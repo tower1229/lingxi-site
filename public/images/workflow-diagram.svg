@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 260" fill="none">
+  <rect x="20" y="40" width="130" height="140" rx="12" fill="#d94a38" opacity="0.12" stroke="#d94a38" stroke-width="1.5"/>
+  <text x="85" y="80" text-anchor="middle" fill="#d94a38" font-family="monospace" font-size="16" font-weight="700">/req</text>
+  <text x="85" y="108" text-anchor="middle" fill="#666" font-family="sans-serif" font-size="12">Create Task</text>
+  <rect x="45" y="124" width="80" height="6" rx="3" fill="#d94a38" opacity="0.3"/>
+  <rect x="55" y="138" width="60" height="6" rx="3" fill="#d94a38" opacity="0.2"/>
+  <rect x="38" y="158" width="94" height="16" rx="8" fill="#d94a38" opacity="0.15"/>
+  <text x="85" y="170" text-anchor="middle" fill="#d94a38" font-family="sans-serif" font-size="9" font-weight="500">Required</text>
+  <path d="M158 110 L186 110" stroke="#ccc" stroke-width="2" stroke-dasharray="4 3"/>
+  <polygon points="186,105 196,110 186,115" fill="#ccc"/>
+  <rect x="200" y="40" width="130" height="140" rx="12" fill="#e8a838" opacity="0.12" stroke="#e8a838" stroke-width="1.5"/>
+  <text x="265" y="76" text-anchor="middle" fill="#c88a20" font-family="monospace" font-size="14" font-weight="700">/review-req</text>
+  <text x="265" y="108" text-anchor="middle" fill="#666" font-family="sans-serif" font-size="12">Review Req</text>
+  <rect x="225" y="124" width="80" height="6" rx="3" fill="#e8a838" opacity="0.3"/>
+  <rect x="235" y="138" width="60" height="6" rx="3" fill="#e8a838" opacity="0.2"/>
+  <rect x="218" y="158" width="94" height="16" rx="8" fill="#e8a838" opacity="0.15"/>
+  <text x="265" y="170" text-anchor="middle" fill="#c88a20" font-family="sans-serif" font-size="9" font-weight="500">Optional</text>
+  <path d="M338 110 L366 110" stroke="#ccc" stroke-width="2" stroke-dasharray="4 3"/>
+  <polygon points="366,105 376,110 366,115" fill="#ccc"/>
+  <rect x="380" y="40" width="130" height="140" rx="12" fill="#61afef" opacity="0.12" stroke="#61afef" stroke-width="1.5"/>
+  <text x="445" y="80" text-anchor="middle" fill="#4a90d0" font-family="monospace" font-size="16" font-weight="700">/plan</text>
+  <text x="445" y="108" text-anchor="middle" fill="#666" font-family="sans-serif" font-size="12">Plan Task</text>
+  <rect x="405" y="124" width="80" height="6" rx="3" fill="#61afef" opacity="0.3"/>
+  <rect x="415" y="138" width="60" height="6" rx="3" fill="#61afef" opacity="0.2"/>
+  <rect x="398" y="158" width="94" height="16" rx="8" fill="#61afef" opacity="0.15"/>
+  <text x="445" y="170" text-anchor="middle" fill="#4a90d0" font-family="sans-serif" font-size="9" font-weight="500">Optional</text>
+  <path d="M518 110 L546 110" stroke="#ccc" stroke-width="2" stroke-dasharray="4 3"/>
+  <polygon points="546,105 556,110 546,115" fill="#ccc"/>
+  <rect x="560" y="40" width="130" height="140" rx="12" fill="#98c379" opacity="0.12" stroke="#98c379" stroke-width="1.5"/>
+  <text x="625" y="80" text-anchor="middle" fill="#6a9a55" font-family="monospace" font-size="16" font-weight="700">/build</text>
+  <text x="625" y="108" text-anchor="middle" fill="#666" font-family="sans-serif" font-size="12">Build Code</text>
+  <rect x="585" y="124" width="80" height="6" rx="3" fill="#98c379" opacity="0.3"/>
+  <rect x="595" y="138" width="60" height="6" rx="3" fill="#98c379" opacity="0.2"/>
+  <rect x="578" y="158" width="94" height="16" rx="8" fill="#98c379" opacity="0.15"/>
+  <text x="625" y="170" text-anchor="middle" fill="#6a9a55" font-family="sans-serif" font-size="9" font-weight="500">Optional</text>
+  <path d="M625 188 L625 210 L85 210 L85 230" stroke="#ccc" stroke-width="2" stroke-dasharray="4 3"/>
+  <polygon points="80,230 85,240 90,230" fill="#ccc"/>
+  <rect x="260" y="220" width="280" height="32" rx="16" fill="#c678dd" opacity="0.12" stroke="#c678dd" stroke-width="1.5"/>
+  <text x="400" y="241" text-anchor="middle" fill="#a855a0" font-family="monospace" font-size="14" font-weight="700">/review - Review Delivery</text>
+</svg>

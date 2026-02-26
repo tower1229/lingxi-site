@@ -75,6 +75,48 @@
   --vp-sidebar-bg-color: #0a0a0a;
 }
 
+/* ========== 首页 Hero 图片放大 ========== */
+
+.VPHero .image-container,
+[class*="VPHero"] .image-container {
+  max-width: 560px;
+  width: 100%;
+}
+
+.VPHero .image-container img,
+[class*="VPHero"] .image-container img,
+.VPHero .VPImage,
+[class*="VPHero"] .VPImage {
+  max-width: 560px !important;
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--vp-c-divider);
+}
+
+.dark .VPHero .image-container img,
+.dark [class*="VPHero"] .image-container img,
+.dark .VPHero .VPImage,
+.dark [class*="VPHero"] .VPImage {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  border-color: var(--vp-c-border);
+}
+
+@media (min-width: 960px) {
+  .VPHero .image-container,
+  [class*="VPHero"] .image-container {
+    max-width: 620px;
+  }
+
+  .VPHero .image-container img,
+  [class*="VPHero"] .image-container img,
+  .VPHero .VPImage,
+  [class*="VPHero"] .VPImage {
+    max-width: 620px !important;
+  }
+}
+
 /* ========== 首页 Hero：字号与间距（贴近 Cursor） ========== */
 
 .VPHero .name,

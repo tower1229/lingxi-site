@@ -2,23 +2,26 @@ import { defineConfig } from 'vitepress'
 
 export default defineConfig({
   title: '灵犀 LingXi',
-  description: '灵犀（LingXi）项目的官方网站',
+  description: '基于 Cursor 的持久记忆工作流',
   lang: 'zh-CN',
 
   appearance: true,
   lastUpdated: true,
+  ignoreDeadLinks: [
+    /localhost/,
+  ],
 
-  // 中英双语：root = 简体中文，en = English
   locales: {
     root: {
       label: '简体中文',
       lang: 'zh-CN',
       title: '灵犀 LingXi',
-      description: '灵犀（LingXi）项目的官方网站',
+      description: '基于 Cursor 的持久记忆工作流',
       themeConfig: {
         nav: [
           { text: '首页', link: '/' },
           { text: '指南', link: '/guide/' },
+          { text: '快速开始', link: '/guide/quick-start' },
         ],
         sidebar: {
           '/guide/': [
@@ -26,6 +29,14 @@ export default defineConfig({
               text: '介绍',
               items: [
                 { text: '什么是灵犀', link: '/guide/what-is-lingxi' },
+                { text: '快速开始', link: '/guide/quick-start' },
+              ],
+            },
+            {
+              text: '深入了解',
+              items: [
+                { text: '核心工作流', link: '/guide/core-workflow' },
+                { text: '记忆系统', link: '/guide/memory-system' },
               ],
             },
           ],
@@ -50,11 +61,12 @@ export default defineConfig({
       lang: 'en-US',
       link: '/en/',
       title: 'LingXi',
-      description: 'Smart workflow & memory for Cursor',
+      description: 'Cursor workflow with persistent memory',
       themeConfig: {
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Guide', link: '/en/guide/' },
+          { text: 'Quick Start', link: '/en/guide/quick-start' },
         ],
         sidebar: {
           '/en/guide/': [
@@ -62,6 +74,14 @@ export default defineConfig({
               text: 'Introduction',
               items: [
                 { text: 'What is LingXi', link: '/en/guide/what-is-lingxi' },
+                { text: 'Quick Start', link: '/en/guide/quick-start' },
+              ],
+            },
+            {
+              text: 'Deep Dive',
+              items: [
+                { text: 'Core Workflow', link: '/en/guide/core-workflow' },
+                { text: 'Memory System', link: '/en/guide/memory-system' },
               ],
             },
           ],
@@ -85,7 +105,7 @@ export default defineConfig({
 
   themeConfig: {
     socialLinks: [
-      { icon: 'github', link: 'https://github.com' },
+      { icon: 'github', link: 'https://github.com/tower1229/LingXi' },
     ],
     search: {
       provider: 'local',
