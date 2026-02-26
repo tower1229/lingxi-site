@@ -6,7 +6,7 @@ hero:
   text: 基于 Cursor 的持久记忆工作流
   tagline: 让 AI 按你的方式做事——沉淀判断力、品味与经验，在每一轮对话中自然复用。
   image:
-    src: /images/hero-screenshot.svg
+    src: https://placehold.co/800x500/1e1e2e/d94a38?text=LingXi+Screenshot&font=raleway
     alt: 灵犀在 Cursor 中的工作界面
   actions:
     - theme: brand
