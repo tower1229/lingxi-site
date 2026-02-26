@@ -6,7 +6,7 @@ hero:
   text: Cursor Workflow with Persistent Memory
   tagline: Make AI work the way you do — capture judgment, taste, and experience, reused naturally in every conversation.
   image:
-    src: https://placehold.co/800x500/1e1e2e/d94a38?text=LingXi+Screenshot&font=raleway
+    src: /images/hero-screenshot-en.svg
     alt: LingXi working inside Cursor IDE
   actions:
     - theme: brand

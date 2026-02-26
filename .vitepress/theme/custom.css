@@ -75,45 +75,77 @@
   --vp-sidebar-bg-color: #0a0a0a;
 }
 
-/* ========== 首页 Hero 图片放大 ========== */
+/* ========== 首页 Hero 图片放大、文案区缩小 ========== */
+
+/* 左侧文案区：缩小占据的空间，右侧留出间距 */
+.VPHero.has-image .main,
+[class*="VPHero"].has-image .main {
+  max-width: 420px !important;
+  width: 38% !important;
+  padding-right: 2rem;
+}
+
+@media (min-width: 960px) {
+  .VPHero.has-image .main,
+  [class*="VPHero"].has-image .main {
+    max-width: 420px !important;
+    width: 38% !important;
+    padding-right: 2.5rem;
+  }
+}
+
+/* 右侧图片区：填满宽度、取消默认左移、与文字拉开间距 */
+.VPHero.has-image .image,
+[class*="VPHero"].has-image .image {
+  margin-left: 0;
+  transform: none;
+  min-width: 0;
+}
 
 .VPHero .image-container,
 [class*="VPHero"] .image-container {
-  max-width: 560px;
+  max-width: none;
   width: 100%;
+  transform: none;
+  background: transparent;
 }
 
+/* 去掉白边：无边框、阴影减弱；图片 100% 宽 */
 .VPHero .image-container img,
 [class*="VPHero"] .image-container img,
 .VPHero .VPImage,
 [class*="VPHero"] .VPImage {
-  max-width: 560px !important;
+  max-width: 100% !important;
   width: 100% !important;
   height: auto !important;
+  max-height: none !important;
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  border: 1px solid var(--vp-c-divider);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: none;
+  background: transparent;
+  display: block;
 }
 
 .dark .VPHero .image-container img,
 .dark [class*="VPHero"] .image-container img,
 .dark .VPHero .VPImage,
 .dark [class*="VPHero"] .VPImage {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-  border-color: var(--vp-c-border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+  border: none;
+  background: transparent;
 }
 
 @media (min-width: 960px) {
   .VPHero .image-container,
   [class*="VPHero"] .image-container {
-    max-width: 620px;
+    max-width: none;
   }
 
   .VPHero .image-container img,
   [class*="VPHero"] .image-container img,
   .VPHero .VPImage,
   [class*="VPHero"] .VPImage {
-    max-width: 620px !important;
+    max-width: 100% !important;
   }
 }
 
