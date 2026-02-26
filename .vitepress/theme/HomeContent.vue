@@ -1,9 +1,9 @@
 <script setup>
-import { useData } from 'vitepress'
+import { useData } from "vitepress";
 
-const { lang } = useData()
+const { lang } = useData();
 
-const isZh = () => lang.value === 'zh-CN'
+const isZh = () => lang.value === "zh-CN";
 </script>
 
 <template>
@@ -11,16 +11,28 @@ const isZh = () => lang.value === 'zh-CN'
     <!-- Section: CTA -->
     <section class="home-section cta-section">
       <div class="cta-container">
-        <h2>{{ isZh() ? '让 AI 按你的方式做事' : 'Make AI Work the Way You Do' }}</h2>
-        <p>{{ isZh()
-          ? '安装灵犀，在你的项目中体验持久记忆工作流。'
-          : 'Install LingXi and experience persistent memory workflows in your project.'
-        }}</p>
+        <h2>
+          {{ isZh() ? "让 AI 按你的方式做事" : "Make AI Work the Way You Do" }}
+        </h2>
+        <p>
+          {{
+            isZh()
+              ? "安装灵犀，在你的项目中体验持久记忆工作流。"
+              : "Install LingXi and experience persistent memory workflows in your project."
+          }}
+        </p>
         <div class="cta-buttons">
-          <a :href="isZh() ? '/guide/quick-start' : '/en/guide/quick-start'" class="cta-primary">
-            {{ isZh() ? '快速开始' : 'Get Started' }}
+          <a
+            :href="isZh() ? '/guide/quick-start' : '/en/guide/quick-start'"
+            class="cta-primary"
+          >
+            {{ isZh() ? "快速开始" : "Get Started" }}
           </a>
-          <a href="https://github.com/tower1229/LingXi" class="cta-secondary" target="_blank">
+          <a
+            href="https://github.com/tower1229/LingXi"
+            class="cta-secondary"
+            target="_blank"
+          >
             GitHub
           </a>
         </div>
@@ -44,7 +56,7 @@ const isZh = () => lang.value === 'zh-CN'
 /* ---- CTA Section ---- */
 .cta-section {
   text-align: center;
-  padding: 5rem 0;
+  margin-top: 5rem;
 }
 
 .cta-container h2 {
