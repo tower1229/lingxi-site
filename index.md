@@ -31,7 +31,7 @@ features:
     details: 智能检索与最小注入策略，让模型聚焦关键信息，避免上下文污染，提升每次对话的质量。
   - icon: 📦
     title: 开箱即用
-    details: 从 Cursor 插件市场安装，运行 /init 即可在现有项目中初始化灵犀，零配置上手。
+    details: 通过脚本安装后运行 /init 即可在现有项目中初始化灵犀，零配置上手。
   - icon: 🤝
     title: 团队经验共享
     details: 通过 git submodule 共享记忆库，让团队的最佳实践、踩坑经验在所有项目中自然流转。

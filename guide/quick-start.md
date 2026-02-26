@@ -4,15 +4,7 @@
 
 ## 安装
 
-### 方式一：Cursor 插件市场（推荐）
-
-在 Cursor 中打开**插件市场**，搜索 **"LingXi"** 或 **"灵犀"**，点击安装。
-
-安装后，灵犀的 Commands、Skills、Agents 和 Hooks 将随插件加载，在任意打开的工作区中可用。
-
-### 方式二：脚本安装
-
-若插件尚未上架，可在项目根目录执行以下命令：
+在项目根目录执行以下命令：
 
 **Linux / macOS / Git Bash：**
 
@@ -37,8 +29,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 灵犀会引导你完成：
 
 1. **收集项目信息** — 技术栈、常用模式、开发规则等
-2. **创建工作区目录** — `.cursor/.lingxi/` 骨架与模板
-3. **生成初始记忆** — 将项目背景写入 `memory/notes/`（可选）
+2. **生成初始记忆** — 将项目背景写入 `memory/notes/`（可选）
 
 初始化完成后，灵犀就准备好了！
 

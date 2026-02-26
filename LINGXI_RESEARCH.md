@@ -6,7 +6,7 @@
 
 ## 1. What is LingXi?
 
-**LingXi (灵犀)** is a **Cursor IDE workflow system with persistent memory**. It is distributed as a **Cursor plugin** (and alternatively via a shell install script) that adds structured development workflows and an AI memory system directly into your Cursor IDE environment.
+**LingXi (灵犀)** is a **Cursor IDE workflow system with persistent memory**. It is distributed via a **shell install script** that adds structured development workflows and an AI memory system directly into your Cursor IDE environment.
 
 **Tagline (Chinese):** 基于 Cursor 的持久记忆工作流 — "Cursor workflow with persistent memory"
 
@@ -261,12 +261,8 @@ Session start → hook injects convention
 
 ## 5. Installation & Quick Start
 
-### Method 1: Cursor Plugin Marketplace (Recommended)
-1. Search "LingXi" or "灵犀" in the Cursor plugin marketplace
-2. Install the plugin
-3. Run `/init` in any project to set up the workspace layout
+### Script Install
 
-### Method 2: Remote Script Install
 **Linux / macOS / Git Bash:**
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.sh | bash
@@ -278,7 +274,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 ```
 
 ### Quick Start Flow
-1. Run `/init` — guided project initialization (collects stack info, patterns, rules; creates `.cursor/.lingxi/` skeleton)
+1. Run `/init` — guided project initialization (collects stack info, patterns, rules)
 2. Run `/req <description>` — create your first task document
 3. Optionally: `/plan`, `/build`, `/review`
 4. Use `/remember` anytime to save learnings
@@ -381,7 +377,7 @@ Based on this research, here's a suggested content strategy:
 ### Homepage Hero
 - **Headline:** "Your AI remembers." / "让 AI 记住你的方式"
 - **Subhead:** "Persistent memory and structured workflows for Cursor"
-- **CTA:** Install from Cursor marketplace / Quick Start guide
+- **CTA:** Quick Start guide (script install)
 
 ### Key Pages to Create
 1. **What is LingXi** — Problem/solution, value proposition
@@ -414,7 +410,7 @@ Based on this research, here's a suggested content strategy:
 
 5. **No runtime dependencies** — Uses only Node.js built-in modules. No npm packages required for the plugin itself.
 
-6. **Plugin distribution** — Has a `plugin.json` manifest for Cursor plugin marketplace, but no releases yet published on GitHub.
+6. **Plugin distribution** — Has a `plugin.json` manifest for future Cursor plugin marketplace; currently install via script only. No releases yet published on GitHub.
 
 7. **The "taste" concept** — The structured 7-field taste payload is a novel approach to capturing user preferences. It goes beyond simple "remember this" to structured decision capture with scoring.
 

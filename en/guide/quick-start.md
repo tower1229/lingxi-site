@@ -4,15 +4,7 @@ Get LingXi running in your project in just two steps.
 
 ## Installation
 
-### Option 1: Cursor Plugin Marketplace (Recommended)
-
-Open the **Plugin Marketplace** in Cursor, search for **"LingXi"**, and click Install.
-
-Once installed, LingXi's Commands, Skills, Agents, and Hooks load with the plugin and are available in any open workspace.
-
-### Option 2: Script Install
-
-If the plugin isn't yet available in the marketplace, run one of these commands from your project root:
+Run one of these commands from your project root:
 
 **Linux / macOS / Git Bash:**
 
@@ -37,8 +29,7 @@ In Cursor's Chat, type:
 LingXi will guide you through:
 
 1. **Collecting project info** — tech stack, patterns, coding conventions
-2. **Creating workspace directories** — `.cursor/.lingxi/` skeleton and templates
-3. **Generating initial memory** — writing project context to `memory/notes/` (optional)
+2. **Generating initial memory** — writing project context to `memory/notes/` (optional)
 
 Once initialized, LingXi is ready to go!
 

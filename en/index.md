@@ -31,7 +31,7 @@ features:
     details: Smart retrieval with minimal injection keeps the model focused on what matters, avoiding context pollution.
   - icon: 📦
     title: Ready to Use
-    details: Install from the Cursor plugin marketplace, run /init, and LingXi is ready in your existing project. Zero config.
+    details: Install via script, run /init, and LingXi is ready in your existing project. Zero config.
   - icon: 🤝
     title: Team Knowledge Sharing
     details: Share memory banks across projects via git submodule. Best practices and lessons learned flow naturally across your team.
