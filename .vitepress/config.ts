@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  base: '/lingxi-site/', // GitHub Pages 仓库路径，若为 username.github.io 则改为 '/'
+  base: '/', // Vercel 或子域名下为根路径；若用 xxx.github.io/lingxi-site 则改为 '/lingxi-site/'
   title: '灵犀 LingXi',
   description: '基于 Cursor 的持久记忆工作流',
   lang: 'zh-CN',
