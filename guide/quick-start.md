@@ -1,6 +1,6 @@
 # 快速开始
 
-只需两步即可在现有项目中启用灵犀。
+只需两步即可在现有项目中启用灵犀。`/init` 为推荐步骤，但不是必选。
 
 ## 安装
 
@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.
 irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
 ```
 
-## 初始化项目
+## 初始化项目（推荐，可选）
 
 在 Cursor 的 Chat 中输入：
 
@@ -31,9 +31,9 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 1. **收集项目信息** — 技术栈、常用模式、开发规则等
 2. **生成初始记忆** — 将项目背景写入 `memory/notes/`（可选）
 
-初始化完成后，灵犀就准备好了！
+如果你希望先直接推进具体需求，也可以先使用 `/req` 创建任务，再按需补做 `/init`。
 
-## 第一个任务
+## 第一个任务（推荐）
 
 试试用灵犀创建你的第一个任务：
 
@@ -56,7 +56,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ## 目录结构
 
-初始化后，你的项目会多出以下目录：
+执行 `/init` 后，你的项目会多出以下目录：
 
 ```
 .cursor/.lingxi/
@@ -72,5 +72,6 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ## 下一步
 
+- 命令语义：`/init` 推荐可选，`/req` 为工作流起点
 - 了解 [核心工作流](/guide/core-workflow) 的完整生命周期
 - 深入理解 [记忆系统](/guide/memory-system) 的工作原理

@@ -4,7 +4,7 @@ layout: home
 hero:
   name: LingXi
   text: Cursor Workflow with Persistent Memory
-  tagline: Make AI work the way you do — capture judgment, taste, and experience, reused naturally in every conversation.
+  tagline: Make AI work the way you do — capture judgment, preferences, and experience, then reuse them naturally in every conversation.
   image:
     src: /images/hero-screenshot-en.svg
     alt: LingXi working inside Cursor IDE
@@ -19,20 +19,20 @@ hero:
 features:
   - icon: 🔄
     title: Flexible Workflow
-    details: End-to-end development flow — req → plan → build → review. Every step is optional; balance rigor with speed.
+    details: Covers req → plan → build → review end-to-end. Compose the flow by task complexity; every step is optional.
   - icon: 🧠
     title: Persistent Memory
-    details: Learns your judgment, taste, and responsibility within projects. Auto-captures notes and injects them into every new conversation.
+    details: Captures your project decisions, preferences, and lessons as reusable memory notes for later conversations.
   - icon: 🛡️
     title: Human in the Loop
-    details: Key decisions follow your lead — optional when you want, never overstepping when you don't. You stay in control.
+    details: You confirm key decisions and control when to apply each step, so AI stays assistive instead of overreaching.
   - icon: 🎯
-    title: Context Curation
-    details: Smart retrieval with minimal injection keeps the model focused on what matters, avoiding context pollution.
+    title: Context Management
+    details: Smart retrieval plus minimal injection keeps the model focused on what matters and reduces noisy context.
   - icon: 📦
     title: Ready to Use
-    details: Install via script, run /init, and LingXi is ready in your existing project. Zero config.
+    details: Install via script and start in your existing project right away; begin with /init, /req, or other commands as needed.
   - icon: 🤝
     title: Team Knowledge Sharing
-    details: Share memory banks across projects via git submodule. Best practices and lessons learned flow naturally across your team.
+    details: Share memory banks across projects via git submodule so best practices and lessons learned can be reused by the team.
 ---

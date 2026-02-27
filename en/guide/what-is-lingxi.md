@@ -1,6 +1,6 @@
 # What is LingXi
 
-LingXi (灵犀) is a **Cursor plugin** that gives developers a **persistent memory workflow** — making AI work the way you do.
+LingXi is a **Cursor plugin** that gives developers a **persistent memory workflow** — making AI work the way you do.
 
 ## The Problem
 

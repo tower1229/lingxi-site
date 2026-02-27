@@ -98,6 +98,8 @@ git submodule update --remote --merge
 
 # 3. 同步记忆索引
 npm run memory-sync
+# 或
+yarn memory-sync
 ```
 
 ### 共享规则

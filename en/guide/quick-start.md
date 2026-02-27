@@ -1,6 +1,6 @@
 # Quick Start
 
-Get LingXi running in your project in just two steps.
+Get LingXi running in your project in just two steps. `/init` is recommended, but optional.
 
 ## Installation
 
@@ -18,7 +18,7 @@ curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.
 irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
 ```
 
-## Initialize Your Project
+## Initialize Your Project (Recommended, Optional)
 
 In Cursor's Chat, type:
 
@@ -31,9 +31,9 @@ LingXi will guide you through:
 1. **Collecting project info** — tech stack, patterns, coding conventions
 2. **Generating initial memory** — writing project context to `memory/notes/` (optional)
 
-Once initialized, LingXi is ready to go!
+If you want to move directly on a concrete requirement, you can start with `/req` first and run `/init` later when needed.
 
-## Your First Task
+## Your First Task (Recommended)
 
 Try creating your first task with LingXi:
 
@@ -56,7 +56,7 @@ Then you can choose your next step:
 
 ## Directory Structure
 
-After initialization, your project will have these new directories:
+After running `/init`, your project will have these new directories:
 
 ```
 .cursor/.lingxi/
@@ -72,5 +72,6 @@ After initialization, your project will have these new directories:
 
 ## Next Steps
 
+- Command semantics: `/init` is recommended and optional; `/req` is the workflow entry point
 - Learn the full [Core Workflow](/en/guide/core-workflow) lifecycle
 - Understand how the [Memory System](/en/guide/memory-system) works

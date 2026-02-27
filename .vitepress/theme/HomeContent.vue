@@ -17,8 +17,8 @@ const isZh = () => lang.value === "zh-CN";
         <p>
           {{
             isZh()
-              ? "安装灵犀，在你的项目中体验持久记忆工作流。"
-              : "Install LingXi and experience persistent memory workflows in your project."
+              ? "安装后可按需使用 /init、/req 等命令，在你的项目中逐步启用灵犀工作流。"
+              : "After installation, use /init, /req, or other commands as needed to adopt the LingXi workflow in your project."
           }}
         </p>
         <div class="cta-buttons">
@@ -61,6 +61,7 @@ const isZh = () => lang.value === "zh-CN";
 
 .cta-container h2 {
   font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 2;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: var(--vp-c-text-1);

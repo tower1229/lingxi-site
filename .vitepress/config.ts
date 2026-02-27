@@ -43,7 +43,7 @@ export default defineConfig({
           ],
         },
         footer: {
-          message: '基于 MIT 许可发布',
+          message: '开源发布（许可证信息以仓库为准）',
           copyright: 'Copyright © 灵犀 LingXi',
         },
         docFooter: { prev: '上一页', next: '下一页' },
@@ -88,7 +88,7 @@ export default defineConfig({
           ],
         },
         footer: {
-          message: 'Released under the MIT License.',
+          message: 'Open-source release (see repository for license details).',
           copyright: 'Copyright © LingXi',
         },
         docFooter: { prev: 'Previous', next: 'Next' },

@@ -98,6 +98,8 @@ git submodule update --remote --merge
 
 # 3. Sync memory index
 npm run memory-sync
+# or
+yarn memory-sync
 ```
 
 ### Sharing Rules

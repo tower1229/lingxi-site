@@ -4,7 +4,7 @@ layout: home
 hero:
   name: 灵犀
   text: 基于 Cursor 的持久记忆工作流
-  tagline: 让 AI 按你的方式做事——沉淀判断力、品味与经验，在每一轮对话中自然复用。
+  tagline: 让 AI 按你的方式做事——沉淀判断、偏好与经验，并在每一轮对话中自然复用。
   image:
     src: /images/hero-screenshot.svg
     alt: 灵犀在 Cursor 中的工作界面
@@ -19,20 +19,20 @@ hero:
 features:
   - icon: 🔄
     title: 可伸缩工作流
-    details: 从需求到交付的完整流程——req → plan → build → review，每个环节可选可跳，兼顾工程严谨与轻便快捷。
+    details: 从需求到交付覆盖 req → plan → build → review，按任务复杂度自由组合，每一步都可选。
   - icon: 🧠
     title: 持久化记忆
-    details: 在项目中学习你的判断力、品味和责任感，自动沉淀为记忆笔记，在每轮新对话中精准注入。
+    details: 在项目中沉淀你的判断、偏好与经验，自动形成记忆笔记，并在新对话中按需注入。
   - icon: 🛡️
     title: 人工门控
-    details: 关键决策始终遵从你的指引——可以不来，绝不胡来。需求提纯、记忆写入等关键节点均需你确认。
+    details: 关键节点由你确认，默认不越权；可按任务需要启用或跳过相应流程。
   - icon: 🎯
-    title: 上下文运营
-    details: 智能检索与最小注入策略，让模型聚焦关键信息，避免上下文污染，提升每次对话的质量。
+    title: 上下文管理
+    details: 基于智能检索与最小注入策略，让模型聚焦关键信息，减少上下文噪音。
   - icon: 📦
     title: 开箱即用
-    details: 通过脚本安装后运行 /init 即可在现有项目中初始化灵犀，零配置上手。
+    details: 通过脚本安装后即可在现有项目使用；你可以按需从 /init、/req 等命令开始。
   - icon: 🤝
     title: 团队经验共享
-    details: 通过 git submodule 共享记忆库，让团队的最佳实践、踩坑经验在所有项目中自然流转。
+    details: 通过 git submodule 共享记忆库，让团队最佳实践与踩坑经验在项目间复用。
 ---
