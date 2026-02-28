@@ -80,18 +80,8 @@
 /* 左侧文案区：缩小占据的空间，右侧留出间距 */
 .VPHero.has-image .main,
 [class*="VPHero"].has-image .main {
-  max-width: 420px !important;
-  width: 38% !important;
   padding-right: 2rem;
-}
-
-@media (min-width: 960px) {
-  .VPHero.has-image .main,
-  [class*="VPHero"].has-image .main {
-    max-width: 420px !important;
-    width: 38% !important;
-    padding-right: 2.5rem;
-  }
+  flex: 1;
 }
 
 /* 右侧图片区：填满宽度、取消默认左移、与文字拉开间距 */
