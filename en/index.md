@@ -17,19 +17,19 @@ hero:
       link: https://github.com/tower1229/LingXi
 
 features:
-  - icon: 🔄
+  - icon: 🧩
     title: Flexible Workflow
     details: Covers req → plan → build → review end-to-end. Compose the flow by task complexity; every step is optional.
-  - icon: 🧠
+  - icon: 🗂️
     title: Persistent Memory
     details: Captures your project decisions, preferences, and lessons as reusable memory notes for later conversations.
-  - icon: 🛡️
+  - icon: 🚦
     title: Human in the Loop
     details: You confirm key decisions and control when to apply each step, so AI stays assistive instead of overreaching.
-  - icon: 🎯
+  - icon: 🧭
     title: Context Management
     details: Smart retrieval plus minimal injection keeps the model focused on what matters and reduces noisy context.
-  - icon: 📦
+  - icon: ⚡
     title: Ready to Use
     details: Install via script and start in your existing project right away; begin with /init, /req, or other commands as needed.
   - icon: 🤝

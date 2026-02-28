@@ -17,19 +17,19 @@ hero:
       link: https://github.com/tower1229/LingXi
 
 features:
-  - icon: 🔄
+  - icon: 🧩
     title: 可伸缩工作流
     details: 从需求到交付覆盖 req → plan → build → review，按任务复杂度自由组合，每一步都可选。
-  - icon: 🧠
+  - icon: 🗂️
     title: 持久化记忆
     details: 在项目中沉淀你的判断、偏好与经验，自动形成记忆笔记，并在新对话中按需注入。
-  - icon: 🛡️
+  - icon: 🚦
     title: 人工门控
     details: 关键节点由你确认，默认不越权；可按任务需要启用或跳过相应流程。
-  - icon: 🎯
+  - icon: 🧭
     title: 上下文管理
     details: 基于智能检索与最小注入策略，让模型聚焦关键信息，减少上下文噪音。
-  - icon: 📦
+  - icon: ⚡
     title: 开箱即用
     details: 通过脚本安装后即可在现有项目使用；你可以按需从 /init、/req 等命令开始。
   - icon: 🤝
