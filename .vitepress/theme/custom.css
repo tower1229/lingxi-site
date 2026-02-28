@@ -181,7 +181,6 @@
 .VPHero .actions,
 [class*="VPHero"] .actions {
   gap: 1rem;
-  margin-top: 1.5rem;
 }
 
 .VPHero .actions .VPButton,
