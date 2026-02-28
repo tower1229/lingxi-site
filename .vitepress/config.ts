@@ -5,6 +5,11 @@ export default defineConfig({
   title: '灵犀 LingXi',
   description: '基于 Cursor 的持久记忆工作流',
   lang: 'zh-CN',
+  head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/assets/logo-mono.svg' }],
+    ['link', { rel: 'shortcut icon', href: '/assets/logo-mono.svg' }],
+    ['link', { rel: 'apple-touch-icon', href: '/assets/logo-mono.svg' }],
+  ],
 
   appearance: true,
   lastUpdated: true,
@@ -105,6 +110,11 @@ export default defineConfig({
   },
 
   themeConfig: {
+    logo: {
+      light: '/assets/logo-primary.svg',
+      dark: '/assets/logo-primary.svg',
+      alt: 'LingXi',
+    },
     socialLinks: [
       { icon: 'github', link: 'https://github.com/tower1229/LingXi' },
     ],

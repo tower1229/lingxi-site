@@ -126,6 +126,14 @@
   display: block;
 }
 
+/* 品牌主标在 Hero 中保持扁平展示，不使用截图风格阴影 */
+.VPHero .image-container img[src*="/assets/logo-primary.svg"],
+[class*="VPHero"] .image-container img[src*="/assets/logo-primary.svg"] {
+  width: min(640px, 100%) !important;
+  border-radius: 0;
+  box-shadow: none;
+}
+
 .dark .VPHero .image-container img,
 .dark [class*="VPHero"] .image-container img,
 .dark .VPHero .VPImage,
@@ -188,7 +196,7 @@
 
 .VPHero .actions .VPButton,
 [class*="VPHero"] .actions .VPButton {
-  padding: 0.5rem 1.5rem;
+  padding: 0.25rem 2rem;
   font-size: 1rem;
   font-weight: 500;
   border-radius: 8px;
@@ -250,6 +258,17 @@
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--vp-c-text-1);
+}
+
+.VPNavBar .VPNavBarTitle .logo {
+  height: 36px;
+  width: auto;
+  margin-right: 0;
+}
+
+/* 有 logo 时隐藏标题文字，避免导航重复展示品牌名 */
+.VPNavBar .VPNavBarTitle .title span {
+  display: none;
 }
 
 .VPNavBar .link {

@@ -11,6 +11,12 @@ const isZh = () => lang.value === "zh-CN";
     <!-- Section: CTA -->
     <section class="home-section cta-section">
       <div class="cta-container">
+        <img
+          src="/assets/logo-mark.svg"
+          alt=""
+          class="cta-mono-mark"
+          aria-hidden="true"
+        />
         <h2>
           {{ isZh() ? "让 AI 按你的方式做事" : "Make AI Work the Way You Do" }}
         </h2>
@@ -26,6 +32,12 @@ const isZh = () => lang.value === "zh-CN";
             :href="isZh() ? '/guide/quick-start' : '/en/guide/quick-start'"
             class="cta-primary"
           >
+            <img
+              src="/assets/logo-mark.svg"
+              alt=""
+              class="cta-primary-badge"
+              aria-hidden="true"
+            />
             {{ isZh() ? "快速开始" : "Get Started" }}
           </a>
           <a
@@ -57,6 +69,14 @@ const isZh = () => lang.value === "zh-CN";
 .cta-section {
   text-align: center;
   margin-top: 5rem;
+}
+
+.cta-mono-mark {
+  width: 7rem;
+  height: auto;
+  color: var(--vp-c-text-2);
+  margin: 0 auto;
+  opacity: 0.9;
 }
 
 .cta-container h2 {
@@ -92,9 +112,18 @@ const isZh = () => lang.value === "zh-CN";
 }
 
 .cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   background: var(--vp-button-brand-bg);
   color: var(--vp-button-brand-text);
   border: 1px solid var(--vp-button-brand-border);
+}
+
+.cta-primary-badge {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
 }
 
 .cta-primary:hover {
