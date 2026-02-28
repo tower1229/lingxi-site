@@ -180,7 +180,7 @@
 
 .VPHero .actions,
 [class*="VPHero"] .actions {
-  gap: 1rem;
+  gap: 1em;
 }
 
 .VPHero .actions .VPButton,
