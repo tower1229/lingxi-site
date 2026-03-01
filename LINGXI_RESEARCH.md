@@ -31,18 +31,21 @@ LingXi addresses several key pain points in AI-assisted development:
 ## 2. Target Audience
 
 ### Primary Users
+
 - **Software developers** who use **Cursor IDE** as their primary development environment
 - **Individual developers** who want their AI assistant to "learn" their preferences and coding style
 - **Development teams** who want to standardize workflows and share institutional knowledge across projects
 
 ### User Profiles
+
 - **Solo developers** building personal projects who want consistent AI behavior
 - **Tech leads / senior developers** who want to encode team standards and architectural decisions
 - **Teams transitioning to AI-assisted development** who need structure without losing flexibility
 - **Open-source maintainers** who want to document project conventions for AI assistants
 
 ### Prerequisites
-- Must use **Cursor IDE** (specifically Cursor Nightly for Skills features)
+
+- Must use **Cursor IDE**
 - Some features require Node.js (for hooks and scripts)
 - Bilingual: supports both **Chinese and English** (README, commands, docs)
 
@@ -54,15 +57,16 @@ LingXi addresses several key pain points in AI-assisted development:
 
 A toolkit of composable commands that follow a software development lifecycle — use all of them for rigorous work, or skip steps for quick tasks:
 
-| Command | Purpose | Output |
-|---------|---------|--------|
-| `/task` | Create a task document with refined requirements | `001.task.<title>.md` |
-| `/vet` | Review the task document (optional, repeatable) | Chat-only feedback |
-| `/plan` | Generate task plan + test cases (optional, for complex tasks) | `001.plan.<title>.md` + `001.testcase.<title>.md` |
-| `/build` | Execute implementation (plan-driven or req-driven) | Code changes |
-| `/review` | Multi-dimensional delivery review | `001.review.<title>.md` |
+| Command   | Purpose                                                       | Output                                            |
+| --------- | ------------------------------------------------------------- | ------------------------------------------------- |
+| `/task`   | Create a task document with refined requirements              | `001.task.<title>.md`                             |
+| `/vet`    | Review the task document (optional, repeatable)               | Chat-only feedback                                |
+| `/plan`   | Generate task plan + test cases (optional, for complex tasks) | `001.plan.<title>.md` + `001.testcase.<title>.md` |
+| `/build`  | Execute implementation (plan-driven or req-driven)            | Code changes                                      |
+| `/review` | Multi-dimensional delivery review                             | `001.review.<title>.md`                           |
 
 **Key design choices:**
+
 - **All steps are optional** except `/task` as the entry point
 - **No lifecycle management or state routing** — each command works independently
 - **Multiple entry points** — experienced developers can jump to any stage
@@ -72,16 +76,17 @@ A toolkit of composable commands that follow a software development lifecycle �
 
 The flagship feature — a structured system for capturing, storing, retrieving, and applying knowledge across sessions:
 
-| Aspect | Detail |
-|--------|--------|
+| Aspect               | Detail                                                                                          |
+| -------------------- | ----------------------------------------------------------------------------------------------- |
 | **What gets stored** | Judgments, preferences, decisions, conventions, debugging paths, anti-patterns ("taste" / 品味) |
-| **Storage format** | Flat Markdown files in `.cursor/.lingxi/memory/notes/` |
-| **Index** | Single Source of Truth in `memory/INDEX.md` |
-| **Write entry** | `/remember <description>` command or automatic capture |
-| **Read entry** | Automatic retrieval before every response via `memory-retrieve` |
-| **Cross-project** | `memory/notes/share/` directory (git submodule recommended) |
+| **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/notes/`                                          |
+| **Index**            | Single Source of Truth in `memory/INDEX.md`                                                     |
+| **Write entry**      | `/remember <description>` command or automatic capture                                          |
+| **Read entry**       | Automatic retrieval before every response via `memory-retrieve`                                 |
+| **Cross-project**    | `memory/notes/share/` directory (git submodule recommended)                                     |
 
 **Memory lifecycle:**
+
 1. **Capture** — via taste-recognition skill (7-field structured payload)
 2. **Evaluate** — 5-dimension scoring (decision gain, transferability, trigger-ability, verifiability, stability)
 3. **Govern** — semantic deduplication, merge/replace/veto/new decisions
@@ -103,6 +108,7 @@ The flagship feature — a structured system for capturing, storing, retrieving,
 ### 3.5 Style Fusion (风格融合)
 
 A unique feature that learns and replicates the user's writing style:
+
 - Analyzes text samples to extract style vectors (10 dimensions including sentence length, logic pattern, emotion intensity, vocabulary level, etc.)
 - Builds a cumulative style profile via weighted averaging
 - Generates writing prompts that match the user's style for documentation
@@ -183,6 +189,7 @@ LingXi is built entirely on Cursor's extension points:
 ### 4.3 Memory System Deep Dive
 
 **Write Path:**
+
 ```
 User input → taste-recognition skill (7-field payload)
   → lingxi-memory subagent (isolated context)
@@ -200,6 +207,7 @@ User input → taste-recognition skill (7-field payload)
 ```
 
 **Read Path (every turn):**
+
 ```
 Session start → hook injects convention
   → Each user message triggers memory-retrieve
@@ -211,6 +219,7 @@ Session start → hook injects convention
 ```
 
 **Taste Payload (7 fields):**
+
 ```json
 {
   "scene": "When referencing Skills in documentation",
@@ -264,22 +273,26 @@ Session start → hook injects convention
 ### Script Install
 
 **Linux / macOS / Git Bash:**
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.sh | bash
 ```
 
 **Windows PowerShell:**
+
 ```powershell
 irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
 ```
 
 ### Quick Start Flow
+
 1. Run `/init` — guided project initialization (collects stack info, patterns, rules)
 2. Run `/task <description>` — create your first task document
 3. Optionally: `/plan`, `/build`, `/review`
 4. Use `/remember` anytime to save learnings
 
 ### Cross-Project Knowledge Sharing
+
 ```bash
 # Add shared memory repo as submodule
 git submodule add <shareRepoUrl> .cursor/.lingxi/memory/notes/share
@@ -293,29 +306,32 @@ npm run memory-sync
 ## 6. What Makes It Unique (Competitive Differentiation)
 
 ### vs. Cursor Rules / .cursorrules
-| Aspect | Cursor Rules | LingXi |
-|--------|-------------|--------|
-| Memory | Static, manual | Dynamic, learns from interactions |
-| Workflow | None | Full dev lifecycle (task→vet→plan→build→review) |
-| Knowledge sharing | Copy-paste between projects | Git submodule shared memory |
-| Context management | All-or-nothing | Selective retrieval + minimal injection |
+
+| Aspect             | Cursor Rules                | LingXi                                          |
+| ------------------ | --------------------------- | ----------------------------------------------- |
+| Memory             | Static, manual              | Dynamic, learns from interactions               |
+| Workflow           | None                        | Full dev lifecycle (task→vet→plan→build→review) |
+| Knowledge sharing  | Copy-paste between projects | Git submodule shared memory                     |
+| Context management | All-or-nothing              | Selective retrieval + minimal injection         |
 
 ### vs. Custom GPTs / System Prompts
-| Aspect | Custom GPTs | LingXi |
-|--------|------------|--------|
-| Persistence | Session-only | Cross-session, file-based |
-| Learning | No | Automatic taste recognition |
-| Structure | Freeform | Structured with scoring & governance |
-| Human oversight | No | Gated writes with confirmation |
+
+| Aspect          | Custom GPTs  | LingXi                               |
+| --------------- | ------------ | ------------------------------------ |
+| Persistence     | Session-only | Cross-session, file-based            |
+| Learning        | No           | Automatic taste recognition          |
+| Structure       | Freeform     | Structured with scoring & governance |
+| Human oversight | No           | Gated writes with confirmation       |
 
 ### vs. Other AI Workflow Tools (e.g., Windsurf Flows, Aider)
-| Aspect | Others | LingXi |
-|--------|--------|--------|
-| Memory system | None or basic | Deep: capture→evaluate→govern→gate→retrieve |
-| Style learning | None | Style fusion (10-dimension vector) |
-| Audit trail | None | Full NDJSON audit with session correlation |
-| Knowledge reuse | None | Cross-project via git submodule |
-| Philosophy | Maximize automation | Balance AI capability with human control |
+
+| Aspect          | Others              | LingXi                                      |
+| --------------- | ------------------- | ------------------------------------------- |
+| Memory system   | None or basic       | Deep: capture→evaluate→govern→gate→retrieve |
+| Style learning  | None                | Style fusion (10-dimension vector)          |
+| Audit trail     | None                | Full NDJSON audit with session correlation  |
+| Knowledge reuse | None                | Cross-project via git submodule             |
+| Philosophy      | Maximize automation | Balance AI capability with human control    |
 
 ### Unique Selling Points (USPs)
 
@@ -337,36 +353,36 @@ npm run memory-sync
 
 ## 7. Project Metadata
 
-| Field | Value |
-|-------|-------|
-| **Repository** | [github.com/tower1229/LingXi](https://github.com/tower1229/LingXi) |
-| **Author** | tower1229 |
-| **Language** | JavaScript (Node.js scripts), Markdown (skills, commands, docs) |
-| **Plugin Version** | 1.1.0 |
-| **License** | Not explicitly stated (but MIT mentioned in plugin.json) |
-| **Created** | 2026-01-11 |
-| **Last Updated** | 2026-02-25 |
-| **Stars** | 0 (new project) |
-| **Issues** | None open |
-| **Releases** | None yet |
-| **Primary Language** | Chinese (with English translations for README and commands) |
+| Field                | Value                                                              |
+| -------------------- | ------------------------------------------------------------------ |
+| **Repository**       | [github.com/tower1229/LingXi](https://github.com/tower1229/LingXi) |
+| **Author**           | tower1229                                                          |
+| **Language**         | JavaScript (Node.js scripts), Markdown (skills, commands, docs)    |
+| **Plugin Version**   | 1.1.0                                                              |
+| **License**          | Not explicitly stated (but MIT mentioned in plugin.json)           |
+| **Created**          | 2026-01-11                                                         |
+| **Last Updated**     | 2026-02-25                                                         |
+| **Stars**            | 0 (new project)                                                    |
+| **Issues**           | None open                                                          |
+| **Releases**         | None yet                                                           |
+| **Primary Language** | Chinese (with English translations for README and commands)        |
 
 ---
 
 ## 8. Key Terminology (Glossary)
 
-| Term | Chinese | Meaning |
-|------|---------|---------|
-| Taste (品味) | 品味 | The user's judgment, preferences, principles — what LingXi captures and remembers |
-| Memory Note | 记忆 | A structured Markdown file storing a captured preference/decision |
-| INDEX | 索引 | The single source of truth listing all memory notes |
-| SSoT | 单一事实来源 | Single Source of Truth — each piece of info defined in one place |
-| Silent Success | 静默成功 | No output when things work fine (Unix philosophy) |
-| Taste Recognition | 品味识别 | The skill that identifies capturable preferences from user input |
-| Memory Retrieve | 记忆提取 | The skill that searches and injects relevant memories each turn |
-| Human Gate | 人工门控 | Required user confirmation for critical decisions |
-| Style Fusion | 风格融合 | Feature that learns and replicates writing style |
-| Workspace Bootstrap | 工作区引导 | Initial setup of the `.cursor/.lingxi/` directory structure |
+| Term                | Chinese      | Meaning                                                                           |
+| ------------------- | ------------ | --------------------------------------------------------------------------------- |
+| Taste (品味)        | 品味         | The user's judgment, preferences, principles — what LingXi captures and remembers |
+| Memory Note         | 记忆         | A structured Markdown file storing a captured preference/decision                 |
+| INDEX               | 索引         | The single source of truth listing all memory notes                               |
+| SSoT                | 单一事实来源 | Single Source of Truth — each piece of info defined in one place                  |
+| Silent Success      | 静默成功     | No output when things work fine (Unix philosophy)                                 |
+| Taste Recognition   | 品味识别     | The skill that identifies capturable preferences from user input                  |
+| Memory Retrieve     | 记忆提取     | The skill that searches and injects relevant memories each turn                   |
+| Human Gate          | 人工门控     | Required user confirmation for critical decisions                                 |
+| Style Fusion        | 风格融合     | Feature that learns and replicates writing style                                  |
+| Workspace Bootstrap | 工作区引导   | Initial setup of the `.cursor/.lingxi/` directory structure                       |
 
 ---
 
@@ -375,11 +391,13 @@ npm run memory-sync
 Based on this research, here's a suggested content strategy:
 
 ### Homepage Hero
+
 - **Headline:** "Your AI remembers." / "让 AI 记住你的方式"
 - **Subhead:** "Persistent memory and structured workflows for Cursor"
 - **CTA:** Quick Start guide (script install)
 
 ### Key Pages to Create
+
 1. **What is LingXi** — Problem/solution, value proposition
 2. **Features** — The 6 core features with visuals
 3. **How It Works** — Architecture diagram, memory system explanation
@@ -391,6 +409,7 @@ Based on this research, here's a suggested content strategy:
 9. **Changelog** — Version history
 
 ### Marketing Angles
+
 - **For individuals:** "Your AI assistant that actually learns"
 - **For teams:** "Encode your team's standards once, apply everywhere"
 - **For productivity:** "Stop repeating yourself to AI"
