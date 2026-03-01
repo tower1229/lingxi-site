@@ -56,18 +56,19 @@ Then you can choose your next step:
 
 ## Directory Structure
 
-After running `/init`, your project will have these new directories:
+After running `/init` or when using related commands for the first time, `.cursor/.lingxi/` is created in your project with this structure:
 
 ```
 .cursor/.lingxi/
 ├── tasks/              # Task documents
 │   └── 001.task.user-login.md
 ├── memory/             # Memory system
-│   ├── INDEX.md        # Unified index
-│   ├── notes/          # Memory notes
+│   ├── INDEX.md        # Unified index (SSoT)
+│   ├── notes/          # Memory notes (flat)
 │   │   └── share/      # Shared memories (can be a git submodule)
 │   └── references/     # Templates and specs
-└── workspace/          # Workspace metadata
+└── workspace/          # Workspace
+    └── audit.log       # Audit log (if enabled)
 ```
 
 ## Next Steps

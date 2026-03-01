@@ -56,18 +56,19 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ## 目录结构
 
-执行 `/init` 后，你的项目会多出以下目录：
+执行 `/init` 或首次使用相关命令后，项目内会创建 `.cursor/.lingxi/`，其下结构为：
 
 ```
 .cursor/.lingxi/
 ├── tasks/              # 任务文档
 │   └── 001.task.用户登录.md
 ├── memory/             # 记忆系统
-│   ├── INDEX.md        # 统一索引
-│   ├── notes/          # 记忆笔记
+│   ├── INDEX.md        # 统一索引（SSoT）
+│   ├── notes/          # 记忆笔记（扁平存放）
 │   │   └── share/      # 共享记忆（可作为 git submodule）
 │   └── references/     # 模板与规范
-└── workspace/          # 工作空间元数据
+└── workspace/          # 工作空间
+    └── audit.log       # 审计日志（若启用）
 ```
 
 ## 下一步
