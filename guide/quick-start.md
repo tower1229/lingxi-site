@@ -5,7 +5,7 @@
 ## 前置条件
 
 - **Cursor IDE**：使用灵犀前请确保已安装 **最新正式版 Cursor**。具体版本要求以主仓 [README](https://github.com/tower1229/LingXi) 为准。
-- **Node.js**：仅在使用 `memory-sync` 同步记忆索引、或通过脚本运行 workspace-bootstrap 等时才需要；仅用命令与基础工作流（如 `/task`、`/plan`、`/build`、`/review`、`/remember`、`/init`、`/refine-memory`）可不安装 Node.js。
+- **Node.js**：仅在使用 `memory-sync` 同步记忆索引、或通过脚本运行 workspace-bootstrap 等时才需要；仅用命令与基础工作流（如 `/task`、`/plan`、`/build`、`/review`、`/remember`、`/init`、`/extract`）可不安装 Node.js。
 - 更多环境说明见 [FAQ](/guide/faq)。
 
 ## 安装

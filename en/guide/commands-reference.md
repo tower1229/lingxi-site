@@ -106,14 +106,14 @@ Initializes the project: creates the `.cursor/.lingxi/` directory skeleton if mi
 
 ---
 
-### /refine-memory
+### /extract
 
 ```
-/refine-memory
-/refine-memory <time range>
+/extract
+/extract <time range>
 ```
 
-Refines capturable content from the current conversation or a given time range and writes to the memory bank. With **no arguments**, refines the **current conversation** (e.g. after a round of dialogue). With **arguments**, accepts natural-language time ranges (e.g. “refine today's conversation”, “last 2 days”, “1d”, “24h”); if the time range cannot be parsed, an error is shown and the command stops. LingXi aggregates the conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, then shows the report.
+Extracts capturable content from the current conversation or a given time range and writes to the memory bank. With **no arguments**, extracts from the **current conversation** (e.g. after a round of dialogue). With **arguments**, accepts natural-language time ranges (e.g. “refine today's conversation”, “last 2 days”, “1d”, “24h”); if the time range cannot be parsed, an error is shown and the command stops. LingXi aggregates the conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, then shows the report.
 
 **Parameters:** Optional. Omit for current conversation; pass a time-range description for a scope.
 

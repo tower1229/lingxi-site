@@ -14,7 +14,7 @@ Inject 0–3 most relevant memories
 AI responds with your "experience"
 ```
 
-**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing** does not run automatically in this flow; it is triggered only when you run a command. **Proactive memory capture** uses **/remember** and **/refine-memory**; **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
+**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing** does not run automatically in this flow; it is triggered only when you run a command. **Proactive memory capture** uses **/remember** and **/extract**; **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
 
 ## Memory Retrieval
 
@@ -26,20 +26,20 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/refine-memory**; **/init** optionally writes memories during project initialization (confirmed drafts → memory), as part of the init flow, not a routine capture entry point. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list).
+Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/extract**; **/init** optionally writes memories during project initialization (confirmed drafts → memory), as part of the init flow, not a routine capture entry point. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list).
 
 ### Proactive memory capture
 
 | Command | Purpose |
 |---------|---------|
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
-| **/refine-memory** | Refine by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
+| **/extract** | Extract by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
 
 These are the routine entry points for capturing memory in daily use.
 
 ### Optional write during init
 
-**/init** can turn user-confirmed drafts into memories after guiding project-info collection. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember** or **/refine-memory**.
+**/init** can turn user-confirmed drafts into memories after guiding project-info collection. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember** or **/extract**.
 
 **Gating**: Merging or replacing existing memories requires your confirmation; new memories with confidence **high** can be written silently; **medium** or **low** require confirmation.
 
@@ -66,16 +66,16 @@ Use `/remember` anytime to write a memory:
 | Extract from conversation | `/remember Capture the lesson from that bug` |
 | Keyword-guided capture | `/remember Best practices for database indexing` |
 
-### /refine-memory — Refine by conversation or time range
+### /extract — Extract by conversation or time range
 
 Refine capturable content from the current conversation or a given time range and write to the memory bank.
 
 ```
-/refine-memory
-/refine-memory Refine today's conversation
-/refine-memory Refine the last 2 days
-/refine-memory 1d
-/refine-memory 24h
+/extract
+/extract Refine today's conversation
+/extract Refine the last 2 days
+/extract 1d
+/extract 24h
 ```
 
 - **No arguments**: Refines the **current conversation** — use after a round of dialogue.

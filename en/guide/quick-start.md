@@ -5,7 +5,7 @@ Get LingXi running in your project in just two steps. `/init` is recommended, bu
 ## Prerequisites
 
 - **Cursor IDE**: Ensure you have the **latest stable Cursor** installed. See the main [README](https://github.com/tower1229/LingXi) for version details.
-- **Node.js**: Only needed when using `memory-sync` to update the memory index or when running scripts such as workspace-bootstrap; you can use the basic workflow (e.g. `/task`, `/plan`, `/build`, `/review`, `/remember`, `/init`, `/refine-memory`) without Node.js.
+- **Node.js**: Only needed when using `memory-sync` to update the memory index or when running scripts such as workspace-bootstrap; you can use the basic workflow (e.g. `/task`, `/plan`, `/build`, `/review`, `/remember`, `/init`, `/extract`) without Node.js.
 - For more on environment requirements, see [FAQ](/en/guide/faq).
 
 ## Installation

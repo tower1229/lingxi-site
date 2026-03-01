@@ -16,6 +16,6 @@ Two steps: install LingXi, initialize your project, create your first task.
 The full development lifecycle: task → vet → plan → build → review.
 
 **[Memory System](/en/guide/memory-system)**
-LingXi's core capability — captures your judgment and experience via /remember and /refine-memory, reused in every conversation.
+LingXi's core capability — captures your judgment and experience via /remember and /extract, reused in every conversation.
 
 </div>
