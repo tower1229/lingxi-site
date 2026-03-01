@@ -16,6 +16,6 @@
 从需求到交付的完整生命周期：task → vet → plan → build → review。
 
 **[记忆系统](/guide/memory-system)**
-灵犀的核心能力——自动捕获你的判断和经验，在每轮对话中精准复用。
+灵犀的核心能力——通过 /remember、/refine-memory 等命令主动沉淀你的判断和经验，在每轮对话中精准复用。
 
 </div>

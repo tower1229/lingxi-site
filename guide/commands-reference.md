@@ -106,6 +106,23 @@
 
 ---
 
+### /refine-memory
+
+```
+/refine-memory
+/refine-memory <时间范围>
+```
+
+对当前会话或指定时间范围内的对话做可沉淀内容提炼并写入记忆库。无参数时提炼**当前会话**（适合一轮对话结束后执行）；带参数时接受自然语言时间范围（如「提炼今天的会话」「提炼最近2天的会话」「1d」「24h」），解析不到有效时间范围则提示错误并终止。灵犀会汇总对应会话、经 taste-recognition 提取 payload、单次传入 lingxi-memory，最后呈现简报。
+
+**参数**：可选。不传则当前会话；传则时间范围的自然语言描述。
+
+**产出**：记忆笔记（写入 `.cursor/.lingxi/memory/notes/` 并更新 INDEX）+ lingxi-memory 返回的简报（新建/合并/跳过条数及 Id 列表）。
+
+详见 [记忆系统](/guide/memory-system)。
+
+---
+
 ## 下一步
 
 - [核心工作流](/guide/core-workflow) — 流程总览与示例

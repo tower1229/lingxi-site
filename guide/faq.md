@@ -8,7 +8,7 @@
 
 ### 是否必须安装 Node.js？
 
-**基础工作流不必须**。仅使用 `/task`、`/vet`、`/plan`、`/build`、`/review`、`/remember`、`/init` 等命令时，无需本机安装 Node.js。
+**基础工作流不必须**。仅使用 `/task`、`/vet`、`/plan`、`/build`、`/review`、`/remember`、`/init`、`/refine-memory` 等命令时，无需本机安装 Node.js。
 
 在以下情况需要 Node.js：
 

@@ -161,4 +161,4 @@
 ## 下一步
 
 - 完整命令语法与参数见 [命令参考](/guide/commands-reference)
-- 了解 [记忆系统](/guide/memory-system) 如何在工作流中自动捕获你的经验
+- 了解 [记忆系统](/guide/memory-system) 如何通过命令在工作流中沉淀经验

@@ -15,7 +15,7 @@ When working with AI coding tools like Cursor, you likely run into these issues:
 
 ### 🧠 Persistent Memory
 
-LingXi automatically captures your judgments, preferences, and lessons learned during development, distilling them into structured "memory notes." In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
+LingXi captures your judgments, preferences, and lessons learned during development **when you run /remember or /refine-memory**, or optionally when you run **/init** to set up the project, distilling them into structured "memory notes." In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
 
 ### 🔄 Flexible Workflow
 
@@ -45,7 +45,7 @@ Using a dual-path retrieval system (semantic + keyword), LingXi injects only 0�
 
 ## How This Differs From Cursor Rules and Other Approaches
 
-LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and an optional pipeline (task → vet → plan → build → review). Memories are captured over time and injected when relevant in new conversations, rather than being fixed rules.
+LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and an optional pipeline (task → vet → plan → build → review). Memories are captured **via /remember and /refine-memory** or optionally during **/init**, and are injected when relevant in new conversations, rather than being fixed rules.
 
 ## Next Steps
 

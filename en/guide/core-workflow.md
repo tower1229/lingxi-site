@@ -161,4 +161,4 @@ Comprehensive review of completed code with a generated review report.
 ## Next Steps
 
 - Full command syntax and parameters: [Commands Reference](/en/guide/commands-reference)
-- Learn how the [Memory System](/en/guide/memory-system) automatically captures your experience during workflows
+- Learn how the [Memory System](/en/guide/memory-system) captures experience via commands during workflows

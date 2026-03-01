@@ -9,16 +9,12 @@ Conversation starts
   ↓
 Auto-retrieve memories (memory-retrieve)
   ↓
-Inject 0-3 most relevant memories
+Inject 0–3 most relevant memories
   ↓
 AI responds with your "experience"
-  ↓
-Identify capturable new experience (taste-recognition)
-  ↓
-Write to memory bank (lingxi-memory)
 ```
 
-The entire process runs **silently**, never interrupting your workflow.
+**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing** does not run automatically in this flow; it is triggered only when you run a command. **Proactive memory capture** uses **/remember** and **/refine-memory**; **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
 
 ## Memory Retrieval
 
@@ -30,17 +26,26 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-### Automatic Capture
+Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/refine-memory**; **/init** optionally writes memories during project initialization (confirmed drafts → memory), as part of the init flow, not a routine capture entry point. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list).
 
-LingXi evaluates each conversation turn for capturable experience. When it identifies a judgment, decision, or lesson worth recording, it automatically writes to the memory bank.
+### Proactive memory capture
 
-**Trigger conditions:**
-- Auto-writes only when confidence is high and it's a brand new memory
-- Merging or replacing existing memories requires your confirmation
+| Command | Purpose |
+|---------|---------|
+| **/remember** | Write now: extract memory from current input (and optional context) and write |
+| **/refine-memory** | Refine by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
 
-### Manual Memory — /remember
+These are the routine entry points for capturing memory in daily use.
 
-Use `/remember` anytime to proactively write to memory:
+### Optional write during init
+
+**/init** can turn user-confirmed drafts into memories after guiding project-info collection. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember** or **/refine-memory**.
+
+**Gating**: Merging or replacing existing memories requires your confirmation; new memories with confidence **high** can be written silently; **medium** or **low** require confirmation.
+
+### /remember — Write now
+
+Use `/remember` anytime to write a memory:
 
 ```
 /remember <description>
@@ -61,9 +66,25 @@ Use `/remember` anytime to proactively write to memory:
 | Extract from conversation | `/remember Capture the lesson from that bug` |
 | Keyword-guided capture | `/remember Best practices for database indexing` |
 
-### Memory Structure
+### /refine-memory — Refine by conversation or time range
 
-Each memory contains 7 fields:
+Refine capturable content from the current conversation or a given time range and write to the memory bank.
+
+```
+/refine-memory
+/refine-memory Refine today's conversation
+/refine-memory Refine the last 2 days
+/refine-memory 1d
+/refine-memory 24h
+```
+
+- **No arguments**: Refines the **current conversation** — use after a round of dialogue.
+- **With arguments**: Accepts natural-language time ranges (e.g. “today's conversation”, “last N days”, “Nd”, “Nh”). If the time range cannot be parsed, an error is shown and the command stops.  
+LingXi then aggregates the relevant conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, and shows you the report.
+
+### Memory structure
+
+Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts only a **payloads array**):
 
 | Field | Meaning |
 |-------|---------|

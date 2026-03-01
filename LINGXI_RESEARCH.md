@@ -81,7 +81,7 @@ The flagship feature — a structured system for capturing, storing, retrieving,
 | **What gets stored** | Judgments, preferences, decisions, conventions, debugging paths, anti-patterns ("taste" / 品味) |
 | **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/notes/`                                          |
 | **Index**            | Single Source of Truth in `memory/INDEX.md`                                                     |
-| **Write entry**      | `/remember <description>` command or automatic capture                                          |
+| **Write entry**      | **Proactive capture**: `/remember`, `/refine-memory`. **Optional during setup**: `/init` (command-triggered only; no automatic capture per turn) |
 | **Read entry**       | Automatic retrieval before every response via `memory-retrieve`                                 |
 | **Cross-project**    | `memory/notes/share/` directory (git submodule recommended)                                     |
 

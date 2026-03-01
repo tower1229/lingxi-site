@@ -8,7 +8,7 @@ LingXi requires the **latest stable Cursor**. Ensure Cursor is installed and wor
 
 ### Do I need Node.js?
 
-**Not for the basic workflow.** You can use `/task`, `/vet`, `/plan`, `/build`, `/review`, `/remember`, and `/init` without Node.js on your machine.
+**Not for the basic workflow.** You can use `/task`, `/vet`, `/plan`, `/build`, `/review`, `/remember`, `/init`, and `/refine-memory` without Node.js on your machine.
 
 You need Node.js when:
 
