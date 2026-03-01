@@ -2,6 +2,12 @@
 
 只需两步即可在现有项目中启用灵犀。`/init` 为推荐步骤，但不是必选。
 
+## 前置条件
+
+- **Cursor IDE**：使用灵犀前请确保已安装 **最新正式版 Cursor**。具体版本要求以主仓 [README](https://github.com/tower1229/LingXi) 为准。
+- **Node.js**：仅在使用 `memory-sync` 同步记忆索引、或通过脚本运行 workspace-bootstrap 等时才需要；仅用命令与基础工作流（如 `/task`、`/plan`、`/build`、`/review`、`/remember`、`/init`）可不安装 Node.js。
+- 更多环境说明见 [FAQ](/guide/faq)。
+
 ## 安装
 
 在项目根目录执行以下命令：
@@ -42,17 +48,20 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 ```
 
 灵犀会：
+
 - 自动生成任务编号（如 `001`）
 - 创建结构化的任务文档 `.cursor/.lingxi/tasks/001.task.用户登录.md`
 - 引导你提纯需求、确认技术方案
 
 接下来你可以选择：
 
-| 下一步 | 命令 | 适用场景 |
-|--------|------|----------|
-| 审查 task 文档 | `/vet 001` | 希望多角度审查需求文档质量 |
-| 规划任务 | `/plan 001` | 复杂任务，需要拆分步骤和测试用例 |
-| 直接构建 | `/build 001` | 简单任务，直接开始写代码 |
+| 下一步         | 命令     | 适用场景                         |
+| -------------- | -------- | -------------------------------- |
+| 审查 task 文档 | `/vet`   | 希望多角度审查需求文档质量       |
+| 规划任务       | `/plan`  | 复杂任务，需要拆分步骤和测试用例 |
+| 直接构建       | `/build` | 简单任务，直接开始写代码         |
+
+以上命令**默认作用于当前最新任务**，无需输入任务编号。多任务时的编号用法与特性见 [核心工作流 - 多任务支持](/guide/core-workflow#多任务支持)。
 
 ## 目录结构
 
@@ -73,6 +82,5 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ## 下一步
 
-- 命令语义：`/init` 推荐可选，`/task` 为工作流起点
 - 了解 [核心工作流](/guide/core-workflow) 的完整生命周期
 - 深入理解 [记忆系统](/guide/memory-system) 的工作原理

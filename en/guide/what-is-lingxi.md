@@ -40,8 +40,12 @@ Using a dual-path retrieval system (semantic + keyword), LingXi injects only 0�
 | Principle | Meaning |
 |-----------|---------|
 | **In Sync With You** | Persistent memory so the AI works the way you do |
-| **AI Native** | Balance capability release with engineering control |
+| **AI Native** | Respect AI capability and leave room for evolution; key decisions are human-led, with gates |
 | **To Your Liking** | Lower cognitive load, smooth user-friendly experience |
+
+## How This Differs From Cursor Rules and Other Approaches
+
+LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and an optional pipeline (task → vet → plan → build → review). Memories are captured over time and injected when relevant in new conversations, rather than being fixed rules.
 
 ## Next Steps
 

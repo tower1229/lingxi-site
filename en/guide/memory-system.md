@@ -79,15 +79,40 @@ Each memory contains 7 fields:
 
 LingXi automatically governs the memory bank to prevent unbounded growth:
 
-- **Scorecard system**: 5 dimensions evaluate each memory's value
+- **Scorecard system**: 5 dimensions evaluate each memory's value and determine whether to write and at which layer. See [Scorecard system](#scorecard-system).
 - **TopK strategy**: Retains the most valuable memories
 - **Conflict resolution**: When new memories conflict with old ones, a gating mechanism decides whether to merge or replace
+
+## Scorecard System
+
+Before writing a memory, LingXi scores the candidate with a **scorecard**. Only memories above a certain value are stored, so the bank doesn’t fill with “correct but useless” entries.
+
+**Five dimensions (0–2 points each)**:
+
+| Dimension | Meaning |
+|-----------|---------|
+| D1 Decision gain | How much this memory improves future decisions |
+| D2 Transferability | Whether it applies to similar scenarios and can be reused |
+| D3 Triggerability | How likely it is to be retrieved and loaded when relevant |
+| D4 Verifiability | Whether it’s backed by verifiable facts or evidence |
+| D5 Stability | Whether it stays valid over time and across contexts |
+
+**Total score T** = D1 + D2 + D3 + D4 + D5 (max 10). Based on T and dimension thresholds, LingXi decides:
+
+- **Don’t write**: T ≤ 3 → low value (e.g. one-off facts, hard to transfer, weak triggers, or short-lived). Not written to avoid noise.
+- **Write L0 (fact layer)**: T in 4–5 with sufficient verifiability → store verifiable instance-level facts.
+- **Write L1 (principle layer)**: T in 6–7 with sufficient decision gain and transferability → store reusable principles and strategies.
+- **Write L0 + L1 (both)**: T ≥ 8 with transferability and verifiability → store both facts and principles.
+
+L0 answers “what happened in what context and what was the outcome”; L1 answers “what to prefer or avoid in similar contexts and why.” The scorecard, together with governance and gating, keeps the memory bank growing with high-value experience without unbounded growth. For implementation details see the main repo [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md).
 
 ## Cross-Project Sharing
 
 Teams can share memory banks via **git submodule**, letting best practices flow across all projects.
 
 ### Setting Up a Shared Repository
+
+The `memory-sync` script is added to your project's `package.json` by **LingXi's install script** during installation. Run it from the **project root**; Node.js must be installed. If the script is not present, complete the [Quick Start](/en/guide/quick-start) installation first.
 
 ```bash
 # 1. Add shared memory repository

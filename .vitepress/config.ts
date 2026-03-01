@@ -28,6 +28,8 @@ export default defineConfig({
           { text: '首页', link: '/' },
           { text: '指南', link: '/guide/' },
           { text: '快速开始', link: '/guide/quick-start' },
+          { text: '命令参考', link: '/guide/commands-reference' },
+          { text: 'FAQ', link: '/guide/faq' },
         ],
         sidebar: {
           '/guide/': [
@@ -45,10 +47,17 @@ export default defineConfig({
                 { text: '记忆系统', link: '/guide/memory-system' },
               ],
             },
+            {
+              text: '参考',
+              items: [
+                { text: '命令参考', link: '/guide/commands-reference' },
+                { text: 'FAQ', link: '/guide/faq' },
+              ],
+            },
           ],
         },
         footer: {
-          message: '开源发布（许可证信息以仓库为准）',
+          message: '开源发布。许可证以仓库为准；版本与更新见 GitHub Releases；反馈与建议请提交 GitHub Issues。',
           copyright: 'Copyright © 灵犀 LingXi',
         },
         docFooter: { prev: '上一页', next: '下一页' },
@@ -73,6 +82,8 @@ export default defineConfig({
           { text: 'Home', link: '/en/' },
           { text: 'Guide', link: '/en/guide/' },
           { text: 'Quick Start', link: '/en/guide/quick-start' },
+          { text: 'Commands Reference', link: '/en/guide/commands-reference' },
+          { text: 'FAQ', link: '/en/guide/faq' },
         ],
         sidebar: {
           '/en/guide/': [
@@ -90,10 +101,17 @@ export default defineConfig({
                 { text: 'Memory System', link: '/en/guide/memory-system' },
               ],
             },
+            {
+              text: 'Reference',
+              items: [
+                { text: 'Commands Reference', link: '/en/guide/commands-reference' },
+                { text: 'FAQ', link: '/en/guide/faq' },
+              ],
+            },
           ],
         },
         footer: {
-          message: 'Open-source release (see repository for license details).',
+          message: 'Open-source. License as per repository; releases and updates on GitHub Releases; feedback via GitHub Issues.',
           copyright: 'Copyright © LingXi',
         },
         docFooter: { prev: 'Previous', next: 'Next' },

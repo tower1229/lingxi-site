@@ -1,6 +1,6 @@
 # Core Workflow
 
-LingXi provides a **flexible development workflow** covering the full lifecycle from requirements to delivery. Every step is optional — compose the flow that fits your task.
+LingXi provides a **flexible development workflow** covering the full lifecycle from requirements to delivery. Every step is optional — compose the flow that fits your task. For full command syntax and parameters, see [Commands Reference](/en/guide/commands-reference).
 
 ## Workflow Overview
 
@@ -12,6 +12,31 @@ LingXi provides a **flexible development workflow** covering the full lifecycle 
 ::: tip Design Philosophy
 LingXi is a **toolkit**, not a pipeline. Apart from `/task` as the starting point, every other step can be skipped. You decide the flow.
 :::
+
+## Multi-task Support
+
+LingXi lets you have multiple tasks (001, 002, 003…) in the same project. Each task has its own task document and optional plan, testcase, and review artifacts. `/vet`, `/plan`, `/build`, and `/review` all accept an optional **taskId** so you can target a specific task when several are in progress.
+
+### How task ID (taskId) works by default
+
+**You don’t need to pass a task ID by default.** When you omit taskId, the command applies to the **current latest task**—the one created most recently with `/task` or last operated on. So for a single task you can run `/vet`, `/plan`, `/build`, `/review` in sequence without any ID.
+
+**Pass taskId only when you have multiple tasks in parallel** and need to act on a specific one. For example, with 001 (login), 002 (permissions), and 003 (reports) in progress, to review 002 and plan 001:
+
+```
+/vet 002
+/plan 001
+/build 001
+```
+
+That way you can switch between tasks in one conversation while keeping commands short when working on a single task.
+
+### Summary
+
+| Scenario | Use taskId? | Example |
+|----------|-------------|---------|
+| Single task, sequential | No | `/vet` → `/plan` → `/build` |
+| Multiple tasks, target one | Yes | `/vet 002`, `/plan 001` |
 
 ## /task — Create a Task
 
@@ -135,4 +160,5 @@ Comprehensive review of completed code with a generated review report.
 
 ## Next Steps
 
+- Full command syntax and parameters: [Commands Reference](/en/guide/commands-reference)
 - Learn how the [Memory System](/en/guide/memory-system) automatically captures your experience during workflows

@@ -2,6 +2,12 @@
 
 Get LingXi running in your project in just two steps. `/init` is recommended, but optional.
 
+## Prerequisites
+
+- **Cursor IDE**: Ensure you have the **latest stable Cursor** installed. See the main [README](https://github.com/tower1229/LingXi) for version details.
+- **Node.js**: Only needed when using `memory-sync` to update the memory index or when running scripts such as workspace-bootstrap; you can use the basic workflow (e.g. `/task`, `/plan`, `/build`, `/review`, `/remember`, `/init`) without Node.js.
+- For more on environment requirements, see [FAQ](/en/guide/faq).
+
 ## Installation
 
 Run one of these commands from your project root:
@@ -42,17 +48,20 @@ Try creating your first task with LingXi:
 ```
 
 LingXi will:
+
 - Auto-generate a task ID (e.g., `001`)
 - Create a structured task document: `.cursor/.lingxi/tasks/001.task.user-login.md`
 - Guide you through **requirement refinement**: analysis, expansion, confirmation
 
 Then you can choose your next step:
 
-| Next Step | Command | When to Use |
-|-----------|---------|-------------|
-| Review task document | `/vet 001` | Multi-angle review of requirement quality |
-| Plan the task | `/plan 001` | Complex task needing step breakdown and test cases |
-| Build directly | `/build 001` | Simple task, start coding right away |
+| Next Step            | Command  | When to Use                                        |
+| -------------------- | -------- | -------------------------------------------------- |
+| Review task document | `/vet`   | Multi-angle review of requirement quality          |
+| Plan the task        | `/plan`  | Complex task needing step breakdown and test cases |
+| Build directly       | `/build` | Simple task, start coding right away               |
+
+These commands **act on the latest task by default**; you don't need to type a task ID. For how task IDs work and multi-task behavior, see [Core Workflow — Multi-task support](/en/guide/core-workflow#multi-task-support).
 
 ## Directory Structure
 
@@ -73,6 +82,5 @@ After running `/init` or when using related commands for the first time, `.curso
 
 ## Next Steps
 
-- Command semantics: `/init` is recommended and optional; `/task` is the workflow entry point
 - Learn the full [Core Workflow](/en/guide/core-workflow) lifecycle
 - Understand how the [Memory System](/en/guide/memory-system) works
