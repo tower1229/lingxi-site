@@ -13,7 +13,7 @@ Understand LingXi's design philosophy and core capabilities — why you need a p
 Two steps: install LingXi, initialize your project, create your first task.
 
 **[Core Workflow](/en/guide/core-workflow)**
-The full development lifecycle: req → review-req → plan → build → review.
+The full development lifecycle: task → vet → plan → build → review.
 
 **[Memory System](/en/guide/memory-system)**
 LingXi's core capability — automatically captures your judgment and experience, reused in every conversation.

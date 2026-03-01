@@ -31,26 +31,26 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 1. **收集项目信息** — 技术栈、常用模式、开发规则等
 2. **生成初始记忆** — 将项目背景写入 `memory/notes/`（可选）
 
-如果你希望先直接推进具体需求，也可以先使用 `/req` 创建任务，再按需补做 `/init`。
+如果你希望先直接推进具体需求，也可以先使用 `/task` 创建任务，再按需补做 `/init`。
 
 ## 第一个任务（推荐）
 
 试试用灵犀创建你的第一个任务：
 
 ```
-/req 添加用户登录功能，支持邮箱和手机号登录
+/task 添加用户登录功能，支持邮箱和手机号登录
 ```
 
 灵犀会：
 - 自动生成任务编号（如 `001`）
-- 创建结构化的任务文档 `.cursor/.lingxi/tasks/001.req.用户登录.md`
+- 创建结构化的任务文档 `.cursor/.lingxi/tasks/001.task.用户登录.md`
 - 引导你提纯需求、确认技术方案
 
 接下来你可以选择：
 
 | 下一步 | 命令 | 适用场景 |
 |--------|------|----------|
-| 审查需求 | `/review-req 001` | 希望多角度审查需求文档质量 |
+| 审查 task 文档 | `/vet 001` | 希望多角度审查需求文档质量 |
 | 规划任务 | `/plan 001` | 复杂任务，需要拆分步骤和测试用例 |
 | 直接构建 | `/build 001` | 简单任务，直接开始写代码 |
 
@@ -61,7 +61,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 ```
 .cursor/.lingxi/
 ├── tasks/              # 任务文档
-│   └── 001.req.用户登录.md
+│   └── 001.task.用户登录.md
 ├── memory/             # 记忆系统
 │   ├── INDEX.md        # 统一索引
 │   ├── notes/          # 记忆笔记
@@ -72,6 +72,6 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ## 下一步
 
-- 命令语义：`/init` 推荐可选，`/req` 为工作流起点
+- 命令语义：`/init` 推荐可选，`/task` 为工作流起点
 - 了解 [核心工作流](/guide/core-workflow) 的完整生命周期
 - 深入理解 [记忆系统](/guide/memory-system) 的工作原理

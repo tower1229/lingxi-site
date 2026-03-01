@@ -22,10 +22,10 @@ LingXi automatically captures your judgments, preferences, and lessons learned d
 An end-to-end development flow:
 
 ```
-/req → /review-req → /plan → /build → /review
+/task → /vet → /plan → /build → /review
 ```
 
-Every step is **optional**. Simple tasks can go straight from `/req` to `/build`. Complex tasks can follow the full flow. You decide when to use which command.
+Every step is **optional**. Simple tasks can go straight from `/task` to `/build`. Complex tasks can follow the full flow. You decide when to use which command.
 
 ### 🛡️ Human in the Loop
 

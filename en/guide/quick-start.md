@@ -31,26 +31,26 @@ LingXi will guide you through:
 1. **Collecting project info** — tech stack, patterns, coding conventions
 2. **Generating initial memory** — writing project context to `memory/notes/` (optional)
 
-If you want to move directly on a concrete requirement, you can start with `/req` first and run `/init` later when needed.
+If you want to move directly on a concrete requirement, you can start with `/task` first and run `/init` later when needed.
 
 ## Your First Task (Recommended)
 
 Try creating your first task with LingXi:
 
 ```
-/req Add user login with email and phone number support
+/task Add user login with email and phone number support
 ```
 
 LingXi will:
 - Auto-generate a task ID (e.g., `001`)
-- Create a structured task document: `.cursor/.lingxi/tasks/001.req.user-login.md`
+- Create a structured task document: `.cursor/.lingxi/tasks/001.task.user-login.md`
 - Guide you through **requirement refinement**: analysis, expansion, confirmation
 
 Then you can choose your next step:
 
 | Next Step | Command | When to Use |
 |-----------|---------|-------------|
-| Review requirements | `/review-req 001` | Multi-angle review of requirement quality |
+| Review task document | `/vet 001` | Multi-angle review of requirement quality |
 | Plan the task | `/plan 001` | Complex task needing step breakdown and test cases |
 | Build directly | `/build 001` | Simple task, start coding right away |
 
@@ -61,7 +61,7 @@ After running `/init`, your project will have these new directories:
 ```
 .cursor/.lingxi/
 ├── tasks/              # Task documents
-│   └── 001.req.user-login.md
+│   └── 001.task.user-login.md
 ├── memory/             # Memory system
 │   ├── INDEX.md        # Unified index
 │   ├── notes/          # Memory notes
@@ -72,6 +72,6 @@ After running `/init`, your project will have these new directories:
 
 ## Next Steps
 
-- Command semantics: `/init` is recommended and optional; `/req` is the workflow entry point
+- Command semantics: `/init` is recommended and optional; `/task` is the workflow entry point
 - Learn the full [Core Workflow](/en/guide/core-workflow) lifecycle
 - Understand how the [Memory System](/en/guide/memory-system) works

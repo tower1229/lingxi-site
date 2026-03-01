@@ -23,8 +23,8 @@ const isZh = () => lang.value === "zh-CN";
         <p>
           {{
             isZh()
-              ? "安装后可按需使用 /init、/req 等命令，在你的项目中逐步启用灵犀工作流。"
-              : "After installation, use /init, /req, or other commands as needed to adopt the LingXi workflow in your project."
+              ? "安装后可按需使用 /init、/task 等命令，在你的项目中逐步启用灵犀工作流。"
+              : "After installation, use /init, /task, or other commands as needed to adopt the LingXi workflow in your project."
           }}
         </p>
         <div class="cta-buttons">

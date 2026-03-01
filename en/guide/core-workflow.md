@@ -5,41 +5,41 @@ LingXi provides a **flexible development workflow** covering the full lifecycle 
 ## Workflow Overview
 
 ```
-/req  →  /review-req  →  /plan  →  /build  →  /review
+/task  →  /vet  →  /plan  →  /build  →  /review
  Required   Optional      Optional   Optional   Recommended
 ```
 
 ::: tip Design Philosophy
-LingXi is a **toolkit**, not a pipeline. Apart from `/req` as the starting point, every other step can be skipped. You decide the flow.
+LingXi is a **toolkit**, not a pipeline. Apart from `/task` as the starting point, every other step can be skipped. You decide the flow.
 :::
 
-## /req — Create a Task
+## /task — Create a Task
 
-Everything starts with a requirement. `/req` is the entry point and the only required step.
+Everything starts with a requirement. `/task` is the entry point and the only required step.
 
 ```
-/req <description>
+/task <description>
 ```
 
 **Examples:**
 ```
-/req Add user login with email and phone number support
-/req Improve homepage load performance, target LCP < 1s
+/task Add user login with email and phone number support
+/task Improve homepage load performance, target LCP < 1s
 ```
 
 **What LingXi does:**
 - Auto-generates a task ID (001, 002...) and title
-- Creates a structured task document: `.cursor/.lingxi/tasks/001.req.<title>.md`
+- Creates a structured task document: `.cursor/.lingxi/tasks/001.task.<title>.md`
 - Guides you through **requirement refinement**: analysis, expansion, confirmation
 
 The task document is the core artifact — all subsequent commands revolve around it.
 
-## /review-req — Review Requirements (Optional)
+## /vet — Review Task Document (Optional)
 
 Multi-dimensional review of the task document to improve requirement quality.
 
 ```
-/review-req [taskId]
+/vet [taskId]
 ```
 
 - Can be run multiple times for iterative improvement
@@ -79,7 +79,7 @@ Implement code based on the task document and (optional) planning document.
 | Mode | Condition | Behavior |
 |------|-----------|----------|
 | Plan-driven | Plan document exists | Structured execution following the plan (recommended) |
-| Req-driven | No plan document | Agent decides approach based on req document |
+| Task-driven | No plan document | Agent decides approach based on task document |
 
 ::: tip
 When using Cursor's Plan mode, you can also use its built-in build feature and skip LingXi's `/build` command.
@@ -111,7 +111,7 @@ Comprehensive review of completed code with a generated review report.
 ### Simple Task (Fast Track)
 
 ```
-/req Fix form validation bug on login page
+/task Fix form validation bug on login page
 /build
 /review
 ```
@@ -119,8 +119,8 @@ Comprehensive review of completed code with a generated review report.
 ### Complex Task (Full Flow)
 
 ```
-/req Refactor user permission system to support RBAC model
-/review-req 001
+/task Refactor user permission system to support RBAC model
+/vet 001
 /plan 001
 /build 001
 /review 001
@@ -129,7 +129,7 @@ Comprehensive review of completed code with a generated review report.
 ### Minimal Flow
 
 ```
-/req Update installation instructions in README
+/task Update installation instructions in README
 /build
 ```
 

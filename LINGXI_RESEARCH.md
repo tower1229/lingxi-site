@@ -56,14 +56,14 @@ A toolkit of composable commands that follow a software development lifecycle �
 
 | Command | Purpose | Output |
 |---------|---------|--------|
-| `/req` | Create a task document with refined requirements | `001.req.<title>.md` |
-| `/review-req` | Review the requirements doc (optional, repeatable) | Chat-only feedback |
+| `/task` | Create a task document with refined requirements | `001.task.<title>.md` |
+| `/vet` | Review the task document (optional, repeatable) | Chat-only feedback |
 | `/plan` | Generate task plan + test cases (optional, for complex tasks) | `001.plan.<title>.md` + `001.testcase.<title>.md` |
 | `/build` | Execute implementation (plan-driven or req-driven) | Code changes |
 | `/review` | Multi-dimensional delivery review | `001.review.<title>.md` |
 
 **Key design choices:**
-- **All steps are optional** except `/req` as the entry point
+- **All steps are optional** except `/task` as the entry point
 - **No lifecycle management or state routing** — each command works independently
 - **Multiple entry points** — experienced developers can jump to any stage
 - Works with Cursor's built-in plan mode
@@ -129,16 +129,16 @@ LingXi is built entirely on Cursor's extension points:
 ```
 ┌─────────────────────────────────────────────────┐
 │ Commands (Entry Points)                          │
-│  /req  /plan  /build  /review  /remember  /init │
+│  /task  /plan  /build  /review  /remember  /init │
 ├─────────────────────────────────────────────────┤
 │ Skills (Execution Logic)                         │
 │  ┌──────────────────┐  ┌─────────────────────┐  │
 │  │ Executor Skills   │  │ Utility Skills      │  │
-│  │  req-executor     │  │  about-lingxi       │  │
+│  │  task-executor     │  │  about-lingxi       │  │
 │  │  plan-executor    │  │  ask-questions       │  │
 │  │  build-executor   │  │  skill-creator       │  │
 │  │  review-executor  │  │  write-doc           │  │
-│  │  review-req-exec  │  │  style-fusion        │  │
+│  │  vet-executor  │  │  style-fusion        │  │
 │  │  workspace-boot   │  │  taste-recognition   │  │
 │  └──────────────────┘  └─────────────────────┘  │
 │  ┌──────────────────┐  ┌─────────────────────┐  │
@@ -174,7 +174,7 @@ LingXi is built entirely on Cursor's extension points:
 
 3. **Context Organization** — Pointer-first, detail-later. INDEX as SSoT. Minimal high-signal injection.
 
-4. **Convention over Configuration** — File naming conventions (`001.req.<title>.md`), directory structure conventions, unified index format.
+4. **Convention over Configuration** — File naming conventions (`001.task.<title>.md`), directory structure conventions, unified index format.
 
 5. **Separation of Concerns** — Commands are pure entry points; Skills carry execution logic; Hooks handle automation; Subagents handle isolated tasks.
 
@@ -229,7 +229,7 @@ Session start → hook injects convention
 .cursor/
 ├── commands/              # Command entry points (Markdown)
 ├── skills/                # Execution logic (SKILL.md + references/)
-│   ├── req-executor/
+│   ├── task-executor/
 │   ├── plan-executor/
 │   ├── build-executor/
 │   ├── review-executor/
@@ -247,7 +247,7 @@ Session start → hook injects convention
 │   ├── lingxi-audit.mjs    # 8-event audit logging
 │   └── append-memory-audit.mjs
 └── .lingxi/
-    ├── tasks/              # Task documents (001.req.*.md, etc.)
+    ├── tasks/              # Task documents (001.task.*.md, etc.)
     ├── memory/
     │   ├── INDEX.md        # SSoT memory index
     │   ├── notes/          # Flat memory files
@@ -275,7 +275,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ### Quick Start Flow
 1. Run `/init` — guided project initialization (collects stack info, patterns, rules)
-2. Run `/req <description>` — create your first task document
+2. Run `/task <description>` — create your first task document
 3. Optionally: `/plan`, `/build`, `/review`
 4. Use `/remember` anytime to save learnings
 
@@ -296,7 +296,7 @@ npm run memory-sync
 | Aspect | Cursor Rules | LingXi |
 |--------|-------------|--------|
 | Memory | Static, manual | Dynamic, learns from interactions |
-| Workflow | None | Full dev lifecycle (req→plan→build→review) |
+| Workflow | None | Full dev lifecycle (task→vet→plan→build→review) |
 | Knowledge sharing | Copy-paste between projects | Git submodule shared memory |
 | Context management | All-or-nothing | Selective retrieval + minimal injection |
 

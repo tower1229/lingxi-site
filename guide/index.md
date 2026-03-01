@@ -13,7 +13,7 @@
 两步搞定：安装灵犀，初始化项目，创建第一个任务。
 
 **[核心工作流](/guide/core-workflow)**
-从需求到交付的完整生命周期：req → review-req → plan → build → review。
+从需求到交付的完整生命周期：task → vet → plan → build → review。
 
 **[记忆系统](/guide/memory-system)**
 灵犀的核心能力——自动捕获你的判断和经验，在每轮对话中精准复用。

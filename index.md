@@ -19,7 +19,7 @@ hero:
 features:
   - icon: 🧩
     title: 可伸缩工作流
-    details: 从需求到交付覆盖 req → plan → build → review，按任务复杂度自由组合，每一步都可选。
+    details: 从需求到交付覆盖 task → vet → plan → build → review，按任务复杂度自由组合，每一步都可选。
   - icon: 🗂️
     title: 持久化记忆
     details: 在项目中沉淀你的判断、偏好与经验，自动形成记忆笔记，并在新对话中按需注入。
@@ -31,7 +31,7 @@ features:
     details: 基于智能检索与最小注入策略，让模型聚焦关键信息，减少上下文噪音。
   - icon: ⚡
     title: 开箱即用
-    details: 通过脚本安装后即可在现有项目使用；你可以按需从 /init、/req 等命令开始。
+    details: 通过脚本安装后即可在现有项目使用；你可以按需从 /init、/task 等命令开始。
   - icon: 🤝
     title: 团队经验共享
     details: 通过 git submodule 共享记忆库，让团队最佳实践与踩坑经验在项目间复用。
