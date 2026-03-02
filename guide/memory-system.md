@@ -92,7 +92,7 @@ AI 带着你的"经验"回答
 | evidence   | 支撑证据 |
 | source     | 来源     |
 | confidence | 置信度   |
-| apply      | 应用方式 |
+| apply      | 是否进入 share（`project` \| `team`） |
 
 ## 记忆治理
 
@@ -232,7 +232,7 @@ yarn memory-sync
 ### 共享规则
 
 - **共享目录**：`.cursor/.lingxi/memory/notes/share/`
-- **识别标准**：通过 `Audience`（team/personal）和 `Portability`（cross-project/project-only）字段标识
+- **识别标准**：payload 的 `apply` 为 `team` 的记忆可放入 `notes/share` 跨项目复用，为 `project` 的仅当前项目。
 - **优先级**：项目记忆覆盖共享记忆（相同主题时）
 
 ## 下一步

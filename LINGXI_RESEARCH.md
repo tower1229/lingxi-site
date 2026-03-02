@@ -228,7 +228,7 @@ Session start → hook injects convention
   "evidence": "Don't write full paths",
   "source": "remember|extract|choice|init",
   "confidence": "low|medium|high",
-  "apply": "personal|project|team"
+  "apply": "project|team"
 }
 ```
 

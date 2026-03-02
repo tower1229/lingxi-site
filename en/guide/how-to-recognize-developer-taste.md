@@ -47,13 +47,13 @@ So it solves:
 - `evidence`: optional one-line evidence quote
 - `source`: origin (`remember` / `extract` / `choice` / `init`)
 - `confidence`: confidence (`low` / `medium` / `high`)
-- `apply`: scope (`personal` / `project` / `team`)
+- `apply`: `project` | `team` — whether the memory goes into `notes/share` (`team` = in share, cross-project; `project` = current project only)
 
 One line summary: **structure taste first, then do persistence and governance**.
 
 ---
 
-## 4) Key to Effective Recognition: 4 Triggers
+## 4) Taste Extraction Triggers
 
 `taste-recognition` is not only for `/remember`. It covers multiple real entry points:
 
@@ -115,17 +115,7 @@ This is effective because it has scenario, comparable options, and guidance for 
 
 ---
 
-## 8) Common Pitfalls
-
-- treating command templates as taste,
-- choice without scenario (hard to reuse),
-- opinion without evidence (hard to verify),
-- writing directly after recognition without the contract,
-- mixing recognition and scoring into one stage.
-
----
-
-## 9) Closing
+## 8) Closing
 
 Effective recognition of developer taste turns implicit judgment into explicit decision assets.
 `taste-recognition` provides the first-principles step: **standardize recognition first, then let downstream score and govern**.

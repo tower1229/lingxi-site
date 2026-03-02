@@ -91,7 +91,7 @@ Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts o
 | evidence | Supporting evidence |
 | source | Origin of the memory |
 | confidence | Confidence level |
-| apply | How to apply |
+| apply | Whether in share (`project` \| `team`) |
 
 ## Memory Governance
 
@@ -231,7 +231,7 @@ yarn memory-sync
 ### Sharing Rules
 
 - **Shared directory**: `.cursor/.lingxi/memory/notes/share/`
-- **Identification**: `Audience` (team/personal) and `Portability` (cross-project/project-only) metadata fields
+- **Identification**: memories with `apply=team` go in `notes/share` for cross-project reuse; `apply=project` stays in the current project only.
 - **Priority**: Project-level memories override shared memories on the same topic
 
 ## Next Steps
