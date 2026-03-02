@@ -25,7 +25,7 @@
 
 ### 灵犀的 /plan、/build 与 Cursor 自带的 Plan/Build 有何关系？
 
-**可互补**。灵犀的 `/plan` 和 `/build` 围绕 **task 文档**（`.cursor/.lingxi/tasks/`），与灵犀的 vet、review 等形成一条可选流水线。Cursor 自带的 Plan 模式与 Build 功能可在合适场景下替代或配合使用，例如在 Cursor Plan 模式下直接使用其内置 build，跳过灵犀的 `/build`。详见 [核心工作流](/guide/core-workflow)。
+**可互补**。灵犀的 `/plan` 和 `/build` 围绕 **task 文档**（`.cursor/.lingxi/tasks/`），并与 vet、review 等命令组成可解耦、按需推进的工作流。Cursor 自带的 Plan 模式与 Build 功能可在合适场景下替代或配合使用，例如在 Cursor Plan 模式下直接使用其内置 build，跳过灵犀的 `/build`。详见 [核心工作流](/guide/core-workflow)。
 
 ---
 

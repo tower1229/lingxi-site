@@ -1,139 +1,148 @@
 # Core Workflow
 
-LingXi provides a **flexible development workflow** covering the full lifecycle from requirements to delivery. Every step is optional — compose the flow that fits your task. For full command syntax and parameters, see [Commands Reference](/en/guide/commands-reference).
+## Top-Level Workflow Design
 
-## Workflow Overview
+### Design Goals
 
-```
-/task  →  /vet  →  /plan  →  /build  →  /review
- Required   Optional      Optional   Optional   Recommended
-```
+Under a multi-entry and decoupled process model, LingXi advances work from "decidable goals" to "executable implementation" to "verifiable delivery":
 
-::: tip Design Philosophy
-LingXi is a **toolkit**, not a pipeline. Apart from `/task` as the starting point, every other step can be skipped. You decide the flow.
-:::
+- Use `task` to lock goal, scope, acceptance criteria, and architecture-level decisions
+- Use `plan` to refine implementation paths and break work down, reducing `build` failure rate
+- Use `build` to execute the implementation-and-testing loop, while supporting both with-plan and skip-plan inputs (so simple tasks can still go straight to implementation)
+- Use `review` to run independent acceptance audits by requirement IDs (`F`) and close the evidence loop
 
-## Multi-task Support
+### Lifecycle (On Demand, Not Strictly Serial)
 
-LingXi lets you have multiple tasks (001, 002, 003…) in the same project. Each task has its own task document and optional plan, testcase, and review artifacts. `/vet`, `/plan`, `/build`, and `/review` all accept an optional **taskId** so you can target a specific task when several are in progress.
+Recommended progression:
 
-### How task ID (taskId) works by default
+1. `/task <description>`: create `001.task.<title>.md`
+2. `/vet` (optional): inspect task quality
+3. `/plan` (optional): generate `001.plan.<title>.md` and `001.testcase.<title>.md`
+4. `/build` (optional): implementation and testing
+5. `/review`: delivery audit and acceptance conclusion
 
-**You don’t need to pass a task ID by default.** When you omit taskId, the command applies to the **current latest task**—the one created most recently with `/task` or last operated on. So for a single task you can run `/vet`, `/plan`, `/build`, `/review` in sequence without any ID.
+Workflow properties:
 
-**Pass taskId only when you have multiple tasks in parallel** and need to act on a specific one. For example, with 001 (login), 002 (permissions), and 003 (reports) in progress, to review 002 and plan 001:
+- Every step can be skipped on demand
+- No lifecycle state machine or routing center
+- Commands are decoupled; entry points are independent
 
-```
-/vet 002
-/plan 001
-/build 001
-```
+### Multi-task Characteristics
 
-That way you can switch between tasks in one conversation while keeping commands short when working on a single task.
+The workflow naturally supports parallel tasks. `taskId` is the unique context anchor:
 
-### Summary
+- Artifacts are named and isolated by `taskId`: `001.task.*`, `001.plan.*`, `001.testcase.*`, `001.review.*`
+- Commands can explicitly switch between tasks via `taskId`; single-task serial flow is not required
+- If `taskId` is omitted, commands can fall back to the latest task number for convenience
+- In multi-task scenarios, passing `taskId` explicitly is recommended to avoid ambiguity
 
-| Scenario | Use taskId? | Example |
-|----------|-------------|---------|
-| Single task, sequential | No | `/vet` → `/plan` → `/build` |
-| Multiple tasks, target one | Yes | `/vet 002`, `/plan 001` |
+## Command Roles
 
-## /task — Create a Task
-
-Everything starts with a requirement. `/task` is the entry point and the only required step.
+### /task — Lock Goal and Boundaries (Architecture Level)
 
 ```
 /task <description>
 ```
 
-**Examples:**
-```
-/task Add user login with email and phone number support
-/task Improve homepage load performance, target LCP < 1s
-```
+**Role:**
+
+- Produces goal, boundaries, acceptance criteria, architecture-level solution, verification method, and evidence format
+- Does not carry implementation-level details; those are refined in `/plan`
 
 **What LingXi does:**
-- Auto-generates a task ID (001, 002...) and title
-- Creates a structured task document: `.cursor/.lingxi/tasks/001.task.<title>.md`
-- Guides you through **requirement refinement**: analysis, expansion, confirmation
 
-The task document is the core artifact — all subsequent commands revolve around it.
+- Auto-generates task ID (001, 002...) and title
+- Refines requirements and clarifies acceptance criteria
+- Creates task document: `.cursor/.lingxi/tasks/001.task.<title>.md`
 
-## /vet — Review Task Document (Optional)
+**Output:**
 
-Multi-dimensional review of the task document to improve requirement quality.
+- `001.task.<title>.md`
+
+### /vet — Inspect Task Quality (Optional)
 
 ```
 /vet [taskId]
 ```
 
-- Can be run multiple times for iterative improvement
-- Produces no files — review results appear in chat only
-- Omit `taskId` to use the latest task
+**Role:**
 
-**Review dimensions:** completeness, consistency, feasibility, edge cases, and more.
+- Reviews task quality to improve feasibility and decidability
 
-## /plan — Task Planning (Optional)
+**What LingXi does:**
 
-Generate a detailed execution plan and test cases from the task document.
+- Provides review conclusions and suggestions across completeness, consistency, and edge conditions
+- Supports repeated runs for iterative refinement
+
+**Output:**
+
+- No file output (results appear in chat)
+
+### /plan — Refine Implementation (Implementation Level, Optional)
 
 ```
 /plan [taskId]
 ```
 
 **Output:**
-- Planning document: `.cursor/.lingxi/tasks/001.plan.<title>.md`
-- Test case document
 
-**When to use:** Complex tasks, multi-module changes, or when you need clear execution steps. Simple tasks can skip this.
+- `001.plan.<title>.md`
+- `001.testcase.<title>.md`
 
-::: tip
-`/plan` works well alongside Cursor's built-in Plan mode — the two complement each other.
-:::
+**Role:**
 
-## /build — Execute Build (Optional)
+- Refines task into an implementation plan (change points, dependencies, order, risks)
+- Performs optional requirement clarification and task decomposition when needed
 
-Implement code based on the task document and (optional) planning document.
+**What LingXi does:**
+
+- Breaks task into executable work items and verification paths
+- Organizes sequencing, dependencies, and major risks
+- For unit-testable items, it can apply a `Txa(test) -> Txb(implementation)` test-first pattern
+
+### /build — Execute Implementation (Execution Level, Optional)
 
 ```
 /build [taskId]
 ```
 
-**Two execution modes:**
+**Role:**
 
-| Mode | Condition | Behavior |
-|------|-----------|----------|
-| Plan-driven | Plan document exists | Structured execution following the plan (recommended) |
-| Task-driven | No plan document | Agent decides approach based on task document |
+- Supports both with-plan and skip-plan inputs to drive implementation and testing loop
+- Enforces a test-before-implementation loop for `unit/integration`
 
-::: tip
-When using Cursor's Plan mode, you can also use its built-in build feature and skip LingXi's `/build` command.
-:::
+**What LingXi does:**
 
-## /review — Review Delivery (Recommended)
+- Selects execution mode based on available inputs and drives implementation
 
-Comprehensive review of completed code with a generated review report.
+**Output:**
+
+- Code and corresponding test changes
+
+### /review — Independent Acceptance Audit (Acceptance Level)
 
 ```
 /review [taskId]
 ```
 
-**Core review dimensions:**
-- Functional completeness
-- Test coverage
-- Architecture quality
-- Maintainability
-- Regression risk
+**Role:**
 
-**On-demand review dimensions:**
-- Documentation consistency
-- Security
-- Performance
-- End-to-end testing
+- Runs independent acceptance audit by requirement item (Feature, denoted as `F`)
+- Produces traceable delivery conclusions
+
+**What LingXi does:**
+
+- Gives Pass/Fail per requirement item (`F`)
+- Attaches evidence references to each conclusion
+- Marks any unverifiable requirement item (`F`) as Fail
+
+**Output:**
+
+- Acceptance conclusions with evidence references (can be materialized as `001.review.<title>.md`)
 
 ## Flow Examples
 
-### Simple Task (Fast Track)
+### Simple Task (Skip Plan)
 
 ```
 /task Fix form validation bug on login page
@@ -141,24 +150,26 @@ Comprehensive review of completed code with a generated review report.
 /review
 ```
 
-### Complex Task (Full Flow)
+### Complex Task (Recommended Full Chain)
 
 ```
-/task Refactor user permission system to support RBAC model
-/vet 001
+/task Refactor user permission system to support RBAC
+/vet
+/plan
+/build
+/review
+```
+
+### Parallel Multi-task
+
+```
+/vet 002
 /plan 001
 /build 001
-/review 001
-```
-
-### Minimal Flow
-
-```
-/task Update installation instructions in README
-/build
+/review 002
 ```
 
 ## Next Steps
 
-- Full command syntax and parameters: [Commands Reference](/en/guide/commands-reference)
-- Learn how the [Memory System](/en/guide/memory-system) captures experience via commands during workflows
+- Full syntax and parameters: [Commands Reference](/en/guide/commands-reference)
+- Learn how the [Memory System](/en/guide/memory-system) captures experience in workflows

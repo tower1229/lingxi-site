@@ -24,20 +24,20 @@ AI 带着你的"经验"回答
 
 ## 记忆写入
 
-记忆写入**由用户通过命令触发**。**主动记忆捕获**使用 **/remember** 与 **/extract**；**/init** 在初始化项目时可将确认的草稿可选写入记忆，属于初始化流程的一部分，不作为惯常的记忆捕获入口。主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。
+记忆写入**由用户通过命令触发**。**主动记忆捕获**使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入环节：先生成候选，默认不写入，仅在你明确选择后才写入记忆。主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。
 
 ### 主动记忆捕获
 
-| 命令               | 用途                                                                                   |
-| ------------------ | -------------------------------------------------------------------------------------- |
-| **/remember**      | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
-| **/extract** | 按会话或时间范围提取：对当前会话或指定时间范围内的对话做可沉淀提取，批量写入并得到简报 |
+| 命令          | 用途                                                                                   |
+| ------------- | -------------------------------------------------------------------------------------- |
+| **/remember** | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
+| **/extract**  | 按会话或时间范围提取：对当前会话或指定时间范围内的对话做可沉淀提取，批量写入并得到简报 |
 
 二者为日常沉淀记忆的惯用入口。
 
 ### 初始化时可选写入
 
-**/init** 在引导收集项目信息后，可将用户确认的草稿转为记忆写入。此为初始化流程的额外产物，非常规记忆捕获方式；若需在日常开发中写入记忆，请使用 **/remember** 或 **/extract**。
+**/init** 在引导收集项目信息后，会先给出记忆候选清单；默认跳过写入，只有在你明确选择写入策略（如 all/partial）后，才会把确认的候选转为记忆。此为初始化流程的额外产物，非常规记忆捕获方式；若需在日常开发中写入记忆，请使用 **/remember** 或 **/extract**。
 
 **门控**：合并或替换已有记忆时需要你确认；新建记忆在 confidence 为 high 时可静默写入，medium/low 时需确认。
 
@@ -57,17 +57,11 @@ AI 带着你的"经验"回答
 /remember 这个项目的 API 返回格式必须遵循 RESTful 规范
 ```
 
-**使用场景：**
-
-| 场景         | 示例                                 |
-| ------------ | ------------------------------------ |
-| 直接陈述原则 | `/remember 组件命名使用 PascalCase`  |
-| 提取对话经验 | `/remember 吸取刚才这个 bug 的经验`  |
-| 关键词定位   | `/remember 关于数据库索引的最佳实践` |
-
 ### /extract — 按会话或时间范围提取
 
 对当前会话或指定时间范围内的对话做可沉淀内容提炼并写入记忆库。
+
+**示例：**
 
 ```
 /extract
@@ -97,34 +91,115 @@ AI 带着你的"经验"回答
 
 ## 记忆治理
 
-灵犀对记忆库进行自动治理，防止记忆无限膨胀：
+灵犀的记忆治理是一套 **“写入治理 + 检索治理 + 审计治理”** 的闭环，目标是持续沉淀高价值经验，同时控制噪音与风险。
 
-- **评分卡系统**：5 个维度评估每条记忆的价值，决定是否写入及写入层级。详见 [评分卡系统](#评分卡系统)。
-- **TopK 策略**：保留最有价值的记忆
-- **冲突解决**：新记忆与旧记忆冲突时，通过门控机制决定合并或替换
+### 1) 写入前治理（质量门槛）
 
-## 评分卡系统
+- 先由 `taste-recognition` 产出标准 7 字段 `payloads`，再由 `lingxi-memory` 子代理执行校验与映射。
+- 候选记忆进入五维评分卡（D1~D5，每维 0～2 分），总分 **T = D1 + D2 + D3 + D4 + D5**（满分 10 分），按规则决策：
+  - **不写**：低价值候选直接 veto。
+  - **写 L0（事实层）**：保留可验证的实例事实。
+  - **写 L1（原则层）**：保留可复用的原则与策略。
+  - **写 L0 + L1（双层）**：同时保留事实与原则。
 
-在记忆写入前，灵犀会用**评分卡**对候选记忆打分，只有达到一定价值的才会入库，避免「正确但无用」的条目堆积。
+### 2) 去重与冲突治理（语义近邻 TopK）
 
-**五维评分（每维 0～2 分）**：
+- 对 `notes/` 执行语义近邻检索（TopK）后，按 `merge / replace / veto / new` 四类动作决策。
+- 发生合并或替换时维护 `Supersedes` 关系，并同步更新 `INDEX`，保证演进链条可追踪。
 
-| 维度        | 含义                                     |
-| ----------- | ---------------------------------------- |
-| D1 决策增益 | 这条记忆能在多大程度上提升未来的决策质量 |
-| D2 迁移性   | 能否迁移到同类场景、复用于其他问题       |
-| D3 触发性   | 未来是否容易被检索命中、在合适时机被加载 |
-| D4 可验证性 | 是否有可验证的事实或证据支撑             |
-| D5 稳定性   | 是否长期有效、不易随时间或环境变化而失效 |
+### 3) 用户门控（不可绕过）
 
-**总分 T** = D1 + D2 + D3 + D4 + D5（满分 10 分）。根据 T 与各维度条件，灵犀会决定：
+- `merge / replace` 必须通过 ask-questions 征得确认。
+- `new` 仅在 `confidence=high` 时可静默写入；`medium/low` 必须确认。
+- 涉及删除或替换的操作一律需要用户确认，不可绕过。
 
-- **不写**：T ≤ 3 时视为低价值（如仅复述单次事实、难以迁移、触发性弱或易过期），不写入，避免噪音。
-- **写 L0（事实层）**：T 在 4～5 且可验证性达标时，写入可验证的实例事实。
-- **写 L1（原则层）**：T 在 6～7 且决策增益与迁移性达标时，写入可复用的原则与策略。
-- **写 L0 + L1（双层）**：T ≥ 8 且满足迁移性与可验证性时，同时保留事实与原则。
+### 4) 检索侧治理（每轮最小注入）
 
-L0 侧重「在什么场景下发生了什么、结果如何」，L1 侧重「在同类场景中优先怎么做、避免什么、原因是什么」。评分卡与后续的治理、门控一起，保证记忆库既持续积累高价值经验，又不会无限膨胀。更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md)。
+- 每轮回答前执行 `memory-retrieve`，流程为：**理解 → 提炼 → 双路径检索（语义 + 关键词）→ top 0-2 → adopt/reject/ask 决策**。
+- 仅对 adopt 结果做“一行最小注入”，reject 结果不向用户展示，控制上下文污染。
+
+### 5) 结构治理（SSoT）
+
+- `INDEX.md` 只存最小元数据，作为权威索引（SSoT）。
+- 真实语义内容保存在 `notes/*.md`。
+- 支持 `active / local / archive` 生命周期分层，以及 `share` 目录的跨项目复用。
+
+### 6) 审计治理
+
+- 记忆检索与记忆写入都会写入审计事件到 `.cursor/.lingxi/workspace/audit.log`。
+- 审计日志用于追溯 query、命中结果、采纳决策与写入动作，便于排错与合规审查。
+
+更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md)。
+
+### 治理时序图（从写入到检索注入）
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as 用户
+    participant A as 主Agent
+    participant TR as taste-recognition
+    participant LM as lingxi-memory子代理
+    participant AQ as ask-questions
+    participant N as memory/notes/*.md
+    participant I as memory/INDEX.md
+    participant AU as audit.log
+
+    rect rgb(245, 250, 255)
+    Note over U,LM: 一、记忆沉淀与写入治理（/remember 或 /extract）
+    U->>A: /remember 或 /extract
+    A->>TR: 提取品味，生成payloads(7字段)
+    TR-->>A: payloads[]
+    A->>LM: 调用写入（payloads + conversation_id）
+    LM->>LM: 校验payloads（字段/枚举）
+    LM->>LM: 映射note字段 + 五维评分(D1~D5)
+    alt 低价值(T<=3)
+        LM-->>A: veto/skip（不写入）
+    else 可写入
+        LM->>LM: 语义近邻TopK治理（merge/replace/veto/new）
+        alt merge 或 replace
+            LM->>AQ: 发起确认问题
+            AQ-->>LM: 用户选择
+            alt 用户确认
+                LM->>N: 更新/删除旧note并写新内容
+                LM->>I: 同步Supersedes与索引行
+            else 用户取消
+                LM-->>A: 取消执行
+            end
+        else new
+            alt confidence=high
+                LM->>N: 直接新建note
+                LM->>I: 追加索引行
+            else confidence=medium/low
+                LM->>AQ: 询问是否写入
+                AQ-->>LM: 用户选择
+                LM->>N: 按选择写入或取消
+                LM->>I: 按需同步索引
+            end
+        end
+        LM->>AU: 追加memory_note_*与memory_index_updated审计
+    end
+    LM-->>A: 返回简报（新建/合并/跳过）
+    A-->>U: 输出结果
+    end
+
+    rect rgb(250, 255, 245)
+    Note over U,AU: 二、每轮记忆提取与最小注入（回答前）
+    U->>A: 普通提问
+    A->>A: 执行 /memory-retrieve
+    A->>A: 提炼语义摘要+关键词
+    A->>N: 语义检索（SemanticSearch）
+    A->>N: 关键词检索（rg + INDEX Title/When to load）
+    A->>A: 并集加权重排，取top0-2
+    A->>A: 对命中做 adopt/reject/ask 决策
+    A->>AU: 追加memory_retrieve审计(query/hits/adopted/rejected)
+    alt 有adopt
+        A-->>U: 一行极简注入提醒（可带[MEM-xxx]）
+    else 无adopt
+        A-->>U: 静默，不展示reject
+    end
+    end
+```
 
 ## 跨项目共享
 

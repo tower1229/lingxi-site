@@ -26,7 +26,7 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/extract**; **/init** optionally writes memories during project initialization (confirmed drafts → memory), as part of the init flow, not a routine capture entry point. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list).
+Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/extract**; **/init** is an optional write path inside initialization: it generates candidate memories first, skips writing by default, and writes only after your explicit choice. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list).
 
 ### Proactive memory capture
 
@@ -39,7 +39,7 @@ These are the routine entry points for capturing memory in daily use.
 
 ### Optional write during init
 
-**/init** can turn user-confirmed drafts into memories after guiding project-info collection. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember** or **/extract**.
+After guiding project-info collection, **/init** first presents a candidate memory list. Writing is skipped by default; only when you explicitly choose a write strategy (for example, all/partial) will confirmed candidates be written as memories. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember** or **/extract**.
 
 **Gating**: Merging or replacing existing memories requires your confirmation; new memories with confidence **high** can be written silently; **medium** or **low** require confirmation.
 
@@ -57,14 +57,6 @@ Use `/remember` anytime to write a memory:
 /remember Always use pnpm instead of npm
 /remember API responses in this project must follow RESTful conventions
 ```
-
-**Use cases:**
-
-| Scenario | Example |
-|----------|---------|
-| State a principle | `/remember Use PascalCase for component names` |
-| Extract from conversation | `/remember Capture the lesson from that bug` |
-| Keyword-guided capture | `/remember Best practices for database indexing` |
 
 ### /extract — Extract by conversation or time range
 
@@ -98,34 +90,115 @@ Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts o
 
 ## Memory Governance
 
-LingXi automatically governs the memory bank to prevent unbounded growth:
+LingXi's memory governance is a closed loop of **write governance + retrieval governance + audit governance**. The goal is to keep accumulating high-value experience while controlling noise and risk.
 
-- **Scorecard system**: 5 dimensions evaluate each memory's value and determine whether to write and at which layer. See [Scorecard system](#scorecard-system).
-- **TopK strategy**: Retains the most valuable memories
-- **Conflict resolution**: When new memories conflict with old ones, a gating mechanism decides whether to merge or replace
+### 1) Pre-write governance (quality threshold)
 
-## Scorecard System
+- `taste-recognition` first produces standardized 7-field `payloads`; then the `lingxi-memory` subagent performs validation and mapping.
+- Candidates enter a five-dimension scorecard (D1~D5, 0–2 each), with **T = D1 + D2 + D3 + D4 + D5** (max 10), then route to:
+  - **veto** for low-value candidates,
+  - **write L0 (fact layer)**,
+  - **write L1 (principle layer)**,
+  - **write L0 + L1 (both layers)**.
 
-Before writing a memory, LingXi scores the candidate with a **scorecard**. Only memories above a certain value are stored, so the bank doesn’t fill with “correct but useless” entries.
+### 2) Deduplication and conflict governance (semantic-neighbor TopK)
 
-**Five dimensions (0–2 points each)**:
+- Run semantic-neighbor TopK retrieval over `notes/`, then decide with `merge / replace / veto / new`.
+- When merging or replacing, maintain `Supersedes` links and sync `INDEX` to preserve a traceable evolution chain.
 
-| Dimension | Meaning |
-|-----------|---------|
-| D1 Decision gain | How much this memory improves future decisions |
-| D2 Transferability | Whether it applies to similar scenarios and can be reused |
-| D3 Triggerability | How likely it is to be retrieved and loaded when relevant |
-| D4 Verifiability | Whether it’s backed by verifiable facts or evidence |
-| D5 Stability | Whether it stays valid over time and across contexts |
+### 3) User gating (non-bypassable)
 
-**Total score T** = D1 + D2 + D3 + D4 + D5 (max 10). Based on T and dimension thresholds, LingXi decides:
+- `merge / replace` must be confirmed via ask-questions.
+- `new` can be silently written only when `confidence=high`; `medium/low` requires confirmation.
+- Any delete-or-replace behavior requires user confirmation and cannot be bypassed.
 
-- **Don’t write**: T ≤ 3 → low value (e.g. one-off facts, hard to transfer, weak triggers, or short-lived). Not written to avoid noise.
-- **Write L0 (fact layer)**: T in 4–5 with sufficient verifiability → store verifiable instance-level facts.
-- **Write L1 (principle layer)**: T in 6–7 with sufficient decision gain and transferability → store reusable principles and strategies.
-- **Write L0 + L1 (both)**: T ≥ 8 with transferability and verifiability → store both facts and principles.
+### 4) Retrieval-side governance (minimal per-turn injection)
 
-L0 answers “what happened in what context and what was the outcome”; L1 answers “what to prefer or avoid in similar contexts and why.” The scorecard, together with governance and gating, keeps the memory bank growing with high-value experience without unbounded growth. For implementation details see the main repo [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md).
+- Before each response, run `memory-retrieve` with the flow: **understand → distill → dual-path retrieval (semantic + keyword) → top 0-2 → adopt/reject/ask**.
+- Only adopt results are injected as a one-line minimal context; reject results are not shown to the user.
+
+### 5) Structure governance (SSoT)
+
+- `INDEX.md` stores only minimal metadata as the authoritative index (SSoT).
+- Full semantic content lives in `notes/*.md`.
+- Supports `active / local / archive` lifecycle layers and cross-project reuse through the `share` directory.
+
+### 6) Audit governance
+
+- Both memory retrieval and memory writing emit audit events to `.cursor/.lingxi/workspace/audit.log`.
+- Audit logs support traceability for queries, hits, adoption decisions, and write actions.
+
+For implementation details, see [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md).
+
+### Governance sequence diagram (write to retrieval injection)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant A as Main Agent
+    participant TR as taste-recognition
+    participant LM as lingxi-memory subagent
+    participant AQ as ask-questions
+    participant N as memory/notes/*.md
+    participant I as memory/INDEX.md
+    participant AU as audit.log
+
+    rect rgb(245, 250, 255)
+    Note over U,LM: 1) Memory capture and write governance (/remember or /extract)
+    U->>A: /remember or /extract
+    A->>TR: Extract preferences and generate payloads (7 fields)
+    TR-->>A: payloads[]
+    A->>LM: Invoke write (payloads + conversation_id)
+    LM->>LM: Validate payloads (fields/enums)
+    LM->>LM: Map note fields + five-dimension scoring (D1~D5)
+    alt Low value (T<=3)
+        LM-->>A: veto/skip (do not write)
+    else Writable
+        LM->>LM: Semantic-neighbor TopK governance (merge/replace/veto/new)
+        alt merge or replace
+            LM->>AQ: Ask for confirmation
+            AQ-->>LM: User decision
+            alt User confirms
+                LM->>N: Update/delete old note and write new content
+                LM->>I: Sync Supersedes and index row
+            else User cancels
+                LM-->>A: Cancel execution
+            end
+        else new
+            alt confidence=high
+                LM->>N: Create note directly
+                LM->>I: Append index row
+            else confidence=medium/low
+                LM->>AQ: Ask whether to write
+                AQ-->>LM: User decision
+                LM->>N: Write or cancel by selection
+                LM->>I: Sync index if needed
+            end
+        end
+        LM->>AU: Append memory_note_* and memory_index_updated audit events
+    end
+    LM-->>A: Return brief report (created/merged/skipped)
+    A-->>U: Output result
+    end
+
+    rect rgb(250, 255, 245)
+    Note over U,AU: 2) Per-turn memory retrieval and minimal injection (before response)
+    U->>A: Normal question
+    A->>A: Execute /memory-retrieve
+    A->>A: Distill semantic summary + keywords
+    A->>N: Semantic retrieval (SemanticSearch)
+    A->>N: Keyword retrieval (rg + INDEX Title/When to load)
+    A->>A: Union + weighted rerank, take top0-2
+    A->>A: Make adopt/reject/ask decisions on hits
+    A->>AU: Append memory_retrieve audit(query/hits/adopted/rejected)
+    alt Has adopt
+        A-->>U: One-line minimal injection hint (optionally [MEM-xxx])
+    else No adopt
+        A-->>U: Silent; do not show reject
+    end
+    end
+```
 
 ## Cross-Project Sharing
 

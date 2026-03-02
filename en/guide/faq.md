@@ -25,7 +25,7 @@ You need Node.js when:
 
 ### How do LingXi’s /plan and /build relate to Cursor’s built-in Plan/Build?
 
-They **complement each other**. LingXi’s `/plan` and `/build` are centered on **task documents** (`.cursor/.lingxi/tasks/`) and fit into the optional pipeline with vet, review, etc. Cursor’s Plan mode and Build feature can replace or combine with them when appropriate (e.g. using Cursor’s built-in build in Plan mode and skipping LingXi’s `/build`). See [Core Workflow](/en/guide/core-workflow).
+They **complement each other**. LingXi’s `/plan` and `/build` are centered on **task documents** (`.cursor/.lingxi/tasks/`) and work with vet/review in a decoupled, on-demand workflow. Cursor’s Plan mode and Build feature can replace or combine with them when appropriate (e.g. using Cursor’s built-in build in Plan mode and skipping LingXi’s `/build`). See [Core Workflow](/en/guide/core-workflow).
 
 ---
 

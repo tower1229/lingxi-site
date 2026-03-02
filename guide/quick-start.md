@@ -1,13 +1,5 @@
 # 快速开始
 
-只需两步即可在现有项目中启用灵犀。`/init` 为推荐步骤，但不是必选。
-
-## 前置条件
-
-- **Cursor IDE**：使用灵犀前请确保已安装 **最新正式版 Cursor**。具体版本要求以主仓 [README](https://github.com/tower1229/LingXi) 为准。
-- **Node.js**：仅在使用 `memory-sync` 同步记忆索引、或通过脚本运行 workspace-bootstrap 等时才需要；仅用命令与基础工作流（如 `/task`、`/plan`、`/build`、`/review`、`/remember`、`/init`、`/extract`）可不安装 Node.js。
-- 更多环境说明见 [FAQ](/guide/faq)。
-
 ## 安装
 
 在项目根目录执行以下命令：
@@ -24,6 +16,47 @@ curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.
 irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
 ```
 
+## 目录结构
+
+执行远程安装脚本后，你会在项目内得到如下灵犀目录结构：
+
+```text
+.cursor/
+├── commands/              # 命令入口
+│   ├── task.md
+│   ├── plan.md
+│   ├── build.md
+│   ├── review.md
+│   └── ...
+├── skills/                # 执行逻辑
+│   ├── task-executor/
+│   ├── vet-executor/
+│   ├── plan-executor/
+│   ├── build-executor/
+│   ├── review-executor/
+│   ├── reviewer-doc-consistency/
+│   ├── reviewer-security/
+│   ├── reviewer-performance/
+│   ├── reviewer-e2e/
+│   ├── memory-retrieve/
+│   └── ...
+├── agents/                # Subagents（独立上下文）
+│   └── lingxi-memory.md   # 记忆写入
+├── hooks/                 # sessionStart 记忆注入约定 + 可选审计/门控
+└── .lingxi/
+    ├── tasks/                 # 任务文档（统一目录）
+    │   ├── 001.task.<标题>.md
+    │   ├── 001.plan.<标题>.md
+    │   └── ...
+    ├── memory/                # 统一记忆系统
+    │   ├── INDEX.md           # 统一索引（SSoT）
+    │   ├── notes/             # 扁平记忆文件（语义+关键词混合检索的主搜索面）
+    │   │   └── share/         # 共享记忆目录（推荐作为 git submodule，跨项目复用）
+    │   └── references/        # 模板与规范
+    └── workspace/             # 工作空间
+        └── audit.log          # 审计日志
+```
+
 ## 初始化项目（推荐，可选）
 
 在 Cursor 的 Chat 中输入：
@@ -34,8 +67,9 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 灵犀会引导你完成：
 
-1. **收集项目信息** — 技术栈、常用模式、开发规则等
-2. **生成初始记忆** — 将项目背景写入 `memory/notes/`（可选）
+1. **静默理解并校对项目信息** — 优先从现有文档与仓库结构整理技术栈、常用模式、开发规则等，仅在缺失时追问补齐
+2. **生成记忆候选清单** — 默认只生成候选，不直接写入
+3. **按你的选择可选写入** — 仅当你明确选择 `all` 或 `partial` 时，才写入 `memory/notes/`
 
 如果你希望先直接推进具体需求，也可以先使用 `/task` 创建任务，再按需补做 `/init`。
 
@@ -61,24 +95,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 | 规划任务       | `/plan`  | 复杂任务，需要拆分步骤和测试用例 |
 | 直接构建       | `/build` | 简单任务，直接开始写代码         |
 
-以上命令**默认作用于当前最新任务**，无需输入任务编号。多任务时的编号用法与特性见 [核心工作流 - 多任务支持](/guide/core-workflow#多任务支持)。
-
-## 目录结构
-
-执行 `/init` 或首次使用相关命令后，项目内会创建 `.cursor/.lingxi/`，其下结构为：
-
-```
-.cursor/.lingxi/
-├── tasks/              # 任务文档
-│   └── 001.task.用户登录.md
-├── memory/             # 记忆系统
-│   ├── INDEX.md        # 统一索引（SSoT）
-│   ├── notes/          # 记忆笔记（扁平存放）
-│   │   └── share/      # 共享记忆（可作为 git submodule）
-│   └── references/     # 模板与规范
-└── workspace/          # 工作空间
-    └── audit.log       # 审计日志（若启用）
-```
+灵犀工作流命令**默认作用于当前最新任务**，同时也支持多任务用法，详见 [核心工作流 - 多任务支持](/guide/core-workflow#多任务支持)。
 
 ## 下一步
 

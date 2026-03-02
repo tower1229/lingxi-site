@@ -1,13 +1,5 @@
 # Quick Start
 
-Get LingXi running in your project in just two steps. `/init` is recommended, but optional.
-
-## Prerequisites
-
-- **Cursor IDE**: Ensure you have the **latest stable Cursor** installed. See the main [README](https://github.com/tower1229/LingXi) for version details.
-- **Node.js**: Only needed when using `memory-sync` to update the memory index or when running scripts such as workspace-bootstrap; you can use the basic workflow (e.g. `/task`, `/plan`, `/build`, `/review`, `/remember`, `/init`, `/extract`) without Node.js.
-- For more on environment requirements, see [FAQ](/en/guide/faq).
-
 ## Installation
 
 Run one of these commands from your project root:
@@ -24,6 +16,47 @@ curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.
 irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
 ```
 
+## Directory Structure
+
+After running the remote install script, you will get the following LingXi directory structure in your project:
+
+```text
+.cursor/
+├── commands/              # Command entry points
+│   ├── task.md
+│   ├── plan.md
+│   ├── build.md
+│   ├── review.md
+│   └── ...
+├── skills/                # Execution logic
+│   ├── task-executor/
+│   ├── vet-executor/
+│   ├── plan-executor/
+│   ├── build-executor/
+│   ├── review-executor/
+│   ├── reviewer-doc-consistency/
+│   ├── reviewer-security/
+│   ├── reviewer-performance/
+│   ├── reviewer-e2e/
+│   ├── memory-retrieve/
+│   └── ...
+├── agents/                # Subagents (isolated context)
+│   └── lingxi-memory.md   # Memory writing
+├── hooks/                 # sessionStart memory-injection convention + optional audit/gating
+└── .lingxi/
+    ├── tasks/                 # Task documents (unified directory)
+    │   ├── 001.task.<title>.md
+    │   ├── 001.plan.<title>.md
+    │   └── ...
+    ├── memory/                # Unified memory system
+    │   ├── INDEX.md           # Unified index (SSoT)
+    │   ├── notes/             # Flat memory notes (primary search surface)
+    │   │   └── share/         # Shared memory directory (recommended as git submodule)
+    │   └── references/        # Templates and specs
+    └── workspace/             # Workspace
+        └── audit.log          # Audit log
+```
+
 ## Initialize Your Project (Recommended, Optional)
 
 In Cursor's Chat, type:
@@ -34,8 +67,9 @@ In Cursor's Chat, type:
 
 LingXi will guide you through:
 
-1. **Collecting project info** — tech stack, patterns, coding conventions
-2. **Generating initial memory** — writing project context to `memory/notes/` (optional)
+1. **Silent understanding + confirmation of project info** — infer from existing docs/repo structure first, then ask only for missing items
+2. **Generating a candidate memory list** — candidates are produced first; no write by default
+3. **Optional write by your choice** — only when you explicitly choose `all` or `partial`, LingXi writes to `memory/notes/`
 
 If you want to move directly on a concrete requirement, you can start with `/task` first and run `/init` later when needed.
 
@@ -61,24 +95,7 @@ Then you can choose your next step:
 | Plan the task        | `/plan`  | Complex task needing step breakdown and test cases |
 | Build directly       | `/build` | Simple task, start coding right away               |
 
-These commands **act on the latest task by default**; you don't need to type a task ID. For how task IDs work and multi-task behavior, see [Core Workflow — Multi-task support](/en/guide/core-workflow#multi-task-support).
-
-## Directory Structure
-
-After running `/init` or when using related commands for the first time, `.cursor/.lingxi/` is created in your project with this structure:
-
-```
-.cursor/.lingxi/
-├── tasks/              # Task documents
-│   └── 001.task.user-login.md
-├── memory/             # Memory system
-│   ├── INDEX.md        # Unified index (SSoT)
-│   ├── notes/          # Memory notes (flat)
-│   │   └── share/      # Shared memories (can be a git submodule)
-│   └── references/     # Templates and specs
-└── workspace/          # Workspace
-    └── audit.log       # Audit log (if enabled)
-```
+LingXi workflow commands **act on the latest task by default**, and also support multi-task usage. See [Core Workflow — Multi-task support](/en/guide/core-workflow#multi-task-support).
 
 ## Next Steps
 

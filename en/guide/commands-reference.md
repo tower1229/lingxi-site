@@ -10,7 +10,7 @@ This page lists all LingXi commands with syntax and purpose. For workflow flow a
 /task <description>
 ```
 
-Creates a task document; the only required step in the workflow. LingXi auto-generates a task ID (001, 002...) and title, creates `.cursor/.lingxi/tasks/001.task.<title>.md`, and guides requirement refinement and confirmation.
+Creates a task document to lock goal, boundaries, and acceptance criteria. LingXi auto-generates a task ID (001, 002...) and title, creates `.cursor/.lingxi/tasks/001.task.<title>.md`, and guides requirement refinement and confirmation.
 
 **Parameters:** `<description>` is required.
 
@@ -26,7 +26,7 @@ Creates a task document; the only required step in the workflow. LingXi auto-gen
 
 Multi-dimensional review of the task document (completeness, consistency, feasibility, edge cases, etc.). Produces no files; results and suggestions appear in chat. Can be run multiple times.
 
-**Parameters:** `taskId` optional; omit to use the latest task.
+**Parameters:** `taskId` optional; omit to fall back to the latest task ID.
 
 **Output:** None.
 
@@ -38,11 +38,11 @@ Multi-dimensional review of the task document (completeness, consistency, feasib
 /plan [taskId]
 ```
 
-Generates a task plan and test cases from the task document. Use for complex tasks or when you need clear execution steps.
+Generates implementation-level planning and test cases from the task document, with `F→T→TC` mapping. Use for complex tasks or when you need a clear execution path (optional for simple tasks).
 
-**Parameters:** `taskId` optional; omit to use the latest task.
+**Parameters:** `taskId` optional; omit to fall back to the latest task ID.
 
-**Output:** `.cursor/.lingxi/tasks/001.plan.<title>.md`, test case document(s).
+**Output:** `.cursor/.lingxi/tasks/001.plan.<title>.md`, `.cursor/.lingxi/tasks/001.testcase.<title>.md`.
 
 ---
 
@@ -52,9 +52,9 @@ Generates a task plan and test cases from the task document. Use for complex tas
 /build [taskId]
 ```
 
-Implements code from the task document and (optional) plan document. Plan-driven when a plan exists; otherwise task-driven.
+Executes implementation from the task document and (optional) plan. Plan-driven when plan exists; otherwise task-driven (skip-plan), which must complete testcase and coverage checks before coding. For `unit/integration`, enforce test-before-implementation loop.
 
-**Parameters:** `taskId` optional; omit to use the latest task.
+**Parameters:** `taskId` optional; omit to fall back to the latest task ID.
 
 **Output:** Code changes.
 
@@ -66,15 +66,15 @@ Implements code from the task document and (optional) plan document. Plan-driven
 /review [taskId]
 ```
 
-Runs a multi-dimensional review of completed code and produces a review report (functionality, tests, architecture, maintainability, regression; optionally doc consistency, security, performance, E2E).
+Runs independent acceptance audit by requirement IDs (`F`) and produces a review report: Pass/Fail per `F` with evidence references. If evidence is missing or unverifiable, that `F` must Fail and overall conclusion cannot be Pass.
 
-**Parameters:** `taskId` optional; omit to use the latest task.
+**Parameters:** `taskId` optional; omit to fall back to the latest task ID.
 
 **Output:** Review report (e.g. under `.cursor/.lingxi/tasks/`, as implemented).
 
 ---
 
-## Memory & Initialization
+## Memory Commands
 
 ### /remember
 
@@ -82,27 +82,13 @@ Runs a multi-dimensional review of completed code and produces a review report (
 /remember <description>
 ```
 
-Write a memory at any time; no task ID required. LingXi turns the description into a structured note and writes it to the memory bank; merges or replacements are gated.
+Write a memory proactively at any time. LingXi converts the description into structured memory and writes it to the memory bank.
 
 **Parameters:** `<description>` is required.
 
 **Output:** Memory note(s) under `.cursor/.lingxi/memory/notes/` and INDEX update.
 
 See [Memory System](/en/guide/memory-system).
-
----
-
-### /init
-
-```
-/init
-```
-
-Initializes the project: creates the `.cursor/.lingxi/` directory skeleton if missing, then guides collection of project info and optional initial memory writes.
-
-**Parameters:** None.
-
-**Output:** Directories and initial files under `.cursor/.lingxi/` (tasks, memory, workspace, etc.) when not already present.
 
 ---
 
@@ -120,6 +106,22 @@ Extracts capturable content from the current conversation or a given time range 
 **Output:** Memory notes (written to `.cursor/.lingxi/memory/notes/` and INDEX) plus the lingxi-memory report (created/merged/skipped counts and Id list).
 
 See [Memory System](/en/guide/memory-system).
+
+---
+
+## Initialization Commands
+
+### /init
+
+```
+/init
+```
+
+Guided initialization for projects that already have some progress: LingXi first infers context from existing docs/repo structure, asks only for missing or uncertain items (selection interactions use the ask-questions protocol), and produces a candidate memory list. It does **not** write by default; memories are written only after your explicit choice.
+
+**Parameters:** None.
+
+**Output:** An initialization summary plus candidate memory list; if you explicitly choose to write, memories are written to `.cursor/.lingxi/memory/notes/` and INDEX is updated. If `.cursor/.lingxi/` is missing, required skeleton directories are created first.
 
 ---
 

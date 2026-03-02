@@ -15,7 +15,7 @@ When working with AI coding tools like Cursor, you likely run into these issues:
 
 ### 🧠 Persistent Memory
 
-LingXi captures your judgments, preferences, and lessons learned during development **when you run /remember or /extract**, or optionally when you run **/init** to set up the project, distilling them into structured "memory notes." In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
+LingXi captures your judgments, preferences, and lessons learned during development **when you run /remember or /extract**, or during **/init** where it first generates candidates and writes only after your explicit choice, distilling them into structured "memory notes." In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
 
 ### 🔄 Flexible Workflow
 
@@ -25,7 +25,7 @@ An end-to-end development flow:
 /task → /vet → /plan → /build → /review
 ```
 
-Every step is **optional**. Simple tasks can go straight from `/task` to `/build`. Complex tasks can follow the full flow. You decide when to use which command.
+The flow is composable on demand with decoupled entry points. Simple tasks can go straight to `/build` (or `/task` + `/build`), while complex tasks can add `/vet`, `/plan`, and `/review` as needed. You decide when to use each command.
 
 ### 🛡️ Human in the Loop
 
@@ -45,7 +45,7 @@ Using a dual-path retrieval system (semantic + keyword), LingXi injects only 0�
 
 ## How This Differs From Cursor Rules and Other Approaches
 
-LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and an optional pipeline (task → vet → plan → build → review). Memories are captured **via /remember and /extract** or optionally during **/init**, and are injected when relevant in new conversations, rather than being fixed rules.
+LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and a decoupled, on-demand workflow (task / vet / plan / build / review). Memories are captured **via /remember and /extract** or via **/init** candidate confirmation with optional write, and are injected when relevant in new conversations, rather than fixed hard-coded rules.
 
 ## Next Steps
 
