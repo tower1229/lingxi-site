@@ -24,7 +24,7 @@ AI 带着你的"经验"回答
 
 ## 记忆写入
 
-记忆写入**由用户通过命令触发**。**主动记忆捕获**使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入环节：先生成候选，默认不写入，仅在你明确选择后才写入记忆。主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。
+记忆写入**由用户通过命令触发**。**主动记忆捕获**使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入环节：先生成候选，默认不写入，仅在你明确选择后才写入记忆。主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。想了解 taste-recognition 如何识别“品味”并形成 7 字段契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ### 主动记忆捕获
 
@@ -73,11 +73,11 @@ AI 带着你的"经验"回答
 
 - **不传参**：对**当前会话**提炼，适合在一轮对话结束后执行。
 - **带参数**：接受自然语言时间范围（如「今天的会话」「最近 N 天」「Nd」「Nh」）；若解析不到有效时间范围会提示错误并终止。
-  执行后灵犀会汇总对应会话内容、经 taste-recognition 提取多条 payload、单次传入 lingxi-memory，最后将简报呈现给你。
+  执行后灵犀会汇总对应会话内容、经 taste-recognition 提取多条 payload、单次传入 lingxi-memory，最后将简报呈现给你。识别规则与触发点见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ### 记忆的结构
 
-每条记忆包含 7 个字段（由 taste-recognition 产出，lingxi-memory 仅接受 **payloads 数组**）：
+每条记忆包含 7 个字段（由 taste-recognition 产出，lingxi-memory 仅接受 **payloads 数组**）。字段定义与识别边界见 [开发者品味](/guide/how-to-recognize-developer-taste)：
 
 | 字段       | 含义     |
 | ---------- | -------- |
@@ -96,11 +96,13 @@ AI 带着你的"经验"回答
 ### 1) 写入前治理（质量门槛）
 
 - 先由 `taste-recognition` 产出标准 7 字段 `payloads`，再由 `lingxi-memory` 子代理执行校验与映射。
+- 关于 taste-recognition 的职责边界与常见误区，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 - 候选记忆进入五维评分卡（D1~D5，每维 0～2 分），总分 **T = D1 + D2 + D3 + D4 + D5**（满分 10 分），按规则决策：
   - **不写**：低价值候选直接 veto。
   - **写 L0（事实层）**：保留可验证的实例事实。
   - **写 L1（原则层）**：保留可复用的原则与策略。
   - **写 L0 + L1（双层）**：同时保留事实与原则。
+- 评分维度、阈值与例外规则见 [五维评分卡](/guide/five-dimension-scorecard)。
 
 ### 2) 去重与冲突治理（语义近邻 TopK）
 
@@ -231,4 +233,5 @@ yarn memory-sync
 ## 下一步
 
 - 回顾 [核心工作流](/guide/core-workflow) 了解记忆如何融入开发流程
+- 阅读 [开发者品味](/guide/how-to-recognize-developer-taste) 了解 taste-recognition 的识别契约
 - 访问 [GitHub 仓库](https://github.com/tower1229/LingXi) 查看完整源码

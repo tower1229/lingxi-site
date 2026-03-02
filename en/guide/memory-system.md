@@ -26,7 +26,7 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/extract**; **/init** is an optional write path inside initialization: it generates candidate memories first, skips writing by default, and writes only after your explicit choice. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list).
+Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/extract**; **/init** is an optional write path inside initialization: it generates candidate memories first, skips writing by default, and writes only after your explicit choice. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). For how taste-recognition identifies reusable "taste" and forms the 7-field contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
 ### Proactive memory capture
 
@@ -72,11 +72,11 @@ Refine capturable content from the current conversation or a given time range an
 
 - **No arguments**: Refines the **current conversation** — use after a round of dialogue.
 - **With arguments**: Accepts natural-language time ranges (e.g. “today's conversation”, “last N days”, “Nd”, “Nh”). If the time range cannot be parsed, an error is shown and the command stops.  
-LingXi then aggregates the relevant conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, and shows you the report.
+LingXi then aggregates the relevant conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, and shows you the report. See [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste) for trigger points and recognition criteria.
 
 ### Memory structure
 
-Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts only a **payloads array**):
+Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts only a **payloads array**). Field definitions and scope boundaries are in [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste):
 
 | Field | Meaning |
 |-------|---------|
@@ -95,11 +95,13 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 ### 1) Pre-write governance (quality threshold)
 
 - `taste-recognition` first produces standardized 7-field `payloads`; then the `lingxi-memory` subagent performs validation and mapping.
+- For taste-recognition responsibility boundaries and common pitfalls, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 - Candidates enter a five-dimension scorecard (D1~D5, 0–2 each), with **T = D1 + D2 + D3 + D4 + D5** (max 10), then route to:
   - **veto** for low-value candidates,
   - **write L0 (fact layer)**,
   - **write L1 (principle layer)**,
   - **write L0 + L1 (both layers)**.
+- See [Five-Dimension Scorecard Reference](/en/guide/five-dimension-scorecard) for dimensions, thresholds, and exception rules.
 
 ### 2) Deduplication and conflict governance (semantic-neighbor TopK)
 
@@ -230,4 +232,5 @@ yarn memory-sync
 ## Next Steps
 
 - Review the [Core Workflow](/en/guide/core-workflow) to see how memory integrates with development flows
+- Read [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste) for the taste-recognition contract
 - Visit the [GitHub repository](https://github.com/tower1229/LingXi) for full source code

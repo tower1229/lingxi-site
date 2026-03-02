@@ -51,6 +51,8 @@ export default defineConfig({
             {
               text: '参考',
               items: [
+                { text: '开发者品味', link: '/guide/how-to-recognize-developer-taste' },
+                { text: '五维评分卡', link: '/guide/five-dimension-scorecard' },
                 { text: '命令参考', link: '/guide/commands-reference' },
                 { text: 'FAQ', link: '/guide/faq' },
               ],
@@ -106,6 +108,8 @@ export default defineConfig({
             {
               text: 'Reference',
               items: [
+                { text: 'How to Recognize Developer Taste', link: '/en/guide/how-to-recognize-developer-taste' },
+                { text: 'Five-Dimension Scorecard', link: '/en/guide/five-dimension-scorecard' },
                 { text: 'Commands Reference', link: '/en/guide/commands-reference' },
                 { text: 'FAQ', link: '/en/guide/faq' },
               ],
