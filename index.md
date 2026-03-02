@@ -22,7 +22,7 @@ features:
     details: 从需求到交付覆盖 task → vet → plan → build → review，按任务复杂度自由组合，每一步都可选。
   - icon: 🗂️
     title: 持久化记忆
-    details: 在项目中沉淀你的判断、偏好与经验，自动形成记忆笔记，并在新对话中按需注入。
+    details: 通过 /remember、/extract 或工作流中的品味嗅探沉淀判断、偏好与经验，形成记忆笔记，并在新对话中按需注入。
   - icon: 🚦
     title: 人工门控
     details: 关键节点由你确认，默认不越权；可按任务需要启用或跳过相应流程。

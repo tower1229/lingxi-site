@@ -22,7 +22,7 @@ features:
     details: Covers task → vet → plan → build → review end-to-end. Compose the flow by task complexity; every step is optional.
   - icon: 🗂️
     title: Persistent Memory
-    details: Captures your project decisions, preferences, and lessons as reusable memory notes for later conversations.
+    details: Capture your decisions, preferences, and lessons via /remember, /extract, or workflow taste sniffing; they become memory notes and are injected when relevant in new conversations.
   - icon: 🚦
     title: Human in the Loop
     details: You confirm key decisions and control when to apply each step, so AI stays assistive instead of overreaching.

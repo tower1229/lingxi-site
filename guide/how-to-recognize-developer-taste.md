@@ -1,7 +1,7 @@
 # 如何有效识别开发者的品味
 
-在 AI 协作开发里，真正决定长期产出质量的，不只是“代码能力”，而是“品味能力”：
-面对多个都能工作的方案，开发者如何做取舍、为什么这样取舍、在什么场景下坚持这套取舍。
+在 AI 协作开发里，真正决定长期产出质量的，不只是模型的“代码能力”，更重要是开发者的“品味”：
+面对多种可能的方案，开发者如何做取舍、为什么这样取舍、在什么场景下坚持这套取舍。
 
 `taste-recognition` 的作用，就是把这种隐性的判断，转成可沉淀、可复用、可治理的结构化输入。
 
@@ -45,7 +45,7 @@
 - `principles`：候选原则（通常 1~2 项）
 - `choice`：实际选择（与 principles 一致或等价）
 - `evidence`：可选，一句证据原文
-- `source`：来源（如 `auto` / `remember` / `extract` / `choice` / `init`）
+- `source`：来源（如 `remember` / `extract` / `choice` / `init`）
 - `confidence`：置信度（`low` / `medium` / `high`）
 - `apply`：适用范围（`personal` / `project` / `team`）
 
@@ -53,15 +53,14 @@
 
 ---
 
-## 四、有效识别的关键：5 个触发点
+## 四、有效识别的关键：4 个触发点
 
-`taste-recognition` 并不是只在 `/remember` 时工作，它覆盖了多个真实入口：
+`taste-recognition` 并不是只在 `/remember` 时工作，它覆盖多个真实入口：
 
-- 每轮会话中的用户自由输入（`source=auto`）
-- 用户显式 `/remember`
-- 用户显式 `/extract`
-- `/init` 里用户确认的草稿
-- 各环节选择题（ask-questions）后的明确选择（`source=choice`）
+- 用户显式 **/remember**
+- 用户显式 **/extract**
+- **/init** 里用户确认的草稿（`source=init`）
+- **工作流内置品味嗅探**：task / plan / build / review 等环节在情境驱动时，经 ask-questions 收集你的选择，产出 payload（`source=choice`）并写入记忆
 
 有效识别的本质不是“多抓”，而是“抓对”：
 
@@ -108,7 +107,7 @@
 - principles：短引用 / 完整路径
 - choice：短引用
 - evidence：别写完整路径
-- source：auto
+- source：remember
 - confidence：high
 - apply：team
 

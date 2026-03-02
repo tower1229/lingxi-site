@@ -24,7 +24,6 @@ Recommended progression:
 Workflow properties:
 
 - Every step can be skipped on demand
-- No lifecycle state machine or routing center
 - Commands are decoupled; entry points are independent
 
 ### Multi-task Characteristics

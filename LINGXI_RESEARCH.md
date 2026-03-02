@@ -226,7 +226,7 @@ Session start → hook injects convention
   "principles": ["short reference", "full path"],
   "choice": "short reference",
   "evidence": "Don't write full paths",
-  "source": "auto|remember|choice|init",
+  "source": "remember|extract|choice|init",
   "confidence": "low|medium|high",
   "apply": "personal|project|team"
 }

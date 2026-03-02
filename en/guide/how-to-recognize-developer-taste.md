@@ -1,7 +1,7 @@
 # How to Effectively Recognize Developer Taste
 
-In AI-assisted development, long-term output quality is driven not only by coding skill, but also by taste:
-when multiple solutions can work, how a developer chooses, why they choose it, and in which contexts they keep that choice.
+In AI-assisted development, what really determines long-term output quality is not only the model's "coding ability", but more importantly the developer's "taste":
+when facing multiple possible solutions, how the developer chooses, why they choose that way, and in which contexts they stick to that choice.
 
 `taste-recognition` turns this implicit judgment into structured input that can be stored, reused, and governed.
 
@@ -45,7 +45,7 @@ So it solves:
 - `principles`: candidate principles (typically 1-2)
 - `choice`: actual choice (aligned with or equivalent to principles)
 - `evidence`: optional one-line evidence quote
-- `source`: origin (`auto` / `remember` / `extract` / `choice` / `init`)
+- `source`: origin (`remember` / `extract` / `choice` / `init`)
 - `confidence`: confidence (`low` / `medium` / `high`)
 - `apply`: scope (`personal` / `project` / `team`)
 
@@ -53,15 +53,14 @@ One line summary: **structure taste first, then do persistence and governance**.
 
 ---
 
-## 4) Key to Effective Recognition: 5 Triggers
+## 4) Key to Effective Recognition: 4 Triggers
 
 `taste-recognition` is not only for `/remember`. It covers multiple real entry points:
 
-- free user input in each conversation turn (`source=auto`),
-- explicit `/remember`,
-- explicit `/extract`,
-- confirmed drafts in `/init`,
-- explicit post-choice signals from ask-questions (`source=choice`).
+- explicit **/remember**,
+- explicit **/extract**,
+- confirmed drafts in **/init** (`source=init`),
+- **workflow built-in taste sniffing**: in task / plan / build / review, when context calls for it, ask-questions collects your choices and produces payloads (`source=choice`) that are written to memory.
 
 Effective recognition is not “capture more”; it is “capture right”:
 
@@ -108,7 +107,7 @@ Recognized output (example):
 - principles: short reference / full path
 - choice: short reference
 - evidence: do not include full path
-- source: auto
+- source: remember
 - confidence: high
 - apply: team
 

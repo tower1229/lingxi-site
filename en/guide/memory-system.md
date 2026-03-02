@@ -14,7 +14,7 @@ Inject 0–3 most relevant memories
 AI responds with your "experience"
 ```
 
-**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing** does not run automatically in this flow; it is triggered only when you run a command. **Proactive memory capture** uses **/remember** and **/extract**; **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
+**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing is never automatic**; it is triggered only when you run a command or when the workflow runs built-in taste sniffing (see below). **Proactive memory capture** uses **/remember** and **/extract**; **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
 
 ## Memory Retrieval
 
@@ -26,7 +26,12 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-Memory writing is **triggered only by you via commands**; it is not automatically run every turn. **Proactive memory capture** uses **/remember** and **/extract**; **/init** is an optional write path inside initialization: it generates candidate memories first, skips writing by default, and writes only after your explicit choice. The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). For how taste-recognition identifies reusable "taste" and forms the 7-field contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
+Memory writing is **triggered only by you or by the workflow**; it never runs automatically in the background. There are two main sources of memory capture:
+
+1. **Proactive memory capture**: **/remember** and **/extract**; **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
+2. **Workflow built-in taste sniffing**: During task / plan / build / review, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
+
+The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). For how taste-recognition identifies reusable "taste" and forms the 7-field contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
 ### Proactive memory capture
 
@@ -35,7 +40,7 @@ Memory writing is **triggered only by you via commands**; it is not automaticall
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
 | **/extract** | Extract by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
 
-These are the routine entry points for capturing memory in daily use.
+These are the routine entry points for capturing memory in daily use; workflow taste sniffing also captures choices during task/plan/build/review when context calls for it, without a separate command.
 
 ### Optional write during init
 
@@ -147,7 +152,7 @@ sequenceDiagram
     participant AU as audit.log
 
     rect rgb(245, 250, 255)
-    Note over U,LM: 1) Memory capture and write governance (/remember or /extract)
+    Note over U,LM: 1) Memory capture and write governance (/remember, /extract, or workflow taste sniffing)
     U->>A: /remember or /extract
     A->>TR: Extract preferences and generate payloads (7 fields)
     TR-->>A: payloads[]

@@ -24,7 +24,12 @@ AI 带着你的"经验"回答
 
 ## 记忆写入
 
-记忆写入**由用户通过命令触发**。**主动记忆捕获**使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入环节：先生成候选，默认不写入，仅在你明确选择后才写入记忆。主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。想了解 taste-recognition 如何识别“品味”并形成 7 字段契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
+记忆写入**仅由用户或工作流环节触发，不会自动执行**。沉淀来源有两类：
+
+1. **主动记忆捕获**：使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入（先生成候选，仅在你明确选择后才写入）。
+2. **工作流内置品味嗅探**：在 task / plan / build / review 等环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
+
+主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。想了解 taste-recognition 如何识别“品味”并形成 7 字段契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ### 主动记忆捕获
 
@@ -33,7 +38,7 @@ AI 带着你的"经验"回答
 | **/remember** | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
 | **/extract**  | 按会话或时间范围提取：对当前会话或指定时间范围内的对话做可沉淀提取，批量写入并得到简报 |
 
-二者为日常沉淀记忆的惯用入口。
+二者为日常沉淀记忆的惯用入口；工作流中的品味嗅探则在你使用 task/plan/build/review 时在情境驱动下自动收集选择并写入，无需单独发命令。
 
 ### 初始化时可选写入
 
@@ -148,7 +153,7 @@ sequenceDiagram
     participant AU as audit.log
 
     rect rgb(245, 250, 255)
-    Note over U,LM: 一、记忆沉淀与写入治理（/remember 或 /extract）
+    Note over U,LM: 一、记忆沉淀与写入治理（/remember、/extract 或工作流品味嗅探）
     U->>A: /remember 或 /extract
     A->>TR: 提取品味，生成payloads(7字段)
     TR-->>A: payloads[]
