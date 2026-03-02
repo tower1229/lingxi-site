@@ -1,7 +1,5 @@
 # Five-Dimension Scorecard Reference
 
-> Writing style: concise, direct, executable (aligned with `[MEM-002]`).
-
 ## Five-Dimension Scorecard: Make Memory Serve Future Decisions
 
 In knowledge-capture systems, the biggest problem is usually not “we forget,” but “we store a lot and still can’t use it.”
