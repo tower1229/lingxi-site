@@ -31,7 +31,7 @@ Memory writing is **triggered only by you or by the workflow**; it never runs au
 1. **Proactive memory capture**: **/remember** and **/extract**; **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
 2. **Workflow built-in taste sniffing**: During task / plan / build / review, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
 
-The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **four-dimension elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates, maps payload to note, governs (TopK), and gates. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
+The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates, maps payload to note, governs (TopK), and gates. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste). For lingxi-memory governance and write details, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
 ### Proactive memory capture
 
@@ -100,7 +100,7 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 
 ### 1) Pre-write governance (quality threshold)
 
-- **Taste-recognition** runs **pattern alignment** (against a design-pattern catalog), then **four-dimension elevation** (D1 decision gain, D2 reusability/triggerability, D3 verifiability, D4 stability; 0–2 each, total T). Only when T≥4 and no exception is triggered does it output that entry as a payload with layer (L0/L1/L0+L1); when T≤3 or an exception applies, that entry is not output and the main agent does not call lingxi-memory for it.
+- **Taste-recognition** runs **pattern alignment** (against a design-pattern catalog), then **elevation** (D1 decision gain, D2 reusability/triggerability, D3 verifiability, D4 stability; 0–2 each, total T). Only when T≥4 and no exception is triggered does it output that entry as a payload with layer (L0/L1/L0+L1); when T≤3 or an exception applies, that entry is not output and the main agent does not call lingxi-memory for it.
 - So only elevation-approved entries enter the **payloads array**. **Lingxi-memory** does not score or elevate; it only: validate payloads → map payload to note → semantic-neighbor TopK governance (merge/replace/veto/new) → gate → write to notes and INDEX.
 - For taste-recognition responsibility boundaries and common pitfalls, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
@@ -108,6 +108,7 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 
 - Run semantic-neighbor TopK retrieval over `notes/`, then decide with `merge / replace / veto / new`.
 - When merging or replacing, maintain `Supersedes` links and sync `INDEX` to preserve a traceable evolution chain.
+- The actual governance logic and gating are performed by the **lingxi-memory** subagent; see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
 ### 3) User gating (non-bypassable)
 
@@ -131,7 +132,7 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 - Both memory retrieval and memory writing emit audit events to `.cursor/.lingxi/workspace/audit.log`.
 - Audit logs support traceability for queries, hits, adoption decisions, and write actions.
 
-For implementation details, see [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md).
+For implementation details, see [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md). For the site’s dedicated page, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
 ### Governance sequence diagram (write to retrieval injection)
 
@@ -150,7 +151,7 @@ sequenceDiagram
     rect rgb(245, 250, 255)
     Note over U,LM: 1) Memory capture and write governance (/remember, /extract, or workflow taste sniffing)
     U->>A: /remember or /extract
-    A->>TR: Extract taste + pattern alignment + four-dimension elevation, produce payloads (7 fields + layer)
+    A->>TR: Extract taste + pattern alignment + elevation, produce payloads (7 fields + layer)
     TR-->>A: payloads[] (only elevation-approved entries)
     A->>LM: Invoke write (payloads + conversation_id)
     LM->>LM: Validate payloads (fields/enums)
@@ -230,4 +231,5 @@ yarn memory-sync
 
 - Review the [Core Workflow](/en/guide/core-workflow) to see how memory integrates with development flows
 - Read [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste) for the taste-recognition contract
+- Read [Memory Governance and Write](/en/guide/memory-governance-and-write) for lingxi-memory governance and write flow
 - Visit the [GitHub repository](https://github.com/tower1229/LingXi) for full source code

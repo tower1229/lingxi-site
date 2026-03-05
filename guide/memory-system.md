@@ -29,7 +29,7 @@ AI 带着你的"经验"回答
 1. **主动记忆捕获**：使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入（先生成候选，仅在你明确选择后才写入）。
 2. **工作流内置品味嗅探**：在 task / plan / build / review 等环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
 
-主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。taste-recognition 在识别后会做**模式靠拢**与**四维升维判定**（写/不写、L0/L1），仅判定为写的条目才会产出 payload 并传入 lingxi-memory；lingxi-memory **不执行评分**，只做校验、按 payload 映射、治理与门控。想了解 taste-recognition 如何识别“品味”并形成扩展 payload 契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
+主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。taste-recognition 在识别后会做**模式靠拢**与**升维判定**（写/不写、L0/L1），仅判定为写的条目才会产出 payload 并传入 lingxi-memory；lingxi-memory **不执行评分**，只做校验、按 payload 映射、治理与门控。想了解 taste-recognition 如何识别“品味”并形成扩展 payload 契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)；想了解 lingxi-memory 的治理与写入细节，见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
 ### 主动记忆捕获
 
@@ -101,7 +101,7 @@ AI 带着你的"经验"回答
 
 ### 1) 写入前治理（质量门槛）
 
-- **taste-recognition** 在识别可沉淀内容后，会先做**模式靠拢**（参考设计模式目录），再做**四维升维判定**（D1 决策增益、D2 可复用/可触发、D3 可验证性、D4 稳定性，每维 0～2 分，总分 T）。仅当 T≥4 且未触犯例外时，才产出该条 payload 并标注 layer（L0/L1/L0+L1）；T≤3 或触犯例外时不产出该条，主 Agent 也不会因此条调用 lingxi-memory。
+- **taste-recognition** 在识别可沉淀内容后，会先做**模式靠拢**（参考设计模式目录），再做**升维判定**（D1 决策增益、D2 可复用/可触发、D3 可验证性、D4 稳定性，每维 0～2 分，总分 T）。仅当 T≥4 且未触犯例外时，才产出该条 payload 并标注 layer（L0/L1/L0+L1）；T≤3 或触犯例外时不产出该条，主 Agent 也不会因此条调用 lingxi-memory。
 - 因此只有通过升维判定的条目才会进入 **payloads 数组**；**lingxi-memory** 不执行评分或升维，只做：校验 payload → 按 payload 映射生成 note → 语义近邻 TopK 治理（merge/replace/veto/new）→ 门控 → 写入 notes 与 INDEX。
 - 关于 taste-recognition 的职责边界与常见误区，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
@@ -109,6 +109,7 @@ AI 带着你的"经验"回答
 
 - 对 `notes/` 执行语义近邻检索（TopK）后，按 `merge / replace / veto / new` 四类动作决策。
 - 发生合并或替换时维护 `Supersedes` 关系，并同步更新 `INDEX`，保证演进链条可追踪。
+- 具体治理逻辑与门控由 **lingxi-memory** 子代理执行，详见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
 ### 3) 用户门控（不可绕过）
 
@@ -132,7 +133,7 @@ AI 带着你的"经验"回答
 - 记忆检索与记忆写入都会写入审计事件到 `.cursor/.lingxi/workspace/audit.log`。
 - 审计日志用于追溯 query、命中结果、采纳决策与写入动作，便于排错与合规审查。
 
-更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md)。
+更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md)；官网专题见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
 ### 治理时序图（从写入到检索注入）
 
@@ -151,7 +152,7 @@ sequenceDiagram
     rect rgb(245, 250, 255)
     Note over U,LM: 一、记忆沉淀与写入治理（/remember、/extract 或工作流品味嗅探）
     U->>A: /remember 或 /extract
-    A->>TR: 提取品味 + 模式靠拢 + 四维升维判定，生成 payloads(7字段+layer)
+    A->>TR: 提取品味 + 模式靠拢 + 升维判定，生成 payloads(7字段+layer)
     TR-->>A: payloads[]（仅判定为写的条目）
     A->>LM: 调用写入（payloads + conversation_id）
     LM->>LM: 校验 payloads（字段/枚举）
@@ -231,4 +232,5 @@ yarn memory-sync
 
 - 回顾 [核心工作流](/guide/core-workflow) 了解记忆如何融入开发流程
 - 阅读 [开发者品味](/guide/how-to-recognize-developer-taste) 了解 taste-recognition 的识别契约
+- 阅读 [记忆治理与写入](/guide/memory-governance-and-write) 了解 lingxi-memory 的治理与写入流程
 - 访问 [GitHub 仓库](https://github.com/tower1229/LingXi) 查看完整源码

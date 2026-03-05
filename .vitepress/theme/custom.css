@@ -271,11 +271,16 @@
   color: var(--vp-c-brand-1);
 }
 
-/* ========== 文档区：正文字号与行距 ========== */
+/* ========== 文档区：正文字号与行距、段落首行缩进 ========== */
 .vp-doc p,
 .vp-doc li {
   font-size: 1.0625rem;
   line-height: 1.7;
+}
+
+/* 段落首行缩进 2 个全角字符 */
+.vp-doc p {
+  text-indent: 2em;
 }
 
 .vp-doc h1 {
