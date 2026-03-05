@@ -9,7 +9,7 @@
   ↓
 自动检索记忆（memory-retrieve）
   ↓
-注入 0–3 条最相关记忆
+注入 0–2 条最相关记忆
   ↓
 AI 带着你的"经验"回答
 ```
@@ -19,7 +19,7 @@ AI 带着你的"经验"回答
 每轮对话前，灵犀自动执行 `memory-retrieve`，从记忆库中检索最相关的笔记：
 
 - **双路径检索**：语义搜索 + 关键词匹配，并集加权合并
-- **最小注入**：只取 top 0–3 条，避免上下文污染
+- **最小注入**：只取 top 0–2 条，避免上下文污染
 - **优雅降级**：语义搜索不可用时降级为纯关键词，仍无匹配则静默跳过
 
 ## 记忆写入
@@ -29,7 +29,7 @@ AI 带着你的"经验"回答
 1. **主动记忆捕获**：使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入（先生成候选，仅在你明确选择后才写入）。
 2. **工作流内置品味嗅探**：在 task / plan / build / review 等环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
 
-主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。想了解 taste-recognition 如何识别“品味”并形成 7 字段契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
+主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。taste-recognition 在识别后会做**模式靠拢**与**四维升维判定**（写/不写、L0/L1），仅判定为写的条目才会产出 payload 并传入 lingxi-memory；lingxi-memory **不执行评分**，只做校验、按 payload 映射、治理与门控。想了解 taste-recognition 如何识别“品味”并形成扩展 payload 契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ### 主动记忆捕获
 
@@ -82,7 +82,7 @@ AI 带着你的"经验"回答
 
 ### 记忆的结构
 
-每条记忆包含 7 个字段（由 taste-recognition 产出，lingxi-memory 仅接受 **payloads 数组**）。字段定义与识别边界见 [开发者品味](/guide/how-to-recognize-developer-taste)：
+每条记忆对应 taste-recognition 产出的**扩展 payload**（7 个业务字段 + **layer**），lingxi-memory 仅接受 **payloads 数组**。字段定义与识别边界见 [开发者品味](/guide/how-to-recognize-developer-taste)：
 
 | 字段       | 含义     |
 | ---------- | -------- |
@@ -93,6 +93,7 @@ AI 带着你的"经验"回答
 | source     | 来源     |
 | confidence | 置信度   |
 | apply      | 是否进入 share（`project` \| `team`） |
+| layer      | 层级（`L0` \| `L1` \| `L0+L1`，由 taste-recognition 升维判定填写） |
 
 ## 记忆治理
 
@@ -100,14 +101,9 @@ AI 带着你的"经验"回答
 
 ### 1) 写入前治理（质量门槛）
 
-- 先由 `taste-recognition` 产出标准 7 字段 `payloads`，再由 `lingxi-memory` 子代理执行校验与映射。
+- **taste-recognition** 在识别可沉淀内容后，会先做**模式靠拢**（参考设计模式目录），再做**四维升维判定**（D1 决策增益、D2 可复用/可触发、D3 可验证性、D4 稳定性，每维 0～2 分，总分 T）。仅当 T≥4 且未触犯例外时，才产出该条 payload 并标注 layer（L0/L1/L0+L1）；T≤3 或触犯例外时不产出该条，主 Agent 也不会因此条调用 lingxi-memory。
+- 因此只有通过升维判定的条目才会进入 **payloads 数组**；**lingxi-memory** 不执行评分或升维，只做：校验 payload → 按 payload 映射生成 note → 语义近邻 TopK 治理（merge/replace/veto/new）→ 门控 → 写入 notes 与 INDEX。
 - 关于 taste-recognition 的职责边界与常见误区，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
-- 候选记忆进入五维评分卡（D1~D5，每维 0～2 分），总分 **T = D1 + D2 + D3 + D4 + D5**（满分 10 分），按规则决策：
-  - **不写**：低价值候选直接 veto。
-  - **写 L0（事实层）**：保留可验证的实例事实。
-  - **写 L1（原则层）**：保留可复用的原则与策略。
-  - **写 L0 + L1（双层）**：同时保留事实与原则。
-- 评分维度、阈值与例外规则见 [五维评分卡](/guide/five-dimension-scorecard)。
 
 ### 2) 去重与冲突治理（语义近邻 TopK）
 
@@ -155,16 +151,13 @@ sequenceDiagram
     rect rgb(245, 250, 255)
     Note over U,LM: 一、记忆沉淀与写入治理（/remember、/extract 或工作流品味嗅探）
     U->>A: /remember 或 /extract
-    A->>TR: 提取品味，生成payloads(7字段)
-    TR-->>A: payloads[]
+    A->>TR: 提取品味 + 模式靠拢 + 四维升维判定，生成 payloads(7字段+layer)
+    TR-->>A: payloads[]（仅判定为写的条目）
     A->>LM: 调用写入（payloads + conversation_id）
-    LM->>LM: 校验payloads（字段/枚举）
-    LM->>LM: 映射note字段 + 五维评分(D1~D5)
-    alt 低价值(T<=3)
-        LM-->>A: veto/skip（不写入）
-    else 可写入
-        LM->>LM: 语义近邻TopK治理（merge/replace/veto/new）
-        alt merge 或 replace
+    LM->>LM: 校验 payloads（字段/枚举）
+    LM->>LM: 按 payload 映射 note 字段（不做评分）
+    LM->>LM: 语义近邻 TopK 治理（merge/replace/veto/new）
+    alt merge 或 replace
             LM->>AQ: 发起确认问题
             AQ-->>LM: 用户选择
             alt 用户确认
@@ -185,7 +178,6 @@ sequenceDiagram
             end
         end
         LM->>AU: 追加memory_note_*与memory_index_updated审计
-    end
     LM-->>A: 返回简报（新建/合并/跳过）
     A-->>U: 输出结果
     end

@@ -33,7 +33,7 @@
 
 ### 记忆太多或噪音太多怎么办？
 
-灵犀对记忆库有**自动治理**：[五维评分卡](/guide/five-dimension-scorecard) 评估价值、TopK 保留高价值记忆、新老记忆冲突时通过**门控**由你决定合并或替换。若仍感噪音较多，可依赖这些机制逐步精简；建议先阅读 [五维评分卡](/guide/five-dimension-scorecard) 再回看 [记忆系统](/guide/memory-system) 的治理闭环。
+灵犀对记忆库有**自动治理**：taste-recognition 在产出 payload 前会做**四维升维判定**（写/不写、L0/L1），仅通过判定的条目才会写入；lingxi-memory 再做语义近邻 TopK 与门控，新老记忆冲突时由你决定合并或替换。若仍感噪音较多，可依赖这些机制逐步精简；详见 [记忆系统](/guide/memory-system) 的治理闭环与 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ---
 

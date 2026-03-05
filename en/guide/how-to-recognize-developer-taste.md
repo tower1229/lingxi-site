@@ -37,7 +37,7 @@ So it solves:
 
 ---
 
-## 3) Single Output Contract: 7-Field Payload
+## 3) Single Output Contract: Extended Payload (7 Fields + layer)
 
 `taste-recognition` has one output shape:
 
@@ -48,8 +48,9 @@ So it solves:
 - `source`: origin (`remember` / `extract` / `choice` / `init`)
 - `confidence`: confidence (`low` / `medium` / `high`)
 - `apply`: `project` | `team` — whether the memory goes into `notes/share` (`team` = in share, cross-project; `project` = current project only)
+- `layer`: layer (`L0` | `L1` | `L0+L1`), set by taste-recognition during **elevation** (four-dimension scoring)
 
-One line summary: **structure taste first, then do persistence and governance**.
+Elevation (write or not, L0/L1) is done inside taste-recognition via **four-dimension scoring** (D1 decision gain, D2 reusability/triggerability, D3 verifiability, D4 stability). Only elevation-approved entries are output as payloads and sent to lingxi-memory. In short: **structure taste and decide value first, then let downstream map and govern**.
 
 ---
 
@@ -80,7 +81,7 @@ Usable results usually have:
 - **clear comparison**: answers “what choice was made among what candidates,”
 - **traceable evidence**: at least weak evidence, not pure opinion,
 - **expressible boundary**: indicates when it does not apply,
-- **downstream compatibility**: matches the 7-field contract.
+- **downstream compatibility**: matches the extended payload contract (7 fields + layer).
 
 ---
 
@@ -88,11 +89,10 @@ Usable results usually have:
 
 Common confusion to avoid:
 
-- `taste-recognition`: detect and structure taste,
-- `lingxi-memory`: validate, score, govern, gate, and write,
-- five-dimension scorecard: decide write value and target shape (L0/L1/both).
+- **taste-recognition**: detects capturable taste, does pattern alignment, and runs **four-dimension elevation** (write or not, L0/L1); only elevation-approved entries are output as extended payloads (7 fields + layer).
+- **lingxi-memory**: validates payloads, maps payload to note, governs (TopK), gates, and writes; **does not score or elevate** — it only accepts payloads that already passed elevation.
 
-So: **recognition is the entry, scoring is the gate, governance is quality assurance**.
+So: **recognition and value judgment live in taste-recognition; mapping and governance live in lingxi-memory**.
 
 ---
 
@@ -118,10 +118,9 @@ This is effective because it has scenario, comparable options, and guidance for 
 ## 8) Closing
 
 Effective recognition of developer taste turns implicit judgment into explicit decision assets.
-`taste-recognition` provides the first-principles step: **standardize recognition first, then let downstream score and govern**.
+`taste-recognition` provides the first-principles step: **standardize recognition and elevation first, then let downstream map and govern**.
 When recognition is stable and input is uniform, the memory system can reliably “work the way you work.”
 
 ## Related Links
 
 - [Memory System](/en/guide/memory-system)
-- [Five-Dimension Scorecard Reference](/en/guide/five-dimension-scorecard)

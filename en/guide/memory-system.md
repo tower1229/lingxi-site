@@ -9,7 +9,7 @@ Conversation starts
   ↓
 Auto-retrieve memories (memory-retrieve)
   ↓
-Inject 0–3 most relevant memories
+Inject 0–2 most relevant memories
   ↓
 AI responds with your "experience"
 ```
@@ -21,7 +21,7 @@ AI responds with your "experience"
 Before each conversation turn, LingXi automatically runs `memory-retrieve` to find the most relevant notes:
 
 - **Dual-path retrieval**: Semantic search + keyword matching, merged with weighted scoring
-- **Minimal injection**: Only top 0–3 results, avoiding context pollution
+- **Minimal injection**: Only top 0–2 results, avoiding context pollution
 - **Graceful degradation**: Falls back to keyword-only when semantic search is unavailable; stays silent when nothing matches
 
 ## Memory Writing
@@ -31,7 +31,7 @@ Memory writing is **triggered only by you or by the workflow**; it never runs au
 1. **Proactive memory capture**: **/remember** and **/extract**; **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
 2. **Workflow built-in taste sniffing**: During task / plan / build / review, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
 
-The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). For how taste-recognition identifies reusable "taste" and forms the 7-field contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
+The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **four-dimension elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates, maps payload to note, governs (TopK), and gates. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
 ### Proactive memory capture
 
@@ -81,7 +81,7 @@ LingXi then aggregates the relevant conversation, uses taste-recognition to extr
 
 ### Memory structure
 
-Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts only a **payloads array**). Field definitions and scope boundaries are in [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste):
+Each memory corresponds to an **extended payload** (7 business fields + **layer**) produced by taste-recognition; lingxi-memory accepts only a **payloads array**. Field definitions and scope are in [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste):
 
 | Field | Meaning |
 |-------|---------|
@@ -92,6 +92,7 @@ Each memory has 7 fields (produced by taste-recognition; lingxi-memory accepts o
 | source | Origin of the memory |
 | confidence | Confidence level |
 | apply | Whether in share (`project` \| `team`) |
+| layer | Layer (`L0` \| `L1` \| `L0+L1`, set by taste-recognition elevation) |
 
 ## Memory Governance
 
@@ -99,14 +100,9 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 
 ### 1) Pre-write governance (quality threshold)
 
-- `taste-recognition` first produces standardized 7-field `payloads`; then the `lingxi-memory` subagent performs validation and mapping.
+- **Taste-recognition** runs **pattern alignment** (against a design-pattern catalog), then **four-dimension elevation** (D1 decision gain, D2 reusability/triggerability, D3 verifiability, D4 stability; 0–2 each, total T). Only when T≥4 and no exception is triggered does it output that entry as a payload with layer (L0/L1/L0+L1); when T≤3 or an exception applies, that entry is not output and the main agent does not call lingxi-memory for it.
+- So only elevation-approved entries enter the **payloads array**. **Lingxi-memory** does not score or elevate; it only: validate payloads → map payload to note → semantic-neighbor TopK governance (merge/replace/veto/new) → gate → write to notes and INDEX.
 - For taste-recognition responsibility boundaries and common pitfalls, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
-- Candidates enter a five-dimension scorecard (D1~D5, 0–2 each), with **T = D1 + D2 + D3 + D4 + D5** (max 10), then route to:
-  - **veto** for low-value candidates,
-  - **write L0 (fact layer)**,
-  - **write L1 (principle layer)**,
-  - **write L0 + L1 (both layers)**.
-- See [Five-Dimension Scorecard Reference](/en/guide/five-dimension-scorecard) for dimensions, thresholds, and exception rules.
 
 ### 2) Deduplication and conflict governance (semantic-neighbor TopK)
 
@@ -154,16 +150,13 @@ sequenceDiagram
     rect rgb(245, 250, 255)
     Note over U,LM: 1) Memory capture and write governance (/remember, /extract, or workflow taste sniffing)
     U->>A: /remember or /extract
-    A->>TR: Extract preferences and generate payloads (7 fields)
-    TR-->>A: payloads[]
+    A->>TR: Extract taste + pattern alignment + four-dimension elevation, produce payloads (7 fields + layer)
+    TR-->>A: payloads[] (only elevation-approved entries)
     A->>LM: Invoke write (payloads + conversation_id)
     LM->>LM: Validate payloads (fields/enums)
-    LM->>LM: Map note fields + five-dimension scoring (D1~D5)
-    alt Low value (T<=3)
-        LM-->>A: veto/skip (do not write)
-    else Writable
-        LM->>LM: Semantic-neighbor TopK governance (merge/replace/veto/new)
-        alt merge or replace
+    LM->>LM: Map payload to note fields (no scoring)
+    LM->>LM: Semantic-neighbor TopK governance (merge/replace/veto/new)
+    alt merge or replace
             LM->>AQ: Ask for confirmation
             AQ-->>LM: User decision
             alt User confirms
@@ -184,7 +177,6 @@ sequenceDiagram
             end
         end
         LM->>AU: Append memory_note_* and memory_index_updated audit events
-    end
     LM-->>A: Return brief report (created/merged/skipped)
     A-->>U: Output result
     end

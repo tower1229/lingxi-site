@@ -33,7 +33,7 @@ They **complement each other**. LingXi’s `/plan` and `/build` are centered on 
 
 ### What if I have too many memories or too much noise?
 
-LingXi applies **automatic governance**: the [Five-Dimension Scorecard Reference](/en/guide/five-dimension-scorecard) evaluates value, TopK keeps high-value notes, and **gates** let you decide merge/replace when new and existing memories conflict. If noise still feels high, review the scorecard reference first, then revisit the governance loop in [Memory System](/en/guide/memory-system).
+LingXi applies **automatic governance**: taste-recognition runs **four-dimension elevation** (write or not, L0/L1) before outputting payloads, so only approved entries are written; lingxi-memory then does semantic-neighbor TopK and gating, and **gates** let you decide merge/replace when new and existing memories conflict. If noise still feels high, rely on these mechanisms to trim over time. See the governance loop in [Memory System](/en/guide/memory-system) and [How to Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
 ---
 
