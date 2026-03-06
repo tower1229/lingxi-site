@@ -12,12 +12,18 @@
 
 在以下情况需要 Node.js：
 
-- 使用 **`memory-sync`** 同步记忆索引（例如跨项目共享后更新 INDEX）
-- 通过脚本直接运行 **workspace-bootstrap**（如 `.cursor/skills/workspace-bootstrap/scripts/workspace-bootstrap.mjs`）
+- 直接运行 **workspace-bootstrap**（如 `.cursor/skills/workspace-bootstrap/scripts/workspace-bootstrap.mjs`）
+- 运行 **lx:uninstall**（卸载脚本为 Node 实现）
 
-### memory-sync 从哪来、在哪执行？
+**同步记忆索引**（例如添加或更新共享记忆后）请直接在 Cursor 中运行 **/memory-govern**，无需 Node.js。
 
-`memory-sync` 由**灵犀安装脚本**在安装时写入项目的 `package.json` 的 `scripts` 中。请在**项目根目录**执行 `yarn memory-sync` 或 `npm run memory-sync`，用于在添加或更新共享记忆后同步 `.cursor/.lingxi/memory/INDEX.md`。需要本机已安装 Node.js。详见 [记忆系统 - 跨项目共享](/guide/memory-system#跨项目共享)。若项目未安装灵犀或未注入该脚本，请先完成 [快速开始](/guide/quick-start) 中的安装步骤。
+### 添加共享记忆后如何同步索引？
+
+在 Cursor 中运行 **/memory-govern**。它会同步 INDEX 与 notes（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库治理。详见 [记忆系统 - 跨项目共享](/guide/memory-system#跨项目共享)。
+
+### 如何卸载灵犀？
+
+在**项目根目录**执行 **`yarn lx:uninstall`** 或 **`npm run lx:uninstall`**。会按安装清单删除 `.cursor/.lingxi/` 以及灵犀安装的 commands、skills、hooks、agents、references 等。交互式环境下会提示确认；非交互式（如 CI）可使用 **`yarn lx:uninstall --yes`** 跳过确认。该脚本在安装时已写入项目 `package.json`。
 
 ---
 

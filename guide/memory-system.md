@@ -37,6 +37,7 @@ AI 带着你的"经验"回答
 | ------------- | -------------------------------------------------------------------------------------- |
 | **/remember** | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
 | **/extract**  | 按会话或时间范围提取：对当前会话或指定时间范围内的对话做可沉淀提取，批量写入并得到简报 |
+| **/memory-govern** | 同步 INDEX 与 notes（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库主动治理（合并/改写/归档建议，经你确认后写回） |
 
 二者为日常沉淀记忆的惯用入口；工作流中的品味嗅探则在你使用 task/plan/build/review 时在情境驱动下自动收集选择并写入，无需单独发命令。
 
@@ -79,6 +80,15 @@ AI 带着你的"经验"回答
 - **不传参**：对**当前会话**提炼，适合在一轮对话结束后执行。
 - **带参数**：接受自然语言时间范围（如「今天的会话」「最近 N 天」「Nd」「Nh」）；若解析不到有效时间范围会提示错误并终止。
   执行后灵犀会汇总对应会话内容、经 taste-recognition 提取多条 payload、单次传入 lingxi-memory，最后将简报呈现给你。识别规则与触发点见 [开发者品味](/guide/how-to-recognize-developer-taste)。
+
+### /memory-govern — 同步索引与主动治理
+
+使用 **/memory-govern** 可保持 INDEX 与 `notes/` 一致，并可选择执行主动治理：
+
+- **同步**：脚本会删除孤儿索引行（INDEX 中有但对应 note 文件已不存在），并检测未索引的 note；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
+- **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
+
+在添加或更新共享记忆后（例如执行 `git submodule update` 后），或在希望整理索引并获取治理建议时，在 Cursor 中运行 `/memory-govern` 即可。无需单独执行 Node.js 脚本。详见 [命令参考 — /memory-govern](/guide/commands-reference#memory-govern)。
 
 ### 记忆的结构
 
@@ -207,7 +217,7 @@ sequenceDiagram
 
 ### 设置共享仓库
 
-`memory-sync` 脚本由**灵犀安装脚本**在安装时写入项目的 `package.json`，请在**项目根目录**执行；需要本机已安装 Node.js。若项目尚未安装灵犀或未注入该脚本，请先完成 [快速开始](/guide/quick-start) 中的安装步骤。
+添加或更新共享记忆仓库后，在 Cursor 中运行 **/memory-govern** 即可同步 INDEX 与 notes（并可选择执行主动治理）。无需单独执行 Node.js 脚本。若项目尚未安装灵犀，请先完成 [快速开始](/guide/quick-start)。
 
 ```bash
 # 1. 添加共享记忆仓库
@@ -216,10 +226,7 @@ git submodule add <shareRepoUrl> .cursor/.lingxi/memory/notes/share
 # 2. 更新共享记忆
 git submodule update --remote --merge
 
-# 3. 同步记忆索引
-npm run memory-sync
-# 或
-yarn memory-sync
+# 3. 同步记忆索引与可选治理：在 Cursor 中运行 /memory-govern
 ```
 
 ### 共享规则

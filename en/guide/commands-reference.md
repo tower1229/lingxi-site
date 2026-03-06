@@ -109,6 +109,22 @@ See [Memory System](/en/guide/memory-system).
 
 ---
 
+### /memory-govern
+
+```
+/memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]
+```
+
+Sync the memory INDEX with `notes/` and optionally run proactive governance. LingXi runs a script to remove orphan index rows (INDEX entries whose note file is missing) and to detect unindexed notes; the model then generates INDEX rows for unindexed notes. Optionally, the model can suggest full-library governance (merge/rewrite/archive); changes are applied only after your confirmation.
+
+**Parameters:** All optional. `--dry-run`: only run the script and show results, do not write INDEX or call the model. `--skip-govern`: sync and complete unindexed entries only, skip full-library governance. `--root <path>`: memory root (default `.cursor/.lingxi/memory`).
+
+**Output:** A brief report (orphans removed, unindexed notes completed, optional duplicate Id hints); if phase 2 runs, a summary of adopted governance changes.
+
+See [Memory System](/en/guide/memory-system) and [Memory Governance and Write](/en/guide/memory-governance-and-write).
+
+---
+
 ## Initialization Commands
 
 ### /init
@@ -122,6 +138,24 @@ Guided initialization for projects that already have some progress: LingXi first
 **Parameters:** None.
 
 **Output:** An initialization summary plus candidate memory list; if you explicitly choose to write, memories are written to `.cursor/.lingxi/memory/notes/` and INDEX is updated. If `.cursor/.lingxi/` is missing, required skeleton directories are created first.
+
+---
+
+## Uninstall
+
+During installation, LingXi adds **`lx:uninstall`** to your project’s `package.json` scripts. From the **project root**, run:
+
+```bash
+yarn lx:uninstall
+# or
+npm run lx:uninstall
+```
+
+This removes `.cursor/.lingxi/` and all LingXi-installed files (commands, skills, hooks, agents, references, etc.) according to the install manifest, so no LingXi artifacts remain. In an interactive environment you will be prompted to confirm; in non-interactive environments (e.g. CI) pass `--yes` to skip confirmation:
+
+```bash
+yarn lx:uninstall --yes
+```
 
 ---
 

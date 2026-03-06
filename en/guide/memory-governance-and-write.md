@@ -50,6 +50,15 @@ Governance scope must **include notes already written in this batch this turn** 
 - **Team-level** (apply=team): note written to `.cursor/.lingxi/memory/notes/share/MEM-<id>.md` for cross-project reuse (e.g. git submodule).
 - **Audit**: After each create/update/delete of a note or update of INDEX, append an NDJSON event to `.cursor/.lingxi/workspace/audit.log` via `append-memory-audit.mjs` (e.g. `memory_note_created`, `memory_note_updated`, `memory_note_deleted`, `memory_index_updated`) for traceability and compliance.
 
+## Proactive memory governance: /memory-govern
+
+Besides the **write-time** governance performed by lingxi-memory (TopK, merge/replace/veto/new), LingXi provides **/memory-govern** for **index sync and proactive library governance**:
+
+1. **Sync**: A script (under the memory-govern skill) scans `notes/` and INDEX, **removes orphan index rows** (INDEX entries whose note file is missing), and reports **unindexed notes**. The model then generates INDEX rows for each unindexed note so retrieval stays accurate.
+2. **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
+
+Run **/memory-govern** in Cursor after adding or updating shared memories (e.g. after `git submodule update`), or when you want to tidy the index and get governance suggestions. No separate Node.js script is required. See [Memory System — /memory-govern](/en/guide/memory-system#memory-govern--sync-index-and-proactive-governance) and [Commands Reference](/en/guide/commands-reference#memory-govern).
+
 ## Related Links
 
 - [Memory System](/en/guide/memory-system) — Overview of retrieval, write entry points, and governance loop

@@ -113,6 +113,22 @@
 
 ---
 
+### /memory-govern
+
+```
+/memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]
+```
+
+同步记忆 INDEX 与 `notes/`，并可选择执行主动治理。灵犀会先运行脚本删除孤儿索引行（INDEX 中有但对应 note 文件不存在），并检测未索引的 note；再由模型为未索引 note 生成 INDEX 行。可选地，模型可对整库提出治理建议（合并/改写/归档），仅在你确认后写回。
+
+**参数**：均可选。`--dry-run`：仅执行脚本并输出结果，不写回 INDEX、不调用模型。`--skip-govern`：只做同步与补全未索引条目，跳过全库治理。`--root <path>`：指定 memory 根目录（默认 `.cursor/.lingxi/memory`）。
+
+**产出**：简报（删除孤儿数、补全未索引数、可选重复 Id 提示）；若执行阶段 2 则包含采纳的治理建议说明。
+
+详见 [记忆系统](/guide/memory-system) 与 [记忆治理与写入](/guide/memory-governance-and-write)。
+
+---
+
 ## 初始化命令
 
 ### /init
@@ -126,6 +142,24 @@
 **参数**：无。
 
 **产出**：初始化校对摘要与记忆候选清单；若你明确选择写入，再写入 `.cursor/.lingxi/memory/notes/` 并更新 INDEX。若 `.cursor/.lingxi/` 缺失，会先补齐所需目录骨架。
+
+---
+
+## 卸载
+
+安装时灵犀会在项目 `package.json` 的 `scripts` 中注入 **`lx:uninstall`**。在**项目根目录**执行：
+
+```bash
+yarn lx:uninstall
+# 或
+npm run lx:uninstall
+```
+
+会按安装清单删除 `.cursor/.lingxi/` 运行数据以及灵犀安装的 commands、skills、hooks、agents、references 等，确保卸载后不留灵犀相关文件。交互式环境下会提示确认；非交互式（如 CI）可传 `--yes` 跳过确认：
+
+```bash
+yarn lx:uninstall --yes
+```
 
 ---
 

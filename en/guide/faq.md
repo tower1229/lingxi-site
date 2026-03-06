@@ -12,12 +12,18 @@ LingXi requires the **latest stable Cursor**. Ensure Cursor is installed and wor
 
 You need Node.js when:
 
-- Using **`memory-sync`** to update the memory index (e.g. after cross-project memory sharing)
 - Running **workspace-bootstrap** directly (e.g. `.cursor/skills/workspace-bootstrap/scripts/workspace-bootstrap.mjs`)
+- Running **lx:uninstall** (the uninstall script is Node-based)
 
-### Where does memory-sync come from and where do I run it?
+To **sync the memory index** after adding or updating shared memories, run **/memory-govern** in Cursor; no Node.js is required for that command.
 
-**LingXi’s install script** adds the `memory-sync` script to your project’s `package.json` during installation. Run **`yarn memory-sync`** or **`npm run memory-sync`** from the **project root** to sync `.cursor/.lingxi/memory/INDEX.md` after adding or updating shared memories. Node.js must be installed. See [Memory System — Cross-project sharing](/en/guide/memory-system#cross-project-sharing). If the script is not present, complete the [Quick Start](/en/guide/quick-start) installation first.
+### How do I sync the memory index after adding shared memories?
+
+Run **/memory-govern** in Cursor. It syncs INDEX with notes (removes orphan index rows, has the model complete INDEX rows for unindexed notes) and can optionally run full-library governance. See [Memory System — Cross-project sharing](/en/guide/memory-system#cross-project-sharing).
+
+### How do I uninstall LingXi?
+
+From the **project root**, run **`yarn lx:uninstall`** or **`npm run lx:uninstall`**. This removes `.cursor/.lingxi/` and all LingXi-installed files (commands, skills, hooks, agents, references, etc.) according to the install manifest. In an interactive environment you will be asked to confirm; in non-interactive environments (e.g. CI) use **`yarn lx:uninstall --yes`** to skip confirmation. The script is added to your project’s `package.json` during installation.
 
 ---
 

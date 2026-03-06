@@ -39,6 +39,7 @@ The main agent first uses taste-recognition to produce structured payloads, then
 |---------|---------|
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
 | **/extract** | Extract by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
+| **/memory-govern** | Sync INDEX with notes (remove orphan index rows, have the model complete INDEX rows for unindexed notes) and optionally run full-library governance (merge/rewrite/archive suggestions with your confirmation) |
 
 These are the routine entry points for capturing memory in daily use; workflow taste sniffing also captures choices during task/plan/build/review when context calls for it, without a separate command.
 
@@ -78,6 +79,15 @@ Refine capturable content from the current conversation or a given time range an
 - **No arguments**: Refines the **current conversation** — use after a round of dialogue.
 - **With arguments**: Accepts natural-language time ranges (e.g. “today's conversation”, “last N days”, “Nd”, “Nh”). If the time range cannot be parsed, an error is shown and the command stops.  
 LingXi then aggregates the relevant conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, and shows you the report. See [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste) for trigger points and recognition criteria.
+
+### /memory-govern — Sync index and proactive governance
+
+Use **/memory-govern** to keep INDEX in sync with `notes/` and optionally run proactive governance:
+
+- **Sync**: A script removes orphan index rows (INDEX entries whose note file no longer exists) and detects unindexed notes; the model then generates INDEX rows for each unindexed note so retrieval stays accurate.
+- **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
+
+Run `/memory-govern` in Cursor whenever you add or update shared memories (e.g. after `git submodule update`), or when you want to tidy the index and get governance suggestions. No Node.js script is required for this command. See [Commands Reference — /memory-govern](/en/guide/commands-reference#memory-govern).
 
 ### Memory structure
 
@@ -206,7 +216,7 @@ Teams can share memory banks via **git submodule**, letting best practices flow 
 
 ### Setting Up a Shared Repository
 
-The `memory-sync` script is added to your project's `package.json` by **LingXi's install script** during installation. Run it from the **project root**; Node.js must be installed. If the script is not present, complete the [Quick Start](/en/guide/quick-start) installation first.
+After adding or updating a shared memory repository, run **/memory-govern** in Cursor to sync INDEX with notes (and optionally run proactive governance). No separate Node.js script is required. If you have not installed LingXi yet, complete [Quick Start](/en/guide/quick-start) first.
 
 ```bash
 # 1. Add shared memory repository
@@ -215,10 +225,7 @@ git submodule add <shareRepoUrl> .cursor/.lingxi/memory/notes/share
 # 2. Update shared memories
 git submodule update --remote --merge
 
-# 3. Sync memory index
-npm run memory-sync
-# or
-yarn memory-sync
+# 3. Sync memory index and optional governance: run /memory-govern in Cursor
 ```
 
 ### Sharing Rules
