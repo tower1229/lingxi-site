@@ -4,6 +4,13 @@ The memory system is LingXi's core capability — it lets AI **learn your judgme
 
 ## How It Works
 
+The memory system has two sides: **retrieval** and **writing**.
+
+- **Retrieval (every turn)**: When a conversation starts, LingXi automatically pulls the most relevant notes from the memory bank and injects them into context, so the AI can respond with your "experience."
+- **Writing (three paths)**: Memories enter the bank through automatic capture (heartbeat session distillation), manual capture (/remember, /init), or workflow taste sniffing. See [Memory Writing](#memory-writing) below.
+
+The per-turn retrieval flow:
+
 ```
 Conversation starts
   ↓
@@ -13,8 +20,6 @@ Inject 0–2 most relevant memories
   ↓
 AI responds with your "experience"
 ```
-
-**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing is never automatic**; it is triggered only when you run a command or when the workflow runs built-in taste sniffing (see below). **Proactive memory capture** uses **/remember** and **heartbeat session distillation** (when you start a new conversation and it has been more than 30 minutes since the last run, up to 3 finished sessions are enqueued and refined in the background by lingxi-session-distill, `source=heartbeat`); **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
 
 ## Memory Retrieval
 
@@ -26,58 +31,35 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-Memory writing is **triggered only by you or by the workflow**; it never runs automatically in the background. There are two main sources of memory capture:
+Memory writing has **three capture paths**: **automatic** (heartbeat-triggered session distillation), **manual** (/remember, /init), and **workflow taste sniffing** (built into task/plan/build/review).
 
-1. **Proactive memory capture**: **/remember** and **heartbeat session distillation** (automatic when starting a new conversation if >30 min since last run; up to 3 finished sessions refined in background by lingxi-session-distill, `source=heartbeat`); **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
-2. **Workflow built-in taste sniffing**: During task / plan / build / review, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
+### Automatic capture: heartbeat session distillation
 
-The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates payloads, invokes the **memory-write** skill to map, govern, and gate, then writes directly to memory/project/, memory/share/, and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates and then invokes memory-write to map, govern (TopK), and gate. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste). For lingxi-memory governance and write details, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
+When you start a **new conversation**, LingXi checks whether it has been more than 30 minutes since the last session distillation. If so, it automatically enqueues up to 3 finished, unrefined sessions. The **lingxi-session-distill** subagent runs in the background, fetches conversation content, uses taste-recognition to produce payloads (`source=heartbeat`), and writes to memory. The main conversation does not wait; distillation runs asynchronously. You can inspect `heartbeat.triggered`, `heartbeat.distillation_completed`, and related events in `.cursor/.lingxi/workspace/audit.log`.
 
-### Proactive memory capture
+### Manual capture: /remember and /init
 
 | Command | Purpose |
 |---------|---------|
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
-| **Heartbeat session distillation** | Automatic: when you start a new conversation and it has been >30 min since last run, enqueue up to 3 finished sessions; the lingxi-session-distill subagent refines them asynchronously and writes (`source=heartbeat`) |
-| **/memory-govern** | Sync INDEX with project/share (remove orphan index rows, have the model complete INDEX rows for unindexed notes) and optionally run full-library governance (merge/rewrite/archive suggestions with your confirmation) |
+| **/init** | Optional write during init: after guiding project-info collection, presents a candidate memory list; writes only after your explicit choice |
 
-These are the routine entry points for capturing memory in daily use; workflow taste sniffing also captures choices during task/plan/build/review when context calls for it, without a separate command.
-
-### Optional write during init
-
-After guiding project-info collection, **/init** first presents a candidate memory list. Writing is skipped by default; only when you explicitly choose a write strategy (for example, all/partial) will confirmed candidates be written as memories. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember**; session-scoped distillation is done automatically by the **heartbeat** (no separate command).
-
-**Gating**: Merging or replacing existing memories requires your confirmation; new memories with confidence **high** can be written silently; **medium** or **low** require confirmation.
-
-### /remember — Write now
-
-Use `/remember` anytime to write a memory:
+/remember is the main entry for day-to-day manual capture. Use it anytime:
 
 ```
 /remember <description>
 ```
 
-**Examples:**
-```
-/remember Capture the lesson from that bug we just fixed
-/remember Always use pnpm instead of npm
-/remember API responses in this project must follow RESTful conventions
-```
+Examples: `/remember Capture the lesson from that bug we just fixed`, `/remember Always use pnpm instead of npm`.  
+/init is optional write during project initialization, not a routine capture path.
 
-### Session distillation (heartbeat, automatic)
+**Gating**: Merging or replacing existing memories requires your confirmation; new memories with confidence **high** can be written silently; **medium** or **low** require confirmation.
 
-When you start a **new conversation**, LingXi checks whether it has been more than 30 minutes since the last session distillation. If so, it automatically enqueues up to 3 finished, unrefined sessions. The **lingxi-session-distill** subagent runs in the background, fetches conversation content, uses taste-recognition to produce payloads (`source=heartbeat`), and writes to memory. The main conversation does not wait; distillation runs asynchronously. You can inspect `heartbeat.triggered`, `heartbeat.distillation_completed`, and related events in `.cursor/.lingxi/workspace/audit.log`.
+### Workflow taste sniffing (built-in)
 
-### /memory-govern — Sync index and proactive governance
+During task / plan / build / review **skills**, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
 
-Use **/memory-govern** to keep INDEX in sync with `memory/project/` and `memory/share/` and optionally run proactive governance:
-
-- **Sync**: A script removes orphan index rows (INDEX entries whose note file no longer exists) and detects unindexed notes; the model then generates INDEX rows for each unindexed note so retrieval stays accurate.
-- **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
-
-Run `/memory-govern` in Cursor whenever you add or update shared memories (e.g. after `git submodule update`), or when you want to tidy the index and get governance suggestions. No Node.js script is required for this command. See [Commands Reference — /memory-govern](/en/guide/commands-reference#memory-govern).
-
-### Memory structure
+## Memory structure
 
 Each memory corresponds to an **extended payload** (7 business fields + **layer**) produced by taste-recognition; lingxi-memory accepts only a **payloads array**. Field definitions and scope are in [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste):
 
@@ -91,6 +73,15 @@ Each memory corresponds to an **extended payload** (7 business fields + **layer*
 | confidence | Confidence level |
 | apply | Whether in share (`project` \| `team`) |
 | layer | Layer (`L0` \| `L1` \| `L0+L1`, set by taste-recognition elevation) |
+
+## Index sync and proactive governance
+
+Use **/memory-govern** to keep INDEX in sync with `memory/project/` and `memory/share/` and optionally run proactive governance:
+
+- **Sync**: A script removes orphan index rows (INDEX entries whose note file no longer exists) and detects unindexed notes; the model then generates INDEX rows for each unindexed note so retrieval stays accurate.
+- **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
+
+Run `/memory-govern` in Cursor whenever you add or update shared memories (e.g. after `git submodule update`), or when you want to tidy the index and get governance suggestions. No Node.js script is required. See [Commands Reference — /memory-govern](/en/guide/commands-reference#memory-govern).
 
 ## Memory Governance
 
@@ -147,7 +138,7 @@ sequenceDiagram
     participant AU as audit.log
 
     rect rgb(245, 250, 255)
-    Note over U,LM: 1) Memory capture and write governance (/remember, heartbeat session distillation, or workflow taste sniffing)
+    Note over U,LM: 1) Memory capture and write governance (three paths: automatic / manual / workflow taste sniffing)
     U->>A: /remember or heartbeat trigger
     A->>TR: Extract taste + pattern alignment + elevation, produce payloads (7 fields + layer)
     TR-->>A: payloads[] (only elevation-approved entries)

@@ -4,6 +4,13 @@
 
 ## 工作原理
 
+记忆系统包含**检索**与**写入**两方面：
+
+- **检索（每轮）**：对话开始时自动从记忆库取出最相关笔记并注入上下文，供 AI 带着你的「经验」回答。
+- **写入（三种途径）**：记忆通过自动捕获（心跳会话提炼）、手动捕获（/remember、/init）、品味嗅探（工作流内置）进入记忆库；详见下文 [记忆写入](#记忆写入)。
+
+每轮对话中的检索流程可简化为：
+
 ```
 对话开始
   ↓
@@ -24,59 +31,35 @@ AI 带着你的"经验"回答
 
 ## 记忆写入
 
-记忆写入**仅由用户或工作流环节触发，不会自动执行**。沉淀来源有两类：
+记忆写入有三种途径：**自动捕获**（心跳触发的会话提炼）、**手动捕获**（/remember、/init 等）、**品味嗅探**（工作流内置）。
 
-1. **主动记忆捕获**：使用 **/remember**；**会话提炼**由**心跳**自动触发（新会话时若距上次提炼超过 30 分钟，自动入队最多 3 个已完结会话，由 lingxi-session-distill 后台子代理提炼，source=heartbeat）；**/init** 属于初始化流程中的可选写入（先生成候选，仅在你明确选择后才写入）。
-2. **工作流内置品味嗅探**：在 task / plan / build / review 等环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
+### 自动捕获：心跳会话提炼
 
-主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理校验后调用 **memory-write** skill 完成映射、治理与门控并直接写入 memory/project/、memory/share/ 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。taste-recognition 在识别后会做**模式靠拢**与**升维判定**（写/不写、L0/L1），仅判定为写的条目才会产出 payload 并传入 lingxi-memory；lingxi-memory **不执行评分**，只做校验并调用 memory-write 执行映射、治理与门控。想了解 taste-recognition 如何识别“品味”并形成扩展 payload 契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)；想了解 lingxi-memory 的治理与写入细节，见 [记忆治理与写入](/guide/memory-governance-and-write)。
+灵犀在**新会话开始时**会检查：若距上次会话提炼已超过 30 分钟，则自动入队最多 3 个已完结、尚未提炼的会话，由后台 **lingxi-session-distill** 子代理异步获取会话内容、经 taste-recognition 提炼并写入记忆（payload 的 source=heartbeat）。主会话无需等待，提炼在后台完成。你可在 `.cursor/.lingxi/workspace/audit.log` 中查看 `heartbeat.triggered`、`heartbeat.distillation_completed` 等事件。
 
-### 主动记忆捕获
+### 手动捕获：/remember 与 /init
 
 | 命令/机制        | 用途                                                                                   |
 | ---------------- | -------------------------------------------------------------------------------------- |
 | **/remember**    | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
-| **心跳会话提炼** | 自动：新会话时若距上次提炼超过 30 分钟，入队最多 3 个已完结会话，由后台子代理异步提炼并写入（source=heartbeat） |
-| **/memory-govern** | 同步 INDEX 与 project/share（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库主动治理（合并/改写/归档建议，经你确认后写回） |
+| **/init**        | 初始化时可选写入：引导收集项目信息后先生成记忆候选清单，仅在你明确选择后才写入         |
 
-/remember 与心跳会话提炼为日常沉淀记忆的主要入口；工作流中的品味嗅探则在你使用 task/plan/build/review 时在情境驱动下自动收集选择并写入，无需单独发命令。
-
-### 初始化时可选写入
-
-**/init** 在引导收集项目信息后，会先给出记忆候选清单；默认跳过写入，只有在你明确选择写入策略（如 all/partial）后，才会把确认的候选转为记忆。此为初始化流程的额外产物，非常规记忆捕获方式；若需在日常开发中写入记忆，请使用 **/remember**；会话范围的提炼由**心跳**自动完成，无需单独命令。
-
-**门控**：合并或替换已有记忆时需要你确认；新建记忆在 confidence 为 high 时可静默写入，medium/low 时需确认。
-
-### /remember — 即时记忆
-
-你可以随时使用 `/remember` 主动写入记忆：
+/remember 为日常主动沉淀的主要入口，可随时使用：
 
 ```
 /remember <记忆描述>
 ```
 
-**示例：**
+示例：`/remember 吸取刚才这个 bug 的经验`、`/remember 始终使用 pnpm 而不是 npm`。  
+/init 为项目初始化时的可选写入，非常规捕获路径。
 
-```
-/remember 吸取刚才这个 bug 的经验
-/remember 始终使用 pnpm 而不是 npm
-/remember 这个项目的 API 返回格式必须遵循 RESTful 规范
-```
+**门控**：合并或替换已有记忆时需要你确认；新建记忆在 confidence 为 high 时可静默写入，medium/low 时需确认。
 
-### 会话提炼（心跳自动）
+### 品味嗅探：工作流内置
 
-灵犀在**新会话开始时**会检查：若距上次会话提炼已超过 30 分钟，则自动入队最多 3 个已完结、尚未提炼的会话，由后台 **lingxi-session-distill** 子代理异步获取会话内容、经 taste-recognition 提炼并写入记忆（payload 的 source=heartbeat）。主会话无需等待，提炼在后台完成。你可在 `.cursor/.lingxi/workspace/audit.log` 中查看 `heartbeat.triggered`、`heartbeat.distillation_completed` 等事件。
+在 task / plan / build / review 等 **Skill** 环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
 
-### /memory-govern — 同步索引与主动治理
-
-使用 **/memory-govern** 可保持 INDEX 与 `memory/project/`、`memory/share/` 一致，并可选择执行主动治理：
-
-- **同步**：脚本会删除孤儿索引行（INDEX 中有但对应 note 文件已不存在），并检测未索引的 note；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
-- **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
-
-在添加或更新共享记忆后（例如执行 `git submodule update` 后），或在希望整理索引并获取治理建议时，在 Cursor 中运行 `/memory-govern` 即可。无需单独执行 Node.js 脚本。详见 [命令参考 — /memory-govern](/guide/commands-reference#memory-govern)。
-
-### 记忆的结构
+## 记忆的结构
 
 每条记忆对应 taste-recognition 产出的**扩展 payload**（7 个业务字段 + **layer**），lingxi-memory 仅接受 **payloads 数组**。字段定义与识别边界见 [开发者品味](/guide/how-to-recognize-developer-taste)：
 
@@ -90,6 +73,15 @@ AI 带着你的"经验"回答
 | confidence | 置信度   |
 | apply      | 是否进入 share（`project` \| `team`） |
 | layer      | 层级（`L0` \| `L1` \| `L0+L1`，由 taste-recognition 升维判定填写） |
+
+## 索引同步与主动治理
+
+使用 **/memory-govern** 可保持 INDEX 与 `memory/project/`、`memory/share/` 一致，并可选择执行主动治理：
+
+- **同步**：脚本会删除孤儿索引行（INDEX 中有但对应 note 文件已不存在），并检测未索引的 note；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
+- **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
+
+在添加或更新共享记忆后（例如执行 `git submodule update` 后），或在希望整理索引并获取治理建议时，在 Cursor 中运行 `/memory-govern` 即可。无需单独执行 Node.js 脚本。详见 [命令参考 — /memory-govern](/guide/commands-reference#memory-govern)。
 
 ## 记忆治理
 
@@ -146,7 +138,7 @@ sequenceDiagram
     participant AU as audit.log
 
     rect rgb(245, 250, 255)
-    Note over U,LM: 一、记忆沉淀与写入治理（/remember、心跳会话提炼或工作流品味嗅探）
+    Note over U,LM: 一、记忆沉淀与写入治理（三种途径：自动捕获/手动捕获/品味嗅探）
     U->>A: /remember 或心跳触发
     A->>TR: 提取品味 + 模式靠拢 + 升维判定，生成 payloads(7字段+layer)
     TR-->>A: payloads[]（仅判定为写的条目）

@@ -7,6 +7,7 @@
 Under a multi-entry and decoupled process model, LingXi advances work from "decidable goals" to "executable implementation" to "verifiable delivery":
 
 - Use `task` to lock goal, scope, acceptance criteria, and architecture-level decisions
+- Use `vet` to review task document quality and support high-quality requirement and acceptance design (optional, repeatable)
 - Use `plan` to refine implementation paths and break work down, reducing `build` failure rate
 - Use `build` to execute the implementation-and-testing loop, while supporting both with-plan and skip-plan inputs (so simple tasks can still go straight to implementation)
 - Use `review` to run independent acceptance audits by requirement IDs (`F`) and close the evidence loop
@@ -24,18 +25,20 @@ Recommended progression:
 Workflow properties:
 
 - Every step can be skipped on demand
-- Commands are decoupled; entry points are independent
+- Entry points are decoupled; invoke each workflow Skill explicitly (e.g. `/task`, `/plan`)
 
 ### Multi-task Characteristics
 
 The workflow naturally supports parallel tasks. `taskId` is the unique context anchor:
 
 - Artifacts are named and isolated by `taskId`: `001.task.*`, `001.plan.*`, `001.testcase.*`, `001.review.*`
-- Commands can explicitly switch between tasks via `taskId`; single-task serial flow is not required
-- If `taskId` is omitted, commands can fall back to the latest task number for convenience
+- You can explicitly switch between tasks via `taskId` when invoking workflow skills; single-task serial flow is not required
+- If `taskId` is omitted, skills fall back to the latest task number for convenience
 - In multi-task scenarios, passing `taskId` explicitly is recommended to avoid ambiguity
 
 ## Command Roles
+
+Workflow steps are driven by **Skills**; `/task`, `/plan`, etc. are explicit triggers (manual or explicit invocation only, not auto-loaded by semantic match). Below are the roles and usage of each step.
 
 ### /task — Lock Goal and Boundaries (Architecture Level)
 

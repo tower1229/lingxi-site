@@ -22,18 +22,17 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ```text
 .cursor/
-├── commands/              # 命令入口
-│   ├── task.md
-│   ├── plan.md
-│   ├── build.md
-│   ├── review.md
+├── commands/              # 辅助命令入口（init、remember、memory-govern 等）
+│   ├── init.md
+│   ├── remember.md
+│   ├── memory-govern.md
 │   └── ...
-├── skills/                # 执行逻辑
-│   ├── task-executor/
-│   ├── vet-executor/
-│   ├── plan-executor/
-│   ├── build-executor/
-│   ├── review-executor/
+├── skills/                # 执行逻辑（工作流 + 记忆等）
+│   ├── task/              # 工作流：task 文档
+│   ├── vet/
+│   ├── plan/
+│   ├── build/
+│   ├── review/
 │   ├── reviewer-doc-consistency/
 │   ├── reviewer-security/
 │   ├── reviewer-performance/
@@ -94,7 +93,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 | 规划任务       | `/plan`  | 复杂任务，需要拆分步骤和测试用例 |
 | 直接构建       | `/build` | 简单任务，直接开始写代码         |
 
-灵犀工作流命令**默认作用于当前最新任务**，同时也支持多任务用法，详见 [核心工作流 - 多任务支持](/guide/core-workflow#多任务支持)。
+灵犀工作流（Skills）**默认作用于当前最新任务**，同时也支持多任务用法，详见 [核心工作流 - 多任务特性](/guide/core-workflow#多任务特性multi-task)。
 
 ## 下一步
 

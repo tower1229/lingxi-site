@@ -8,7 +8,7 @@
 
 ### 是否必须安装 Node.js？
 
-**基础工作流不必须**。仅使用 `/task`、`/vet`、`/plan`、`/build`、`/review`、`/remember`、`/init` 等命令时，无需本机安装 Node.js。
+**基础工作流不必须**。使用 **task/vet/plan/build/review** Skill（如输入 `/task`、`/plan` 等）或 **/remember**、**/init** 等命令时，无需本机安装 Node.js。
 
 在以下情况需要 Node.js：
 
@@ -31,7 +31,7 @@
 
 ### 灵犀的 /plan、/build 与 Cursor 自带的 Plan/Build 有何关系？
 
-**可互补**。灵犀的 `/plan` 和 `/build` 围绕 **task 文档**（`.cursor/.lingxi/tasks/`），并与 vet、review 等命令组成可解耦、按需推进的工作流。Cursor 自带的 Plan 模式与 Build 功能可在合适场景下替代或配合使用，例如在 Cursor Plan 模式下直接使用其内置 build，跳过灵犀的 `/build`。详见 [核心工作流](/guide/core-workflow)。
+**可互补**。灵犀的 **plan** 和 **build** Skill 围绕 **task 文档**（`.cursor/.lingxi/tasks/`），并与 vet、review 等 Skill 组成可解耦、按需推进的工作流。Cursor 自带的 Plan 模式与 Build 功能可在合适场景下替代或配合使用，例如在 Cursor Plan 模式下直接使用其内置 build，跳过灵犀的 build skill。详见 [核心工作流](/guide/core-workflow)。
 
 ---
 
@@ -45,6 +45,6 @@
 
 ## 更多
 
-- [命令参考](/guide/commands-reference) — 所有命令语法与参数
+- [命令与工作流参考](/guide/commands-reference) — 工作流 Skills 与命令语法与参数
 - [快速开始](/guide/quick-start) — 安装与第一个任务
 - [GitHub 仓库](https://github.com/tower1229/LingXi) — 源码与 Issues

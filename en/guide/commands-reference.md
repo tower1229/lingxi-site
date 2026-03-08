@@ -1,14 +1,14 @@
-# Commands Reference
+# Commands and Workflow Reference
 
-This page lists all LingXi commands with syntax and purpose. For workflow flow and examples see [Core Workflow](/en/guide/core-workflow); for memory-related commands see [Memory System](/en/guide/memory-system).
+This page lists **workflow Skills** and **helper commands** in LingXi. For workflow flow and examples see [Core Workflow](/en/guide/core-workflow); for memory-related commands see [Memory System](/en/guide/memory-system).
 
-## Workflow Commands
+## Workflow Skills
 
-### /task
+The workflow (task → vet → plan → build → review) is driven by **Skills**. Invoke them explicitly by typing `/task`, `/plan`, `/build`, `/review`, or `/vet` (Cursor shows the matching skill) or by natural language (e.g. “run task”, “plan task 001”). **Workflow Skills are for manual or explicit invocation only**; they are not auto-loaded by semantic match, to keep context lean.
 
-```
-/task <description>
-```
+### task
+
+**Trigger:** `/task <description>` or natural language “create task…”
 
 Creates a task document to lock goal, boundaries, and acceptance criteria. LingXi auto-generates a task ID (001, 002...) and title, creates `.cursor/.lingxi/tasks/001.task.<title>.md`, and guides requirement refinement and confirmation.
 
@@ -18,11 +18,9 @@ Creates a task document to lock goal, boundaries, and acceptance criteria. LingX
 
 ---
 
-### /vet
+### vet
 
-```
-/vet [taskId]
-```
+**Trigger:** `/vet [taskId]` or “review task document”
 
 Multi-dimensional review of the task document (completeness, consistency, feasibility, edge cases, etc.). Produces no files; results and suggestions appear in chat. Can be run multiple times.
 
@@ -32,11 +30,9 @@ Multi-dimensional review of the task document (completeness, consistency, feasib
 
 ---
 
-### /plan
+### plan
 
-```
-/plan [taskId]
-```
+**Trigger:** `/plan [taskId]` or “plan task…”
 
 Generates implementation-level planning and test cases from the task document, with `F→T→TC` mapping. Use for complex tasks or when you need a clear execution path (optional for simple tasks).
 
@@ -46,11 +42,9 @@ Generates implementation-level planning and test cases from the task document, w
 
 ---
 
-### /build
+### build
 
-```
-/build [taskId]
-```
+**Trigger:** `/build [taskId]` or “implement task…”
 
 Executes implementation from the task document and (optional) plan. Plan-driven when plan exists; otherwise task-driven (skip-plan), which must complete testcase and coverage checks before coding. For `unit/integration`, enforce test-before-implementation loop.
 
@@ -60,11 +54,9 @@ Executes implementation from the task document and (optional) plan. Plan-driven 
 
 ---
 
-### /review
+### review
 
-```
-/review [taskId]
-```
+**Trigger:** `/review [taskId]` or “review delivery”
 
 Runs independent acceptance audit by requirement IDs (`F`) and produces a review report: Pass/Fail per `F` with evidence references. If evidence is missing or unverifiable, that `F` must Fail and overall conclusion cannot be Pass.
 
@@ -88,9 +80,7 @@ Write a memory proactively at any time. LingXi converts the description into str
 
 **Output:** Memory note(s) under `memory/project/` or `memory/share/` and INDEX update.
 
-See [Memory System](/en/guide/memory-system).
-
-**Session distillation (automatic):** When you start a **new conversation**, if it has been more than 30 minutes since the last run, LingXi automatically enqueues up to 3 finished, unrefined sessions and has the **lingxi-session-distill** subagent refine them asynchronously in the background (payload `source=heartbeat`). No user command is required; you can check audit events such as `heartbeat.distillation_completed` in `.cursor/.lingxi/workspace/audit.log`.
+See [Memory System](/en/guide/memory-system). Memory writing has **three capture paths**: **automatic** (heartbeat session distillation), **manual** (this command and /init), and **workflow taste sniffing** (context-driven during workflow Skills); see the “Automatic capture” section in Memory System for session distillation.
 
 ---
 

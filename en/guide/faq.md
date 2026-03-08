@@ -8,7 +8,7 @@ LingXi requires the **latest stable Cursor**. Ensure Cursor is installed and wor
 
 ### Do I need Node.js?
 
-**Not for the basic workflow.** You can use `/task`, `/vet`, `/plan`, `/build`, `/review`, `/remember`, and `/init` without Node.js on your machine.
+**Not for the basic workflow.** Using **task/vet/plan/build/review** skills (e.g. `/task`, `/plan`) or **/remember**, **/init** and other commands does not require Node.js on your machine.
 
 You need Node.js when:
 
@@ -31,7 +31,7 @@ From the **project root**, run **`yarn lx:uninstall`** or **`npm run lx:uninstal
 
 ### How do LingXi’s /plan and /build relate to Cursor’s built-in Plan/Build?
 
-They **complement each other**. LingXi’s `/plan` and `/build` are centered on **task documents** (`.cursor/.lingxi/tasks/`) and work with vet/review in a decoupled, on-demand workflow. Cursor’s Plan mode and Build feature can replace or combine with them when appropriate (e.g. using Cursor’s built-in build in Plan mode and skipping LingXi’s `/build`). See [Core Workflow](/en/guide/core-workflow).
+They **complement each other**. LingXi’s **plan** and **build** skills are centered on **task documents** (`.cursor/.lingxi/tasks/`) and work with vet/review in a decoupled, on-demand workflow. Cursor’s Plan mode and Build feature can replace or combine with them when appropriate (e.g. using Cursor’s built-in build in Plan mode and skipping LingXi’s build skill). See [Core Workflow](/en/guide/core-workflow).
 
 ---
 
@@ -45,6 +45,6 @@ LingXi applies **automatic governance**: taste-recognition runs **elevation** (w
 
 ## More
 
-- [Commands Reference](/en/guide/commands-reference) — Syntax and parameters for all commands
+- [Commands and Workflow Reference](/en/guide/commands-reference) — Workflow skills and command syntax
 - [Quick Start](/en/guide/quick-start) — Installation and first task
 - [GitHub repository](https://github.com/tower1229/LingXi) — Source and Issues

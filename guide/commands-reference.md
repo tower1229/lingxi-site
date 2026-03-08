@@ -1,14 +1,14 @@
-# 命令参考
+# 命令与工作流参考
 
-本文档集中列出灵犀提供的所有命令的语法与用途。流程说明与示例见 [核心工作流](/guide/core-workflow)，记忆相关命令详见 [记忆系统](/guide/memory-system)。
+本文档集中列出灵犀提供的**工作流 Skills** 与**辅助命令**的用法。流程说明与示例见 [核心工作流](/guide/core-workflow)，记忆相关命令详见 [记忆系统](/guide/memory-system)。
 
-## 工作流命令
+## 工作流 Skills
 
-### /task
+工作流（task → vet → plan → build → review）由 **Skills** 驱动。通过输入 `/task`、`/plan`、`/build`、`/review`、`/vet`（Cursor 会列出同名 Skill）或自然语言（如「执行 task」「做任务规划」）显式触发对应 Skill。**工作流 Skills 仅支持手动或显式调用**，不会根据语义自动加载，以节省上下文。
 
-```
-/task <需求描述>
-```
+### task
+
+**触发**：`/task <需求描述>` 或自然语言「创建任务…」
 
 创建任务文档，用于锁定目标、边界与验收标准。灵犀会自动生成任务编号（001, 002...）和标题，并创建 `.cursor/.lingxi/tasks/001.task.<标题>.md`，引导需求提纯与确认。
 
@@ -18,11 +18,9 @@
 
 ---
 
-### /vet
+### vet
 
-```
-/vet [taskId]
-```
+**触发**：`/vet [taskId]` 或「审查 task 文档」
 
 对 task 文档进行多维度审查（完整性、一致性、可行性、边界条件等），不产出文件，仅在对话中给出审查结果与建议。可多次执行以迭代优化。
 
@@ -32,11 +30,9 @@
 
 ---
 
-### /plan
+### plan
 
-```
-/plan [taskId]
-```
+**触发**：`/plan [taskId]` 或「规划任务…」
 
 基于 task 文档生成实施级方案与测试用例，建立 `F→T→TC` 映射；适用于复杂任务或需要明确执行路径时（简单任务可跳过）。
 
@@ -46,11 +42,9 @@
 
 ---
 
-### /build
+### build
 
-```
-/build [taskId]
-```
+**触发**：`/build [taskId]` 或「实现任务…」
 
 根据 task 文档与（可选的）plan 文档执行实现。存在 plan 文档时为 Plan-driven；无 plan 时为 Task-driven（skip-plan），需先补齐 testcase 与覆盖校验，再进入编码。对 `unit/integration` 执行先测后实现闭环。
 
@@ -60,11 +54,9 @@
 
 ---
 
-### /review
+### review
 
-```
-/review [taskId]
-```
+**触发**：`/review [taskId]` 或「审查交付」
 
 按需求编号（F）做独立验收审计并生成审查报告：逐条判定 Pass/Fail，附证据引用；证据缺失或不可验证时该 F 必须 Fail，整体结论不得判通过。
 
@@ -88,9 +80,7 @@
 
 **产出**：记忆笔记（写入 `memory/project/` 或 `memory/share/` 并更新 INDEX）。
 
-详见 [记忆系统](/guide/memory-system)。
-
-**会话提炼（自动）**：灵犀在**新会话开始时**若距上次会话提炼已超过 30 分钟，会自动入队最多 3 个已完结、未提炼的会话，由后台 **lingxi-session-distill** 子代理异步提炼并写入记忆（payload 的 source=heartbeat）。无需用户执行任何命令；写入结果可通过 audit 中的 `heartbeat.distillation_completed` 事件查看。
+详见 [记忆系统](/guide/memory-system)。记忆写入有三种途径：**自动捕获**（心跳会话提炼）、**手动捕获**（本命令与 /init）、**品味嗅探**（工作流 Skills 情境驱动）；会话提炼说明见记忆系统「自动捕获」一节。
 
 ---
 

@@ -22,18 +22,17 @@ After running the remote install script, you will get the following LingXi direc
 
 ```text
 .cursor/
-├── commands/              # Command entry points
-│   ├── task.md
-│   ├── plan.md
-│   ├── build.md
-│   ├── review.md
+├── commands/              # Helper command entry points (init, remember, memory-govern, etc.)
+│   ├── init.md
+│   ├── remember.md
+│   ├── memory-govern.md
 │   └── ...
-├── skills/                # Execution logic
-│   ├── task-executor/
-│   ├── vet-executor/
-│   ├── plan-executor/
-│   ├── build-executor/
-│   ├── review-executor/
+├── skills/                # Execution logic (workflow + memory, etc.)
+│   ├── task/              # Workflow: task document
+│   ├── vet/
+│   ├── plan/
+│   ├── build/
+│   ├── review/
 │   ├── reviewer-doc-consistency/
 │   ├── reviewer-security/
 │   ├── reviewer-performance/
@@ -94,7 +93,7 @@ Then you can choose your next step:
 | Plan the task        | `/plan`  | Complex task needing step breakdown and test cases |
 | Build directly       | `/build` | Simple task, start coding right away               |
 
-LingXi workflow commands **act on the latest task by default**, and also support multi-task usage. See [Core Workflow — Multi-task support](/en/guide/core-workflow#multi-task-support).
+LingXi workflow (Skills) **act on the latest task by default**, and also support multi-task usage. See [Core Workflow — Multi-task](/en/guide/core-workflow#multi-task-characteristics).
 
 ## Next Steps
 

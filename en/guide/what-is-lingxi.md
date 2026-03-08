@@ -15,17 +15,17 @@ When working with AI coding tools like Cursor, you likely run into these issues:
 
 ### 🧠 Persistent Memory
 
-LingXi captures your judgments, preferences, and lessons learned during development **when you run /remember** or **when the heartbeat triggers session distillation** (new conversation, >30 min since last run; up to 3 finished sessions refined in the background by lingxi-session-distill), or **when the workflow runs built-in taste sniffing** (task / plan / build / review) and collects your choices, or during **/init** where it first generates candidates and writes only after your explicit choice, distilling them into structured "memory notes." **Memory capture is never automatic**; it is triggered only by these paths. In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
+LingXi captures your judgments, preferences, and lessons learned during development through **three capture paths**: **automatic** (heartbeat-triggered session distillation), **manual** (/remember, /init), and **workflow taste sniffing** (collecting your choices during task/plan/build/review when context calls for it), distilling them into structured "memory notes." In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
 
 ### 🔄 Flexible Workflow
 
-An end-to-end development flow:
+An end-to-end development flow driven by **task, vet, plan, build, review** **Skills**:
 
 ```
-/task → /vet → /plan → /build → /review
+task → vet → plan → build → review
 ```
 
-The flow is composable on demand with decoupled entry points. Simple tasks can go straight to `/build` (or `/task` + `/build`), while complex tasks can add `/vet`, `/plan`, and `/review` as needed. You decide when to use each command.
+Invoke them **explicitly** via `/task`, `/plan`, etc. or natural language (e.g. “run task”). These workflow Skills are for manual or explicit invocation only; they are not auto-loaded by semantic match. The flow is composable on demand with decoupled entry points. Simple tasks can go straight to build (or task + build), while complex tasks can add vet, plan, and review as needed. You decide when to use each skill.
 
 ### 🛡️ Human in the Loop
 
@@ -45,7 +45,7 @@ Using a dual-path retrieval system (semantic + keyword), LingXi injects only 0�
 
 ## How This Differs From Cursor Rules and Other Approaches
 
-LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and a decoupled, on-demand workflow (task / vet / plan / build / review). Memories are captured **via /remember and heartbeat session distillation**, or by **workflow taste sniffing** (task/plan/build/review) when context calls for it, or via **/init** candidate confirmation with optional write, and are injected when relevant in new conversations, rather than fixed hard-coded rules.
+LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and a decoupled, on-demand workflow (task / vet / plan / build / review **Skills**). Memories are captured through **three paths** — **automatic** (heartbeat session distillation), **manual** (/remember, /init), and **workflow taste sniffing** (context-driven during task/plan/build/review) — and injected when relevant in new conversations, rather than fixed hard-coded rules.
 
 ## Next Steps
 

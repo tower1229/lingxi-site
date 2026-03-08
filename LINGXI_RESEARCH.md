@@ -55,21 +55,21 @@ LingXi addresses several key pain points in AI-assisted development:
 
 ### 3.1 Flexible Workflow (可伸缩工作流)
 
-A toolkit of composable commands that follow a software development lifecycle — use all of them for rigorous work, or skip steps for quick tasks:
+A toolkit of composable **Skills** that follow a software development lifecycle — use all of them for rigorous work, or skip steps for quick tasks. Workflow is **skill-driven**: invoke task, vet, plan, build, review **explicitly** via `/task`, `/plan`, `/build`, `/review`, `/vet` (Cursor shows the matching skill) or natural language. These workflow Skills are **manual or explicit invocation only**; they are not auto-loaded by semantic match, to keep context lean.
 
-| Command   | Purpose                                                       | Output                                            |
-| --------- | ------------------------------------------------------------- | ------------------------------------------------- |
-| `/task`   | Create a task document with refined requirements              | `001.task.<title>.md`                             |
-| `/vet`    | Review the task document (optional, repeatable)               | Chat-only feedback                                |
-| `/plan`   | Generate task plan + test cases (optional, for complex tasks) | `001.plan.<title>.md` + `001.testcase.<title>.md` |
-| `/build`  | Execute implementation (plan-driven or req-driven)            | Code changes                                      |
-| `/review` | Multi-dimensional delivery review                             | `001.review.<title>.md`                           |
+| Skill    | Purpose                                                       | Output                                            |
+| -------- | ------------------------------------------------------------- | ------------------------------------------------- |
+| **task**   | Create a task document with refined requirements              | `001.task.<title>.md`                             |
+| **vet**    | Review the task document (optional, repeatable)               | Chat-only feedback                                |
+| **plan**   | Generate task plan + test cases (optional, for complex tasks) | `001.plan.<title>.md` + `001.testcase.<title>.md` |
+| **build**  | Execute implementation (plan-driven or req-driven)            | Code changes                                      |
+| **review** | Multi-dimensional delivery review                             | `001.review.<title>.md`                           |
 
 **Key design choices:**
 
-- **All steps are optional** except `/task` as the entry point
-- **No lifecycle management or state routing** — each command works independently
-- **Multiple entry points** — experienced developers can jump to any stage
+- **task** is the common entry point; all other steps are optional
+- **No lifecycle management or state routing** — each skill works independently
+- **Multiple entry points** — experienced developers can jump to any stage (invoke the corresponding skill)
 - Works with Cursor's built-in plan mode
 
 ### 3.2 Persistent Memory Bank (持久化记忆库)
@@ -81,7 +81,7 @@ The flagship feature — a structured system for capturing, storing, retrieving,
 | **What gets stored** | Judgments, preferences, decisions, conventions, debugging paths, anti-patterns ("taste" / 品味) |
 | **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/project/` and `memory/share/`                     |
 | **Index**            | Single Source of Truth in `memory/INDEX.md`                                                     |
-| **Write entry**      | **Proactive capture**: `/remember`; **session distillation**: heartbeat (automatic when new conversation and >30 min since last run). **Optional during setup**: `/init` (command-triggered only; no automatic capture per turn) |
+| **Write entry**      | **Three capture paths**: **Automatic** — heartbeat-triggered session distillation (new conversation, >30 min since last run). **Manual** — `/remember`, `/init` (optional during setup). **Workflow taste sniffing** — during task/plan/build/review when context calls for it. |
 | **Read entry**       | Automatic retrieval before every response via `memory-retrieve`                                 |
 | **Cross-project**    | `memory/share/` directory (git submodule recommended)                                           |
 
@@ -134,24 +134,25 @@ LingXi is built entirely on Cursor's extension points:
 
 ```
 ┌─────────────────────────────────────────────────┐
-│ Commands (Entry Points)                          │
-│  /task  /plan  /build  /review  /remember  /init │
+│ Workflow (Skill-driven) + Helper Commands        │
+│  task  plan  build  review  vet  (/remember /init) │
 ├─────────────────────────────────────────────────┤
 │ Skills (Execution Logic)                         │
 │  ┌──────────────────┐  ┌─────────────────────┐  │
-│  │ Executor Skills   │  │ Utility Skills      │  │
-│  │  task-executor     │  │  about-lingxi       │  │
-│  │  plan-executor    │  │  ask-questions       │  │
-│  │  build-executor   │  │  skill-creator       │  │
-│  │  review-executor  │  │  write-doc           │  │
-│  │  vet-executor  │  │  style-fusion        │  │
-│  │  workspace-boot   │  │  taste-recognition   │  │
+│  │ Workflow Skills   │  │ Utility Skills      │  │
+│  │  task             │  │  about-lingxi       │  │
+│  │  plan             │  │  ask-questions       │  │
+│  │  build            │  │  skill-creator       │  │
+│  │  review           │  │  taste-recognition   │  │
+│  │  vet              │  │  workspace-bootstrap │  │
 │  └──────────────────┘  └─────────────────────┘  │
 │  ┌──────────────────┐  ┌─────────────────────┐  │
 │  │ Memory Skills     │  │ Reviewer Skills     │  │
 │  │  memory-retrieve  │  │  reviewer-doc-cons  │  │
 │  └──────────────────┘  │  reviewer-security  │  │
 │                         │  reviewer-perf      │  │
+│                         │  reviewer-e2e       │  │
+│                         └─────────────────────┘  │
 │                         │  reviewer-e2e       │  │
 │                         └─────────────────────┘  │
 ├─────────────────────────────────────────────────┤
@@ -182,7 +183,7 @@ LingXi is built entirely on Cursor's extension points:
 
 4. **Convention over Configuration** — File naming conventions (`001.task.<title>.md`), directory structure conventions, unified index format.
 
-5. **Separation of Concerns** — Commands are pure entry points; Skills carry execution logic; Hooks handle automation; Subagents handle isolated tasks.
+5. **Separation of Concerns** — Workflow is skill-driven (task, vet, plan, build, review); helper commands for memory/init; Skills carry execution logic; Hooks handle automation; Subagents handle isolated tasks.
 
 6. **Single Source of Truth (SSoT)** — INDEX.md is the authoritative memory index; notes contain the actual content.
 
@@ -236,16 +237,16 @@ Session start → hook injects convention
 
 ```
 .cursor/
-├── commands/              # Command entry points (Markdown)
+├── commands/              # Helper commands (init, remember, memory-govern)
 ├── skills/                # Execution logic (SKILL.md + references/)
-│   ├── task-executor/
-│   ├── plan-executor/
-│   ├── build-executor/
-│   ├── review-executor/
+│   ├── task/
+│   ├── plan/
+│   ├── build/
+│   ├── review/
+│   ├── vet/
 │   ├── memory-retrieve/
 │   ├── taste-recognition/
 │   ├── about-lingxi/      # Self-documentation skill
-│   ├── style-fusion/      # Writing style learning
 │   ├── skill-creator/     # Meta-skill for creating skills
 │   └── ...
 ├── agents/
@@ -286,8 +287,8 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 ### Quick Start Flow
 
 1. Run `/init` — guided project initialization (collects stack info, patterns, rules)
-2. Run `/task <description>` — create your first task document
-3. Optionally: `/plan`, `/build`, `/review`
+2. Run task skill (e.g. `/task <description>`) — create your first task document
+3. Optionally: plan, build, review skills (e.g. `/plan`, `/build`, `/review`)
 4. Use `/remember` anytime to save learnings
 
 ### Cross-Project Knowledge Sharing
