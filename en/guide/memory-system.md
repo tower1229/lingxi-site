@@ -27,7 +27,6 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 - **Dual-path retrieval**: Semantic search + keyword matching, merged with weighted scoring
 - **Minimal injection**: Only top 0–2 results, avoiding context pollution
-- **Graceful degradation**: Falls back to keyword-only when semantic search is unavailable; stays silent when nothing matches
 
 ## Memory Writing
 
@@ -43,12 +42,6 @@ When you start a **new conversation**, LingXi checks whether it has been more th
 |---------|---------|
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
 | **/init** | Optional write during init: after guiding project-info collection, presents a candidate memory list; writes only after your explicit choice |
-
-/remember is the main entry for day-to-day manual capture. Use it anytime:
-
-```
-/remember <description>
-```
 
 Examples: `/remember Capture the lesson from that bug we just fixed`, `/remember Always use pnpm instead of npm`.  
 /init is optional write during project initialization, not a routine capture path.
