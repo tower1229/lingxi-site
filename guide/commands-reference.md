@@ -90,26 +90,7 @@
 
 详见 [记忆系统](/guide/memory-system)。
 
----
-
-### /extract
-
-```
-/extract
-/extract <时间范围>
-```
-
-对当前会话或指定时间范围内的会话做可沉淀内容提取并写入记忆库。
-
-**参数**：可选。
-
-无参数时提取**当前会话**（适合一轮对话结束后执行）；
-
-带参数时接受自然语言时间范围（如「提炼今天的会话」「提炼最近2天的会话」「1d」「24h」），解析不到有效时间范围则提示错误并终止。
-
-**产出**：记忆笔记（写入 `memory/project/` 或 `memory/share/` 并更新 INDEX）+ lingxi-memory 返回的简报（新建/合并/跳过条数及 Id 列表）。
-
-详见 [记忆系统](/guide/memory-system)。
+**会话提炼（自动）**：灵犀在**新会话开始时**若距上次会话提炼已超过 30 分钟，会自动入队最多 3 个已完结、未提炼的会话，由后台 **lingxi-session-distill** 子代理异步提炼并写入记忆（payload 的 source=heartbeat）。无需用户执行任何命令；写入结果可通过 audit 中的 `heartbeat.distillation_completed` 事件查看。
 
 ---
 
