@@ -31,7 +31,7 @@ Memory writing is **triggered only by you or by the workflow**; it never runs au
 1. **Proactive memory capture**: **/remember** and **/extract**; **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
 2. **Workflow built-in taste sniffing**: During task / plan / build / review, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
 
-The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates, maps, governs, and gates, then writes directly to notes and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates, maps payload to note, governs (TopK), and gates. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste). For lingxi-memory governance and write details, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
+The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates payloads, invokes the **memory-write** skill to map, govern, and gate, then writes directly to memory/project/, memory/share/, and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates and then invokes memory-write to map, govern (TopK), and gate. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste). For lingxi-memory governance and write details, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
 ### Proactive memory capture
 
@@ -39,7 +39,7 @@ The main agent first uses taste-recognition to produce structured payloads, then
 |---------|---------|
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
 | **/extract** | Extract by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
-| **/memory-govern** | Sync INDEX with notes (remove orphan index rows, have the model complete INDEX rows for unindexed notes) and optionally run full-library governance (merge/rewrite/archive suggestions with your confirmation) |
+| **/memory-govern** | Sync INDEX with project/share (remove orphan index rows, have the model complete INDEX rows for unindexed notes) and optionally run full-library governance (merge/rewrite/archive suggestions with your confirmation) |
 
 These are the routine entry points for capturing memory in daily use; workflow taste sniffing also captures choices during task/plan/build/review when context calls for it, without a separate command.
 
@@ -82,7 +82,7 @@ LingXi then aggregates the relevant conversation, uses taste-recognition to extr
 
 ### /memory-govern — Sync index and proactive governance
 
-Use **/memory-govern** to keep INDEX in sync with `notes/` and optionally run proactive governance:
+Use **/memory-govern** to keep INDEX in sync with `memory/project/` and `memory/share/` and optionally run proactive governance:
 
 - **Sync**: A script removes orphan index rows (INDEX entries whose note file no longer exists) and detects unindexed notes; the model then generates INDEX rows for each unindexed note so retrieval stays accurate.
 - **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
@@ -111,12 +111,12 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 ### 1) Pre-write governance (quality threshold)
 
 - **Taste-recognition** runs **pattern alignment** (against a design-pattern catalog), then **elevation** (D1 decision gain, D2 reusability/triggerability, D3 verifiability, D4 stability; 0–2 each, total T). Only when T≥4 and no exception is triggered does it output that entry as a payload with layer (L0/L1/L0+L1); when T≤3 or an exception applies, that entry is not output and the main agent does not call lingxi-memory for it.
-- So only elevation-approved entries enter the **payloads array**. **Lingxi-memory** does not score or elevate; it only: validate payloads → map payload to note → semantic-neighbor TopK governance (merge/replace/veto/new) → gate → write to notes and INDEX.
+- So only elevation-approved entries enter the **payloads array**. **Lingxi-memory** does not score or elevate; it validates, then invokes the **memory-write** skill to: map payload to note → semantic-neighbor TopK governance (merge/replace/veto/new) → gate → write to memory/project/, memory/share/, and INDEX.
 - For taste-recognition responsibility boundaries and common pitfalls, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
 ### 2) Deduplication and conflict governance (semantic-neighbor TopK)
 
-- Run semantic-neighbor TopK retrieval over `notes/`, then decide with `merge / replace / veto / new`.
+- Run semantic-neighbor TopK retrieval over `memory/project/` and `memory/share/`, then decide with `merge / replace / veto / new`.
 - When merging or replacing, maintain `Supersedes` links and sync `INDEX` to preserve a traceable evolution chain.
 - The actual governance logic and gating are performed by the **lingxi-memory** subagent; see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
@@ -134,15 +134,15 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 ### 5) Structure governance (SSoT)
 
 - `INDEX.md` stores only minimal metadata as the authoritative index (SSoT).
-- Full semantic content lives in `notes/*.md`.
-- Supports `active / local / archive` lifecycle layers and cross-project reuse through the `share` directory.
+- Full semantic content lives in `memory/project/*.md` and `memory/share/*.md`.
+- Supports `active / local / archive` lifecycle layers and cross-project reuse through the **memory/share** directory.
 
 ### 6) Audit governance
 
 - Both memory retrieval and memory writing emit audit events to `.cursor/.lingxi/workspace/audit.log`.
 - Audit logs support traceability for queries, hits, adoption decisions, and write actions.
 
-For implementation details, see [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md). For the site’s dedicated page, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
+For implementation details, see [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md) and [memory-write](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/memory-write/SKILL.md). For the site’s dedicated page, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
 ### Governance sequence diagram (write to retrieval injection)
 
@@ -154,7 +154,7 @@ sequenceDiagram
     participant TR as taste-recognition
     participant LM as lingxi-memory subagent
     participant AQ as ask-questions
-    participant N as memory/notes/*.md
+    participant N as memory notes (project & share)
     participant I as memory/INDEX.md
     participant AU as audit.log
 
@@ -216,11 +216,11 @@ Teams can share memory banks via **git submodule**, letting best practices flow 
 
 ### Setting Up a Shared Repository
 
-After adding or updating a shared memory repository, run **/memory-govern** in Cursor to sync INDEX with notes (and optionally run proactive governance). No separate Node.js script is required. If you have not installed LingXi yet, complete [Quick Start](/en/guide/quick-start) first.
+After adding or updating a shared memory repository, run **/memory-govern** in Cursor to sync INDEX with project/share (and optionally run proactive governance). No separate Node.js script is required. If you have not installed LingXi yet, complete [Quick Start](/en/guide/quick-start) first.
 
 ```bash
 # 1. Add shared memory repository
-git submodule add <shareRepoUrl> .cursor/.lingxi/memory/notes/share
+git submodule add <shareRepoUrl> .cursor/.lingxi/memory/share
 
 # 2. Update shared memories
 git submodule update --remote --merge
@@ -230,8 +230,8 @@ git submodule update --remote --merge
 
 ### Sharing Rules
 
-- **Shared directory**: `.cursor/.lingxi/memory/notes/share/`
-- **Identification**: memories with `apply=team` go in `notes/share` for cross-project reuse; `apply=project` stays in the current project only.
+- **Shared directory**: `.cursor/.lingxi/memory/share/`
+- **Identification**: memories with `apply=team` go in **memory/share** for cross-project reuse; `apply=project` stays in the current project (memory/project) only.
 - **Priority**: Project-level memories override shared memories on the same topic
 
 ## Next Steps

@@ -86,7 +86,7 @@ Write a memory proactively at any time. LingXi converts the description into str
 
 **Parameters:** `<description>` is required.
 
-**Output:** Memory note(s) under `.cursor/.lingxi/memory/notes/` and INDEX update.
+**Output:** Memory note(s) under `memory/project/` or `memory/share/` and INDEX update.
 
 See [Memory System](/en/guide/memory-system).
 
@@ -103,7 +103,7 @@ Extracts capturable content from the current conversation or a given time range 
 
 **Parameters:** Optional. Omit for current conversation; pass a time-range description for a scope.
 
-**Output:** Memory notes (written to `.cursor/.lingxi/memory/notes/` and INDEX) plus the lingxi-memory report (created/merged/skipped counts and Id list).
+**Output:** Memory notes (written to `memory/project/` or `memory/share/` and INDEX) plus the lingxi-memory report (created/merged/skipped counts and Id list).
 
 See [Memory System](/en/guide/memory-system).
 
@@ -115,7 +115,7 @@ See [Memory System](/en/guide/memory-system).
 /memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]
 ```
 
-Sync the memory INDEX with `notes/` and optionally run proactive governance. LingXi runs a script to remove orphan index rows (INDEX entries whose note file is missing) and to detect unindexed notes; the model then generates INDEX rows for unindexed notes. Optionally, the model can suggest full-library governance (merge/rewrite/archive); changes are applied only after your confirmation.
+Sync the memory INDEX with `memory/project/` and `memory/share/` and optionally run proactive governance. LingXi runs a script to remove orphan index rows (INDEX entries whose note file is missing) and to detect unindexed notes; the model then generates INDEX rows for unindexed notes. Optionally, the model can suggest full-library governance (merge/rewrite/archive); changes are applied only after your confirmation.
 
 **Parameters:** All optional. `--dry-run`: only run the script and show results, do not write INDEX or call the model. `--skip-govern`: sync and complete unindexed entries only, skip full-library governance. `--root <path>`: memory root (default `.cursor/.lingxi/memory`).
 
@@ -137,7 +137,7 @@ Guided initialization for projects that already have some progress: LingXi first
 
 **Parameters:** None.
 
-**Output:** An initialization summary plus candidate memory list; if you explicitly choose to write, memories are written to `.cursor/.lingxi/memory/notes/` and INDEX is updated. If `.cursor/.lingxi/` is missing, required skeleton directories are created first.
+**Output:** An initialization summary plus candidate memory list; if you explicitly choose to write, memories are written to `memory/project/` or `memory/share/` and INDEX is updated. If `.cursor/.lingxi/` is missing, required skeleton directories are created first.
 
 ---
 

@@ -50,9 +50,8 @@ After running the remote install script, you will get the following LingXi direc
     │   └── ...
     ├── memory/                # Unified memory system
     │   ├── INDEX.md           # Unified index (SSoT)
-    │   ├── notes/             # Flat memory notes (primary search surface)
-    │   │   └── share/         # Shared memory directory (recommended as git submodule)
-    │   └── references/        # Templates and specs
+    │   ├── project/           # Project-level memory notes (primary search surface)
+    │   └── share/             # Shared memory directory (recommended as git submodule)
     └── workspace/             # Workspace
         └── audit.log          # Audit log
 ```
@@ -69,7 +68,7 @@ LingXi will guide you through:
 
 1. **Silent understanding + confirmation of project info** — infer from existing docs/repo structure first, then ask only for missing items
 2. **Generating a candidate memory list** — candidates are produced first; no write by default
-3. **Optional write by your choice** — only when you explicitly choose `all` or `partial`, LingXi writes to `memory/notes/`
+3. **Optional write by your choice** — only when you explicitly choose `all` or `partial`, LingXi writes to `memory/project/` or `memory/share/` (by apply)
 
 If you want to move directly on a concrete requirement, you can start with `/task` first and run `/init` later when needed.
 

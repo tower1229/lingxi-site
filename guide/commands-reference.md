@@ -86,7 +86,7 @@
 
 **参数**：`<记忆描述>` 为必填。
 
-**产出**：记忆笔记（写入 `.cursor/.lingxi/memory/notes/` 并更新 INDEX）。
+**产出**：记忆笔记（写入 `memory/project/` 或 `memory/share/` 并更新 INDEX）。
 
 详见 [记忆系统](/guide/memory-system)。
 
@@ -107,7 +107,7 @@
 
 带参数时接受自然语言时间范围（如「提炼今天的会话」「提炼最近2天的会话」「1d」「24h」），解析不到有效时间范围则提示错误并终止。
 
-**产出**：记忆笔记（写入 `.cursor/.lingxi/memory/notes/` 并更新 INDEX）+ lingxi-memory 返回的简报（新建/合并/跳过条数及 Id 列表）。
+**产出**：记忆笔记（写入 `memory/project/` 或 `memory/share/` 并更新 INDEX）+ lingxi-memory 返回的简报（新建/合并/跳过条数及 Id 列表）。
 
 详见 [记忆系统](/guide/memory-system)。
 
@@ -119,7 +119,7 @@
 /memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]
 ```
 
-同步记忆 INDEX 与 `notes/`，并可选择执行主动治理。灵犀会先运行脚本删除孤儿索引行（INDEX 中有但对应 note 文件不存在），并检测未索引的 note；再由模型为未索引 note 生成 INDEX 行。可选地，模型可对整库提出治理建议（合并/改写/归档），仅在你确认后写回。
+同步记忆 INDEX 与 `memory/project/`、`memory/share/`，并可选择执行主动治理。灵犀会先运行脚本删除孤儿索引行（INDEX 中有但对应 note 文件不存在），并检测未索引的 note；再由模型为未索引 note 生成 INDEX 行。可选地，模型可对整库提出治理建议（合并/改写/归档），仅在你确认后写回。
 
 **参数**：均可选。`--dry-run`：仅执行脚本并输出结果，不写回 INDEX、不调用模型。`--skip-govern`：只做同步与补全未索引条目，跳过全库治理。`--root <path>`：指定 memory 根目录（默认 `.cursor/.lingxi/memory`）。
 
@@ -141,7 +141,7 @@
 
 **参数**：无。
 
-**产出**：初始化校对摘要与记忆候选清单；若你明确选择写入，再写入 `.cursor/.lingxi/memory/notes/` 并更新 INDEX。若 `.cursor/.lingxi/` 缺失，会先补齐所需目录骨架。
+**产出**：初始化校对摘要与记忆候选清单；若你明确选择写入，再写入 `memory/project/` 或 `memory/share/` 并更新 INDEX。若 `.cursor/.lingxi/` 缺失，会先补齐所需目录骨架。
 
 ---
 

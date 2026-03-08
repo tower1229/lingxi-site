@@ -79,11 +79,11 @@ The flagship feature — a structured system for capturing, storing, retrieving,
 | Aspect               | Detail                                                                                          |
 | -------------------- | ----------------------------------------------------------------------------------------------- |
 | **What gets stored** | Judgments, preferences, decisions, conventions, debugging paths, anti-patterns ("taste" / 品味) |
-| **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/notes/`                                          |
+| **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/project/` and `memory/share/`                     |
 | **Index**            | Single Source of Truth in `memory/INDEX.md`                                                     |
 | **Write entry**      | **Proactive capture**: `/remember`, `/extract`. **Optional during setup**: `/init` (command-triggered only; no automatic capture per turn) |
 | **Read entry**       | Automatic retrieval before every response via `memory-retrieve`                                 |
-| **Cross-project**    | `memory/notes/share/` directory (git submodule recommended)                                     |
+| **Cross-project**    | `memory/share/` directory (git submodule recommended)                                           |
 
 **Memory lifecycle:**
 
@@ -202,7 +202,7 @@ User input → taste-recognition skill (7-field payload)
       → T ≥ 8 + D2≥1 + D4≥1: write both L0+L1
     → Govern (semantic TopK: merge/replace/veto/new)
     → Gate (human confirmation for non-high-confidence)
-    → Direct file write (notes/*.md + INDEX.md)
+    → Direct file write (memory/project/*.md, memory/share/*.md + INDEX.md)
     → Audit log entry
 ```
 
@@ -259,9 +259,8 @@ Session start → hook injects convention
     ├── tasks/              # Task documents (001.task.*.md, etc.)
     ├── memory/
     │   ├── INDEX.md        # SSoT memory index
-    │   ├── notes/          # Flat memory files
-    │   │   └── share/      # Cross-project shared memories (git submodule)
-    │   └── references/     # Templates
+    │   ├── project/        # Project-level memory files
+    │   └── share/          # Cross-project shared memories (git submodule)
     ├── style-fusion/       # Style profile data
     └── workspace/          # Audit log, session state
 ```
@@ -295,7 +294,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ```bash
 # Add shared memory repo as submodule
-git submodule add <shareRepoUrl> .cursor/.lingxi/memory/notes/share
+git submodule add <shareRepoUrl> .cursor/.lingxi/memory/share
 
 # Sync memory index after adding shared notes
 npm run memory-sync

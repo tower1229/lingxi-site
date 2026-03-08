@@ -50,9 +50,8 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
     │   └── ...
     ├── memory/                # 统一记忆系统
     │   ├── INDEX.md           # 统一索引（SSoT）
-    │   ├── notes/             # 扁平记忆文件（语义+关键词混合检索的主搜索面）
-    │   │   └── share/         # 共享记忆目录（推荐作为 git submodule，跨项目复用）
-    │   └── references/        # 模板与规范
+    │   ├── project/           # 项目级记忆文件（语义+关键词混合检索的主搜索面）
+    │   └── share/             # 共享记忆目录（推荐作为 git submodule，跨项目复用）
     └── workspace/             # 工作空间
         └── audit.log          # 审计日志
 ```
@@ -69,7 +68,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 1. **静默理解并校对项目信息** — 优先从现有文档与仓库结构整理技术栈、常用模式、开发规则等，仅在缺失时追问补齐
 2. **生成记忆候选清单** — 默认只生成候选，不直接写入
-3. **按你的选择可选写入** — 仅当你明确选择 `all` 或 `partial` 时，才写入 `memory/notes/`
+3. **按你的选择可选写入** — 仅当你明确选择 `all` 或 `partial` 时，才写入 `memory/project/` 或 `memory/share/`（由 apply 决定）
 
 如果你希望先直接推进具体需求，也可以先使用 `/task` 创建任务，再按需补做 `/init`。
 

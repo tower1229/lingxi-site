@@ -29,7 +29,7 @@ AI 带着你的"经验"回答
 1. **主动记忆捕获**：使用 **/remember** 与 **/extract**；**/init** 属于初始化流程中的可选写入（先生成候选，仅在你明确选择后才写入）。
 2. **工作流内置品味嗅探**：在 task / plan / build / review 等环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
 
-主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理完成校验、映射、治理与门控后直接写入 notes 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。taste-recognition 在识别后会做**模式靠拢**与**升维判定**（写/不写、L0/L1），仅判定为写的条目才会产出 payload 并传入 lingxi-memory；lingxi-memory **不执行评分**，只做校验、按 payload 映射、治理与门控。想了解 taste-recognition 如何识别“品味”并形成扩展 payload 契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)；想了解 lingxi-memory 的治理与写入细节，见 [记忆治理与写入](/guide/memory-governance-and-write)。
+主 Agent 先经 taste-recognition 产出结构化 payload，再以 **payloads 数组**调用 lingxi-memory 子代理；子代理校验后调用 **memory-write** skill 完成映射、治理与门控并直接写入 memory/project/、memory/share/ 与 INDEX，并向主对话返回**简报**（新建/合并/跳过条数及 Id 列表）。taste-recognition 在识别后会做**模式靠拢**与**升维判定**（写/不写、L0/L1），仅判定为写的条目才会产出 payload 并传入 lingxi-memory；lingxi-memory **不执行评分**，只做校验并调用 memory-write 执行映射、治理与门控。想了解 taste-recognition 如何识别“品味”并形成扩展 payload 契约，见 [开发者品味](/guide/how-to-recognize-developer-taste)；想了解 lingxi-memory 的治理与写入细节，见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
 ### 主动记忆捕获
 
@@ -37,7 +37,7 @@ AI 带着你的"经验"回答
 | ------------- | -------------------------------------------------------------------------------------- |
 | **/remember** | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
 | **/extract**  | 按会话或时间范围提取：对当前会话或指定时间范围内的对话做可沉淀提取，批量写入并得到简报 |
-| **/memory-govern** | 同步 INDEX 与 notes（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库主动治理（合并/改写/归档建议，经你确认后写回） |
+| **/memory-govern** | 同步 INDEX 与 project/share（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库主动治理（合并/改写/归档建议，经你确认后写回） |
 
 二者为日常沉淀记忆的惯用入口；工作流中的品味嗅探则在你使用 task/plan/build/review 时在情境驱动下自动收集选择并写入，无需单独发命令。
 
@@ -83,7 +83,7 @@ AI 带着你的"经验"回答
 
 ### /memory-govern — 同步索引与主动治理
 
-使用 **/memory-govern** 可保持 INDEX 与 `notes/` 一致，并可选择执行主动治理：
+使用 **/memory-govern** 可保持 INDEX 与 `memory/project/`、`memory/share/` 一致，并可选择执行主动治理：
 
 - **同步**：脚本会删除孤儿索引行（INDEX 中有但对应 note 文件已不存在），并检测未索引的 note；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
 - **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
@@ -112,12 +112,12 @@ AI 带着你的"经验"回答
 ### 1) 写入前治理（质量门槛）
 
 - **taste-recognition** 在识别可沉淀内容后，会先做**模式靠拢**（参考设计模式目录），再做**升维判定**（D1 决策增益、D2 可复用/可触发、D3 可验证性、D4 稳定性，每维 0～2 分，总分 T）。仅当 T≥4 且未触犯例外时，才产出该条 payload 并标注 layer（L0/L1/L0+L1）；T≤3 或触犯例外时不产出该条，主 Agent 也不会因此条调用 lingxi-memory。
-- 因此只有通过升维判定的条目才会进入 **payloads 数组**；**lingxi-memory** 不执行评分或升维，只做：校验 payload → 按 payload 映射生成 note → 语义近邻 TopK 治理（merge/replace/veto/new）→ 门控 → 写入 notes 与 INDEX。
+- 因此只有通过升维判定的条目才会进入 **payloads 数组**；**lingxi-memory** 不执行评分或升维，校验后调用 **memory-write** skill 执行：按 payload 映射生成 note → 语义近邻 TopK 治理（merge/replace/veto/new）→ 门控 → 写入 memory/project/、memory/share/ 与 INDEX。
 - 关于 taste-recognition 的职责边界与常见误区，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ### 2) 去重与冲突治理（语义近邻 TopK）
 
-- 对 `notes/` 执行语义近邻检索（TopK）后，按 `merge / replace / veto / new` 四类动作决策。
+- 对 `memory/project/`、`memory/share/` 执行语义近邻检索（TopK）后，按 `merge / replace / veto / new` 四类动作决策。
 - 发生合并或替换时维护 `Supersedes` 关系，并同步更新 `INDEX`，保证演进链条可追踪。
 - 具体治理逻辑与门控由 **lingxi-memory** 子代理执行，详见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
@@ -135,15 +135,15 @@ AI 带着你的"经验"回答
 ### 5) 结构治理（SSoT）
 
 - `INDEX.md` 只存最小元数据，作为权威索引（SSoT）。
-- 真实语义内容保存在 `notes/*.md`。
-- 支持 `active / local / archive` 生命周期分层，以及 `share` 目录的跨项目复用。
+- 真实语义内容保存在 `memory/project/*.md`、`memory/share/*.md`。
+- 支持 `active / local / archive` 生命周期分层，以及 **memory/share** 目录的跨项目复用。
 
 ### 6) 审计治理
 
 - 记忆检索与记忆写入都会写入审计事件到 `.cursor/.lingxi/workspace/audit.log`。
 - 审计日志用于追溯 query、命中结果、采纳决策与写入动作，便于排错与合规审查。
 
-更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md)；官网专题见 [记忆治理与写入](/guide/memory-governance-and-write)。
+更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md) 与 [memory-write](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/memory-write/SKILL.md)；官网专题见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
 ### 治理时序图（从写入到检索注入）
 
@@ -155,7 +155,7 @@ sequenceDiagram
     participant TR as taste-recognition
     participant LM as lingxi-memory子代理
     participant AQ as ask-questions
-    participant N as memory/notes/*.md
+    participant N as memory/project 与 memory/share 下的 note
     participant I as memory/INDEX.md
     participant AU as audit.log
 
@@ -217,11 +217,11 @@ sequenceDiagram
 
 ### 设置共享仓库
 
-添加或更新共享记忆仓库后，在 Cursor 中运行 **/memory-govern** 即可同步 INDEX 与 notes（并可选择执行主动治理）。无需单独执行 Node.js 脚本。若项目尚未安装灵犀，请先完成 [快速开始](/guide/quick-start)。
+添加或更新共享记忆仓库后，在 Cursor 中运行 **/memory-govern** 即可同步 INDEX 与 project/share（并可选择执行主动治理）。无需单独执行 Node.js 脚本。若项目尚未安装灵犀，请先完成 [快速开始](/guide/quick-start)。
 
 ```bash
 # 1. 添加共享记忆仓库
-git submodule add <shareRepoUrl> .cursor/.lingxi/memory/notes/share
+git submodule add <shareRepoUrl> .cursor/.lingxi/memory/share
 
 # 2. 更新共享记忆
 git submodule update --remote --merge
@@ -231,8 +231,8 @@ git submodule update --remote --merge
 
 ### 共享规则
 
-- **共享目录**：`.cursor/.lingxi/memory/notes/share/`
-- **识别标准**：payload 的 `apply` 为 `team` 的记忆可放入 `notes/share` 跨项目复用，为 `project` 的仅当前项目。
+- **共享目录**：`.cursor/.lingxi/memory/share/`
+- **识别标准**：payload 的 `apply` 为 `team` 的记忆可放入 **memory/share** 跨项目复用，为 `project` 的仅当前项目（memory/project）。
 - **优先级**：项目记忆覆盖共享记忆（相同主题时）
 
 ## 下一步
