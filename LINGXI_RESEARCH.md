@@ -81,7 +81,7 @@ The flagship feature — a structured system for capturing, storing, retrieving,
 | **What gets stored** | Judgments, preferences, decisions, conventions, debugging paths, anti-patterns ("taste" / 品味) |
 | **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/project/` and `memory/share/`                     |
 | **Index**            | Single Source of Truth in `memory/INDEX.md`                                                     |
-| **Write entry**      | **Proactive capture**: `/remember`, `/extract`. **Optional during setup**: `/init` (command-triggered only; no automatic capture per turn) |
+| **Write entry**      | **Proactive capture**: `/remember`; **session distillation**: heartbeat (automatic when new conversation and >30 min since last run). **Optional during setup**: `/init` (command-triggered only; no automatic capture per turn) |
 | **Read entry**       | Automatic retrieval before every response via `memory-retrieve`                                 |
 | **Cross-project**    | `memory/share/` directory (git submodule recommended)                                           |
 
@@ -226,7 +226,7 @@ Session start → hook injects convention
   "principles": ["short reference", "full path"],
   "choice": "short reference",
   "evidence": "Don't write full paths",
-  "source": "remember|extract|choice|init",
+  "source": "remember|heartbeat|choice|init",
   "confidence": "low|medium|high",
   "apply": "project|team"
 }

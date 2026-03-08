@@ -76,7 +76,7 @@ taste-recognition is not only used for `/remember`. Every path that can write to
 | Trigger | Input | payload.source |
 |--------|--------|----------------|
 | **/remember** | Current user input or user-specified “what to remember” | `remember` |
-| **/extract** | Current conversation or a given time range (aggregated text) | `extract` |
+| **Heartbeat session distillation** | Finished sessions (enqueued when new conversation starts and >30 min since last run; aggregated text fetched by background subagent) | `heartbeat` |
 | **/init** write | User-confirmed init drafts (typed collection results) | `init` |
 | **Workflow taste sniffing** | Choices collected via ask-questions in task / plan / build / review | `choice` |
 
@@ -138,7 +138,7 @@ The value of taste-recognition can be summarized in three points:
 
 1. **Turn implicit judgment into a retrievable decision structure.** Only content in the shape “scene + principle candidates + actual choice” is stored, so the memory bank can be reliably matched in future conversations and reused your way.  
 2. **Filter by value at the door.** Via pattern alignment and elevation, low-value or one-off content never becomes a payload and never enters memory—noise is controlled at the source.  
-3. **Multiple entry points, one contract.** /remember, /extract, /init, and workflow taste sniffing all use the same pipeline and the same payload spec, so the memory system stays consistently governable.
+3. **Multiple entry points, one contract.** /remember, heartbeat session distillation, /init, and workflow taste sniffing all use the same pipeline and the same payload spec, so the memory system stays consistently governable.
 
 So “taste recognition” is not about labeling conversation; it’s **providing the only valid input shape for the memory system and letting through only judgments and principles that are worth reusing long term.**  
 That’s how LingXi can be “in tune with you” and work your way.

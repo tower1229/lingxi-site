@@ -14,7 +14,7 @@ Inject 0–2 most relevant memories
 AI responds with your "experience"
 ```
 
-**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing is never automatic**; it is triggered only when you run a command or when the workflow runs built-in taste sniffing (see below). **Proactive memory capture** uses **/remember** and **/extract**; **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
+**Memory retrieval** is triggered automatically each turn by the session convention. **Memory writing is never automatic**; it is triggered only when you run a command or when the workflow runs built-in taste sniffing (see below). **Proactive memory capture** uses **/remember** and **heartbeat session distillation** (when you start a new conversation and it has been more than 30 minutes since the last run, up to 3 finished sessions are enqueued and refined in the background by lingxi-session-distill, `source=heartbeat`); **/init** can optionally write memories when you initialize a project (confirmed drafts → memory), which is part of the init flow, not a routine capture entry point. The process stays silent and does not interrupt your workflow.
 
 ## Memory Retrieval
 
@@ -28,7 +28,7 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 Memory writing is **triggered only by you or by the workflow**; it never runs automatically in the background. There are two main sources of memory capture:
 
-1. **Proactive memory capture**: **/remember** and **/extract**; **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
+1. **Proactive memory capture**: **/remember** and **heartbeat session distillation** (automatic when starting a new conversation if >30 min since last run; up to 3 finished sessions refined in background by lingxi-session-distill, `source=heartbeat`); **/init** is an optional write path during initialization (candidates first, write only after your explicit choice).
 2. **Workflow built-in taste sniffing**: During task / plan / build / review, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
 
 The main agent first uses taste-recognition to produce structured payloads, then calls the lingxi-memory subagent with a **payloads array**. The subagent validates payloads, invokes the **memory-write** skill to map, govern, and gate, then writes directly to memory/project/, memory/share/, and INDEX and returns a **brief report** to the main conversation (counts of created/merged/skipped and Id list). Taste-recognition performs **pattern alignment** and **elevation** (write or not, L0/L1) after identifying capturable content; only entries that pass elevation are output as payloads and sent to lingxi-memory. **Lingxi-memory does not perform scoring** — it only validates and then invokes memory-write to map, govern (TopK), and gate. For how taste-recognition identifies "taste" and produces the extended payload contract, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste). For lingxi-memory governance and write details, see [Memory Governance and Write](/en/guide/memory-governance-and-write).
@@ -38,14 +38,14 @@ The main agent first uses taste-recognition to produce structured payloads, then
 | Command | Purpose |
 |---------|---------|
 | **/remember** | Write now: extract memory from current input (and optional context) and write |
-| **/extract** | Extract by conversation or time range: extract capturable content from the current conversation or a given time range, then batch-write and get a report |
+| **Heartbeat session distillation** | Automatic: when you start a new conversation and it has been >30 min since last run, enqueue up to 3 finished sessions; the lingxi-session-distill subagent refines them asynchronously and writes (`source=heartbeat`) |
 | **/memory-govern** | Sync INDEX with project/share (remove orphan index rows, have the model complete INDEX rows for unindexed notes) and optionally run full-library governance (merge/rewrite/archive suggestions with your confirmation) |
 
 These are the routine entry points for capturing memory in daily use; workflow taste sniffing also captures choices during task/plan/build/review when context calls for it, without a separate command.
 
 ### Optional write during init
 
-After guiding project-info collection, **/init** first presents a candidate memory list. Writing is skipped by default; only when you explicitly choose a write strategy (for example, all/partial) will confirmed candidates be written as memories. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember** or **/extract**.
+After guiding project-info collection, **/init** first presents a candidate memory list. Writing is skipped by default; only when you explicitly choose a write strategy (for example, all/partial) will confirmed candidates be written as memories. This is an optional byproduct of the init flow, not a routine capture path; for day-to-day memory capture, use **/remember**; session-scoped distillation is done automatically by the **heartbeat** (no separate command).
 
 **Gating**: Merging or replacing existing memories requires your confirmation; new memories with confidence **high** can be written silently; **medium** or **low** require confirmation.
 
@@ -64,21 +64,9 @@ Use `/remember` anytime to write a memory:
 /remember API responses in this project must follow RESTful conventions
 ```
 
-### /extract — Extract by conversation or time range
+### Session distillation (heartbeat, automatic)
 
-Refine capturable content from the current conversation or a given time range and write to the memory bank.
-
-```
-/extract
-/extract Refine today's conversation
-/extract Refine the last 2 days
-/extract 1d
-/extract 24h
-```
-
-- **No arguments**: Refines the **current conversation** — use after a round of dialogue.
-- **With arguments**: Accepts natural-language time ranges (e.g. “today's conversation”, “last N days”, “Nd”, “Nh”). If the time range cannot be parsed, an error is shown and the command stops.  
-LingXi then aggregates the relevant conversation, uses taste-recognition to extract payloads, sends them once to lingxi-memory, and shows you the report. See [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste) for trigger points and recognition criteria.
+When you start a **new conversation**, LingXi checks whether it has been more than 30 minutes since the last session distillation. If so, it automatically enqueues up to 3 finished, unrefined sessions. The **lingxi-session-distill** subagent runs in the background, fetches conversation content, uses taste-recognition to produce payloads (`source=heartbeat`), and writes to memory. The main conversation does not wait; distillation runs asynchronously. You can inspect `heartbeat.triggered`, `heartbeat.distillation_completed`, and related events in `.cursor/.lingxi/workspace/audit.log`.
 
 ### /memory-govern — Sync index and proactive governance
 
@@ -159,8 +147,8 @@ sequenceDiagram
     participant AU as audit.log
 
     rect rgb(245, 250, 255)
-    Note over U,LM: 1) Memory capture and write governance (/remember, /extract, or workflow taste sniffing)
-    U->>A: /remember or /extract
+    Note over U,LM: 1) Memory capture and write governance (/remember, heartbeat session distillation, or workflow taste sniffing)
+    U->>A: /remember or heartbeat trigger
     A->>TR: Extract taste + pattern alignment + elevation, produce payloads (7 fields + layer)
     TR-->>A: payloads[] (only elevation-approved entries)
     A->>LM: Invoke write (payloads + conversation_id)

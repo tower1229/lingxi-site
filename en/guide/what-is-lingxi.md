@@ -15,7 +15,7 @@ When working with AI coding tools like Cursor, you likely run into these issues:
 
 ### 🧠 Persistent Memory
 
-LingXi captures your judgments, preferences, and lessons learned during development **when you run /remember or /extract**, or **when the workflow runs built-in taste sniffing** (task / plan / build / review) and collects your choices, or during **/init** where it first generates candidates and writes only after your explicit choice, distilling them into structured "memory notes." **Memory capture is never automatic**; it is triggered only by these paths. In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
+LingXi captures your judgments, preferences, and lessons learned during development **when you run /remember** or **when the heartbeat triggers session distillation** (new conversation, >30 min since last run; up to 3 finished sessions refined in the background by lingxi-session-distill), or **when the workflow runs built-in taste sniffing** (task / plan / build / review) and collects your choices, or during **/init** where it first generates candidates and writes only after your explicit choice, distilling them into structured "memory notes." **Memory capture is never automatic**; it is triggered only by these paths. In every new conversation, LingXi **automatically retrieves and injects** the most relevant memories, so AI truly "knows" how you work.
 
 ### 🔄 Flexible Workflow
 
@@ -45,7 +45,7 @@ Using a dual-path retrieval system (semantic + keyword), LingXi injects only 0�
 
 ## How This Differs From Cursor Rules and Other Approaches
 
-LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and a decoupled, on-demand workflow (task / vet / plan / build / review). Memories are captured **via /remember and /extract**, or by **workflow taste sniffing** (task/plan/build/review) when context calls for it, or via **/init** candidate confirmation with optional write, and are injected when relevant in new conversations, rather than fixed hard-coded rules.
+LingXi provides **persistent memory plus a structured workflow**, unlike static Cursor Rules or one-off prompts: it focuses on cross-session "learning" and a decoupled, on-demand workflow (task / vet / plan / build / review). Memories are captured **via /remember and heartbeat session distillation**, or by **workflow taste sniffing** (task/plan/build/review) when context calls for it, or via **/init** candidate confirmation with optional write, and are injected when relevant in new conversations, rather than fixed hard-coded rules.
 
 ## Next Steps
 
