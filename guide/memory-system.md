@@ -69,12 +69,12 @@ AI 带着你的"经验"回答
 
 ## 索引同步与主动治理
 
-使用 **/memory-govern** 可保持 INDEX 与 `memory/project/`、`memory/share/` 一致，并可选择执行主动治理：
+使用 **memory-govern** Skill（在 Cursor 中输入 `/memory-govern`）可保持 INDEX 与 `memory/project/`、`memory/share/` 一致，并可选择执行主动治理：
 
 - **同步**：脚本会删除孤儿索引行（INDEX 中有但对应 note 文件已不存在），并检测未索引的 note；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
 - **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
 
-在添加或更新共享记忆后（例如执行 `git submodule update` 后），或在希望整理索引并获取治理建议时，在 Cursor 中运行 `/memory-govern` 即可。无需单独执行 Node.js 脚本。详见 [命令参考 — /memory-govern](/guide/commands-reference#memory-govern)。
+在添加或更新共享记忆后（例如执行 `git submodule update` 后），或在希望整理索引并获取治理建议时，在 Cursor 中运行 **memory-govern** Skill（如输入 `/memory-govern`）即可。无需单独执行 Node.js 脚本。详见 [命令参考 — memory-govern](/guide/commands-reference#memory-govern)。
 
 ## 记忆治理
 
@@ -188,7 +188,7 @@ sequenceDiagram
 
 ### 设置共享仓库
 
-添加或更新共享记忆仓库后，在 Cursor 中运行 **/memory-govern** 即可同步 INDEX 与 project/share（并可选择执行主动治理）。无需单独执行 Node.js 脚本。若项目尚未安装灵犀，请先完成 [快速开始](/guide/quick-start)。
+添加或更新共享记忆仓库后，在 Cursor 中运行 **memory-govern** Skill（如输入 `/memory-govern`）即可同步 INDEX 与 project/share（并可选择执行主动治理）。无需单独执行 Node.js 脚本。若项目尚未安装灵犀，请先完成 [快速开始](/guide/quick-start)。
 
 ```bash
 # 1. 添加共享记忆仓库
@@ -197,7 +197,7 @@ git submodule add <shareRepoUrl> .cursor/.lingxi/memory/share
 # 2. 更新共享记忆
 git submodule update --remote --merge
 
-# 3. 同步记忆索引与可选治理：在 Cursor 中运行 /memory-govern
+# 3. 同步记忆索引与可选治理：在 Cursor 中运行 memory-govern Skill（如 /memory-govern）
 ```
 
 ### 共享规则

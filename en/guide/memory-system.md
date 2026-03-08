@@ -69,12 +69,12 @@ Each memory corresponds to an **extended payload** (7 business fields + **layer*
 
 ## Index sync and proactive governance
 
-Use **/memory-govern** to keep INDEX in sync with `memory/project/` and `memory/share/` and optionally run proactive governance:
+Use the **memory-govern** skill (e.g. type `/memory-govern` in Cursor) to keep INDEX in sync with `memory/project/` and `memory/share/` and optionally run proactive governance:
 
 - **Sync**: A script removes orphan index rows (INDEX entries whose note file no longer exists) and detects unindexed notes; the model then generates INDEX rows for each unindexed note so retrieval stays accurate.
 - **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
 
-Run `/memory-govern` in Cursor whenever you add or update shared memories (e.g. after `git submodule update`), or when you want to tidy the index and get governance suggestions. No Node.js script is required. See [Commands Reference — /memory-govern](/en/guide/commands-reference#memory-govern).
+Run the **memory-govern** skill (e.g. `/memory-govern`) in Cursor whenever you add or update shared memories (e.g. after `git submodule update`), or when you want to tidy the index and get governance suggestions. No Node.js script is required. See [Commands Reference — memory-govern](/en/guide/commands-reference#memory-govern).
 
 ## Memory Governance
 
@@ -188,7 +188,7 @@ Teams can share memory banks via **git submodule**, letting best practices flow 
 
 ### Setting Up a Shared Repository
 
-After adding or updating a shared memory repository, run **/memory-govern** in Cursor to sync INDEX with project/share (and optionally run proactive governance). No separate Node.js script is required. If you have not installed LingXi yet, complete [Quick Start](/en/guide/quick-start) first.
+After adding or updating a shared memory repository, run the **memory-govern** skill (e.g. `/memory-govern`) in Cursor to sync INDEX with project/share (and optionally run proactive governance). No separate Node.js script is required. If you have not installed LingXi yet, complete [Quick Start](/en/guide/quick-start) first.
 
 ```bash
 # 1. Add shared memory repository
@@ -197,7 +197,7 @@ git submodule add <shareRepoUrl> .cursor/.lingxi/memory/share
 # 2. Update shared memories
 git submodule update --remote --merge
 
-# 3. Sync memory index and optional governance: run /memory-govern in Cursor
+# 3. Sync memory index and optional governance: run the memory-govern skill (e.g. /memory-govern) in Cursor
 ```
 
 ### Sharing Rules

@@ -22,10 +22,9 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 
 ```text
 .cursor/
-├── commands/              # 辅助命令入口（init、remember、memory-govern 等）
+├── commands/              # 辅助命令入口（init、remember 等）
 │   ├── init.md
 │   ├── remember.md
-│   ├── memory-govern.md
 │   └── ...
 ├── skills/                # 执行逻辑（工作流 + 记忆等）
 │   ├── task/              # 工作流：task 文档

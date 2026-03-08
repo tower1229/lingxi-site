@@ -84,7 +84,9 @@ See [Memory System](/en/guide/memory-system). Memory writing has **three capture
 
 ---
 
-### /memory-govern
+### memory-govern (index sync and proactive governance)
+
+Provided by the **memory-govern** skill; invoke by typing `/memory-govern` or natural language (e.g. “sync memory index”).
 
 ```
 /memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]

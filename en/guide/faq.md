@@ -15,11 +15,11 @@ You need Node.js when:
 - Running **workspace-bootstrap** directly (e.g. `.cursor/skills/workspace-bootstrap/scripts/workspace-bootstrap.mjs`)
 - Running **lx:uninstall** (the uninstall script is Node-based)
 
-To **sync the memory index** after adding or updating shared memories, run **/memory-govern** in Cursor; no Node.js is required for that command.
+To **sync the memory index** after adding or updating shared memories, run the **memory-govern** skill (e.g. `/memory-govern`) in Cursor; no Node.js is required.
 
 ### How do I sync the memory index after adding shared memories?
 
-Run **/memory-govern** in Cursor. It syncs INDEX with notes (removes orphan index rows, has the model complete INDEX rows for unindexed notes) and can optionally run full-library governance. See [Memory System — Cross-project sharing](/en/guide/memory-system#cross-project-sharing).
+Run the **memory-govern** skill (e.g. `/memory-govern`) in Cursor. It syncs INDEX with notes (removes orphan index rows, has the model complete INDEX rows for unindexed notes) and can optionally run full-library governance. See [Memory System — Cross-project sharing](/en/guide/memory-system#cross-project-sharing).
 
 ### How do I uninstall LingXi?
 

@@ -237,7 +237,7 @@ Session start → hook injects convention
 
 ```
 .cursor/
-├── commands/              # Helper commands (init, remember, memory-govern)
+├── commands/              # Helper commands (init, remember)
 ├── skills/                # Execution logic (SKILL.md + references/)
 │   ├── task/
 │   ├── plan/

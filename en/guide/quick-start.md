@@ -22,10 +22,9 @@ After running the remote install script, you will get the following LingXi direc
 
 ```text
 .cursor/
-├── commands/              # Helper command entry points (init, remember, memory-govern, etc.)
+├── commands/              # Helper command entry points (init, remember, etc.)
 │   ├── init.md
 │   ├── remember.md
-│   ├── memory-govern.md
 │   └── ...
 ├── skills/                # Execution logic (workflow + memory, etc.)
 │   ├── task/              # Workflow: task document

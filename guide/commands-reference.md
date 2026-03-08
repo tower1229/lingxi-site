@@ -84,7 +84,9 @@
 
 ---
 
-### /memory-govern
+### memory-govern（索引同步与主动治理）
+
+由 **memory-govern** Skill 提供，通过输入 `/memory-govern` 或自然语言（如「同步记忆索引」）触发。
 
 ```
 /memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]

@@ -15,11 +15,11 @@
 - 直接运行 **workspace-bootstrap**（如 `.cursor/skills/workspace-bootstrap/scripts/workspace-bootstrap.mjs`）
 - 运行 **lx:uninstall**（卸载脚本为 Node 实现）
 
-**同步记忆索引**（例如添加或更新共享记忆后）请直接在 Cursor 中运行 **/memory-govern**，无需 Node.js。
+**同步记忆索引**（例如添加或更新共享记忆后）请直接在 Cursor 中运行 **memory-govern** Skill（如输入 `/memory-govern`），无需 Node.js。
 
 ### 添加共享记忆后如何同步索引？
 
-在 Cursor 中运行 **/memory-govern**。它会同步 INDEX 与 notes（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库治理。详见 [记忆系统 - 跨项目共享](/guide/memory-system#跨项目共享)。
+在 Cursor 中运行 **memory-govern** Skill（如输入 `/memory-govern`）。它会同步 INDEX 与 notes（删除孤儿索引行、由模型补全未索引条目的 INDEX 行），并可选择执行全库治理。详见 [记忆系统 - 跨项目共享](/guide/memory-system#跨项目共享)。
 
 ### 如何卸载灵犀？
 

@@ -50,14 +50,14 @@
 - **团队级**（apply=team）：note 写入 `.cursor/.lingxi/memory/share/MEM-<id>.md`，便于跨项目复用（如 git submodule）。
 - **审计**：每次新建/更新/删除 note 或更新 INDEX 后，在同一流程内调用 `append-memory-audit.mjs` 向 `.cursor/.lingxi/workspace/audit.log` 追加 NDJSON 事件（如 `memory_note_created`、`memory_note_updated`、`memory_note_deleted`、`memory_index_updated`），便于追溯与合规。
 
-## 主动治理：/memory-govern
+## 主动治理：memory-govern
 
-除 lingxi-memory 在**写入时**执行的治理（TopK、merge/replace/veto/new）外，灵犀提供 **/memory-govern** 用于**索引同步与整库主动治理**：
+除 lingxi-memory 在**写入时**执行的治理（TopK、merge/replace/veto/new）外，灵犀提供 **memory-govern** Skill 用于**索引同步与整库主动治理**：
 
 1. **同步**：由 memory-govern Skill 下的脚本扫描 `memory/project/`、`memory/share/` 与 INDEX，**删除孤儿索引行**（INDEX 中有但对应 note 文件不存在），并上报**未索引 note**；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
 2. **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
 
-在添加或更新共享记忆后（例如执行 `git submodule update` 后），或希望整理索引并获取治理建议时，在 Cursor 中运行 **/memory-govern** 即可。无需单独执行 Node.js 脚本。详见 [记忆系统 — /memory-govern](/guide/memory-system#memory-govern--同步索引与主动治理) 与 [命令参考](/guide/commands-reference#memory-govern)。
+在添加或更新共享记忆后（例如执行 `git submodule update` 后），或希望整理索引并获取治理建议时，在 Cursor 中运行 **memory-govern** Skill（如输入 `/memory-govern`）即可。无需单独执行 Node.js 脚本。详见 [记忆系统 — 索引同步与主动治理](/guide/memory-system#索引同步与主动治理) 与 [命令参考](/guide/commands-reference#memory-govern)。
 
 ## 相关链接
 
