@@ -1,5 +1,9 @@
 # Core Workflow
 
+## When to Use This Workflow
+
+The LingXi workflow is intended for tasks that are **larger than ~3 person-days and of medium-to-high complexity**. Such tasks benefit from upfront architecture and solution design; **task + vet** help architects (or whoever owns the design) shape the architecture and overall plan. For simpler tasks, using your IDE’s Agent mode is enough; there is no need to start the LingXi workflow.
+
 ## Top-Level Workflow Design
 
 ### Design Goals

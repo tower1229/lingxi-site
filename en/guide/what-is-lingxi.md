@@ -29,7 +29,9 @@ An end-to-end development flow driven by **task, vet, plan, build, review** **Sk
 task → vet → plan → build → review
 ```
 
-Invoke them **explicitly** via `/task`, `/plan`, etc. or natural language (e.g. “run task”). These workflow Skills are for manual or explicit invocation only; they are not auto-loaded by semantic match. The flow is composable on demand with decoupled entry points. Simple tasks can go straight to build (or task + build), while complex tasks can add vet, plan, and review as needed. You decide when to use each skill.
+Invoke them **explicitly** via `/task`, `/plan`, etc. or natural language (e.g. “run task”). These workflow Skills are for manual or explicit invocation only; they are not auto-loaded by semantic match. The flow is composable on demand with decoupled entry points; you decide when to use each skill.
+
+**When to use this workflow**: The LingXi workflow is intended for tasks that are **larger than ~3 person-days and of medium-to-high complexity** — such tasks benefit from upfront architecture and solution design; **task + vet** help architects (or whoever owns the design) shape the architecture and overall plan. For simpler tasks, using your IDE's Agent mode is enough; there is no need to start the LingXi workflow.
 
 ### 🛡️ Human in the Loop
 
