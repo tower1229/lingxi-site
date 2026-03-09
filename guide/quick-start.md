@@ -92,7 +92,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 | 规划任务       | `/plan`  | 复杂任务，需要拆分步骤和测试用例 |
 | 直接构建       | `/build` | 简单任务，直接开始写代码         |
 
-灵犀工作流（Skills）**默认作用于当前最新任务**，同时也支持多任务用法，详见 [核心工作流 - 多任务特性](/guide/core-workflow#多任务特性multi-task)。
+灵犀工作流（Skills）**默认作用于当前最新任务**，同时也支持多任务用法，详见 [核心工作流 - 多任务特性](/guide/core-workflow#多任务特性-multi-task)。
 
 ## 下一步
 

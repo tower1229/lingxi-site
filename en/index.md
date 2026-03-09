@@ -22,17 +22,17 @@ features:
     details: Covers task → vet → plan → build → review end-to-end. Compose the flow by task complexity; every step is optional.
   - icon: 🗂️
     title: Persistent Memory
-    details: Capture your decisions, preferences, and lessons via /remember, /extract, or workflow taste sniffing; they become memory notes and are injected when relevant in new conversations.
+    details: Capture decisions, preferences, and lessons via /remember, automatic session distillation, or workflow taste sniffing; they become memory notes and are injected when relevant in new conversations.
   - icon: 🚦
     title: Human in the Loop
     details: You confirm key decisions and control when to apply each step, so AI stays assistive instead of overreaching.
-  - icon: 🧭
-    title: Context Management
-    details: Smart retrieval plus minimal injection keeps the model focused on what matters and reduces noisy context.
   - icon: ⚡
     title: Ready to Use
     details: Install via script and start in your existing project right away; begin with /init, /task, or other commands as needed.
   - icon: 🤝
     title: Team Knowledge Sharing
     details: Share memory banks across projects via git submodule so best practices and lessons learned can be reused by the team.
+  - icon: 🔄
+    title: Self-iterate
+    details: Continuously collects system run state during operation, audits on a heartbeat interval, and auto-improves low-risk issues.
 ---

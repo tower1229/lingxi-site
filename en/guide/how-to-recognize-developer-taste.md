@@ -99,9 +99,9 @@ taste-recognition is not only used for `/remember`. Every path that can write to
 | Trigger | Input | payload.source |
 |--------|--------|----------------|
 | `/remember` | Current user input or user-specified “what to remember” | `remember` |
-| Heartbeat session distillation | Full dialogue of finished sessions (enqueued when a new conversation starts and >30 min since last run; fetched by background subagent) | `heartbeat` |
+| Automatic session distillation | Full dialogue of finished sessions (enqueued when a new conversation starts and >30 min since last run; fetched by background subagent) | `heartbeat` |
 | `/init` write | User-confirmed init drafts | `init` |
-| Workflow taste sniffing | Choices collected via ask-questions in task / plan / build / review | `choice` |
+| Workflow taste sniffing | Choices collected via ask-questions in task / plan / build / review (see [Taste Sniffing](/en/guide/taste-sniffing)) | `choice` |
 
 From any entry point, **the same type-aware recognition and elevation logic** runs, and the **same extended payload contract** is produced. That keeps every note in memory in a consistent shape, so governance (TopK, merge/replace/veto) and retrieval work reliably. Different types can get different retrieval strategies later (e.g. preference/counter-signals for precision, domain/troubleshooting for recall); the current implementation still uses a single dual-path strategy. See [Memory System](/en/guide/memory-system) and the main-repo memory-retrieve docs for strategy details.
 

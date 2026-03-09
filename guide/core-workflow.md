@@ -175,3 +175,4 @@
 
 - 完整命令语法与参数见 [命令参考](/guide/commands-reference)
 - 了解 [记忆系统](/guide/memory-system) 如何在工作流中沉淀经验
+- 各环节情境驱动的品味嗅探内容见 [品味嗅探](/guide/taste-sniffing)

@@ -7,7 +7,7 @@
 记忆系统包含**检索**与**写入**两方面：
 
 - **检索（每轮）**：对话开始时自动从记忆库取出最相关笔记并注入上下文，供 AI 带着你的「经验」回答。
-- **写入（三种途径）**：记忆通过自动捕获（心跳会话提炼）、手动捕获（/remember、/init）、品味嗅探（工作流内置）进入记忆库；详见下文 [记忆写入](#记忆写入)。
+- **写入（三种途径）**：记忆通过自动捕获（自动会话提炼）、手动捕获（/remember、/init）、品味嗅探（工作流内置）进入记忆库；详见下文 [记忆写入](#记忆写入)。
 
 每轮对话中的检索流程可简化为：
 
@@ -30,41 +30,41 @@ AI 带着你的"经验"回答
 
 ## 记忆写入
 
-记忆写入有三种途径：**自动捕获**（心跳触发的会话提炼）、**手动捕获**（/remember、/init 等）、**品味嗅探**（工作流内置）。
+记忆写入有三种途径：**自动捕获**（自动会话提炼）、**手动捕获**（/remember、/init 等）、**品味嗅探**（工作流内置）。
 
-### 自动捕获：心跳会话提炼
+### 自动捕获：自动会话提炼
 
 灵犀在**新会话开始时**会检查：若距上次会话提炼已超过 30 分钟，则自动入队最多 3 个已完结、尚未提炼的会话，由后台 **lingxi-session-distill** 子代理异步获取会话内容、经 taste-recognition 提炼并写入记忆（payload 的 source=heartbeat）。主会话无需等待，提炼在后台完成。你可在 `.cursor/.lingxi/workspace/audit.log` 中查看 `heartbeat.triggered`、`heartbeat.distillation_completed` 等事件。
 
 ### 手动捕获：/remember 与 /init
 
-| 命令/机制        | 用途                                                                                   |
-| ---------------- | -------------------------------------------------------------------------------------- |
-| **/remember**    | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                                 |
-| **/init**        | 初始化时可选写入：引导收集项目信息后先生成记忆候选清单，仅在你明确选择后才写入         |
+| 命令/机制     | 用途                                                                           |
+| ------------- | ------------------------------------------------------------------------------ |
+| **/remember** | 即时写入：从当前输入（可结合对话上下文）提取记忆并写入                         |
+| **/init**     | 初始化时可选写入：引导收集项目信息后先生成记忆候选清单，仅在你明确选择后才写入 |
 
-示例：`/remember 吸取刚才这个 bug 的经验`、`/remember 始终使用 pnpm 而不是 npm`。  
+示例：`/remember 吸取刚才这个 bug 的经验`、`/remember 始终使用 pnpm 而不是 npm`。
 /init 为项目初始化时的可选写入，非常规捕获路径。
 
 **门控**：合并或替换已有记忆时需要你确认；新建记忆在 confidence 为 high 时可静默写入，medium/low 时需确认。
 
 ### 品味嗅探：工作流内置
 
-在 task / plan / build / review 等 **Skill** 环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。
+在 task / plan / build / review 等 **Skill** 环节中，当情境需要时，灵犀会通过 ask-questions 收集你的选择，经 taste-recognition 产出 payload（`source=choice`）并写入记忆，无需你额外执行命令。各环节具体嗅探内容（情境、原则、提问与提取方式）见 [品味嗅探](/guide/taste-sniffing)。
 
 ## 记忆的结构
 
 每条记忆对应 taste-recognition 产出的**扩展 payload**（7 个业务字段 + **layer**），lingxi-memory 仅接受 **payloads 数组**。字段定义与识别边界见 [开发者品味](/guide/how-to-recognize-developer-taste)：
 
-| 字段       | 含义     |
-| ---------- | -------- |
-| scene      | 适用场景 |
-| principles | 核心原则 |
-| choice     | 具体选择 |
-| evidence   | 支撑证据 |
-| source     | 来源     |
-| confidence | 置信度   |
-| apply      | 是否进入 share（`project` \| `team`） |
+| 字段       | 含义                                                               |
+| ---------- | ------------------------------------------------------------------ |
+| scene      | 适用场景                                                           |
+| principles | 核心原则                                                           |
+| choice     | 具体选择                                                           |
+| evidence   | 支撑证据                                                           |
+| source     | 来源                                                               |
+| confidence | 置信度                                                             |
+| apply      | 是否进入 share（`project` \| `team`）                              |
 | layer      | 层级（`L0` \| `L1` \| `L0+L1`，由 taste-recognition 升维判定填写） |
 
 ## 索引同步与主动治理
@@ -111,7 +111,10 @@ AI 带着你的"经验"回答
 
 ### 6) 审计治理
 
-- 记忆检索与记忆写入都会写入审计事件到 `.cursor/.lingxi/workspace/audit.log`。
+- 记忆检索与记忆写入都会写入审计事件到 `.cursor/.lingxi/workspace/audit.log`（NDJSON 格式）。
+- **核心事件**（默认写入）：每轮检索的 `memory.retrieve.performed` / `memory.retrieve.skipped`；记忆写入的 `memory_note_*`、`memory_index_updated`；会话提炼与自我迭代的 `heartbeat.*`、`memory.merge.*`、`memory.improvement.*`；以及 Cursor Hook 的 `session_end`、`stop`。
+- **自我迭代机制**（含审计如何作为依据）：见 [自我迭代](/guide/self-iterate)。
+- **Debug 事件**（可选）：若设置环境变量 `LINGXI_AUDIT_DEBUG=1`，会额外写入全部 9 类 Hook 事件（如 `pre_tool_use`、`post_tool_use`）及记忆检索完整性审计（如 `memory.retrieve.missing`），便于排查与健康度指标计算。
 - 审计日志用于追溯 query、命中结果、采纳决策与写入动作，便于排错与合规审查。
 
 更多实现细节见主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md) 与 [memory-write](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/memory-write/SKILL.md)；官网专题见 [记忆治理与写入](/guide/memory-governance-and-write)。

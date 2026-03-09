@@ -19,20 +19,20 @@ hero:
 features:
   - icon: 🧩
     title: 可伸缩工作流
-    details: 从需求到交付覆盖 task → vet → plan → build → review，按任务复杂度自由组合，每一步都可选。
+    details: 从需求到交付，覆盖 task → vet → plan → build → review，按任务复杂度自由组合，每一步都可选。
   - icon: 🗂️
     title: 持久化记忆
-    details: 通过 /remember、/extract 或工作流中的品味嗅探沉淀判断、偏好与经验，形成记忆笔记，并在新对话中按需注入。
+    details: 通过 /remember、自动会话提炼或工作流中的品味嗅探，提取你的判断、偏好与经验，形成记忆笔记，并在新对话中按需注入。
   - icon: 🚦
     title: 人工门控
     details: 关键节点由你确认，默认不越权；可按任务需要启用或跳过相应流程。
-  - icon: 🧭
-    title: 上下文管理
-    details: 基于智能检索与最小注入策略，让模型聚焦关键信息，减少上下文噪音。
   - icon: ⚡
     title: 开箱即用
     details: 通过脚本安装后即可在现有项目使用；你可以按需从 /init、/task 等命令开始。
   - icon: 🤝
     title: 团队经验共享
     details: 通过 git submodule 共享记忆库，让团队最佳实践与踩坑经验在项目间复用。
+  - icon: 🔄
+    title: 自我迭代
+    details: 运行期间持续收集系统运行状态，按心跳间隔审计，对低风险问题自动改进。
 ---

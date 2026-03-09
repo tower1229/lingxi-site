@@ -53,6 +53,8 @@ export default defineConfig({
               items: [
                 { text: '开发者品味', link: '/guide/how-to-recognize-developer-taste' },
                 { text: '记忆治理与写入', link: '/guide/memory-governance-and-write' },
+                { text: '品味嗅探', link: '/guide/taste-sniffing' },
+                { text: '自我迭代', link: '/guide/self-iterate' },
                 { text: '命令参考', link: '/guide/commands-reference' },
                 { text: 'FAQ', link: '/guide/faq' },
               ],
@@ -110,6 +112,8 @@ export default defineConfig({
               items: [
                 { text: 'How to Recognize Developer Taste', link: '/en/guide/how-to-recognize-developer-taste' },
                 { text: 'Memory Governance and Write', link: '/en/guide/memory-governance-and-write' },
+                { text: 'Taste Sniffing', link: '/en/guide/taste-sniffing' },
+                { text: 'Self-iterate', link: '/en/guide/self-iterate' },
                 { text: 'Commands Reference', link: '/en/guide/commands-reference' },
                 { text: 'FAQ', link: '/en/guide/faq' },
               ],

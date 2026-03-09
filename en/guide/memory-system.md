@@ -7,7 +7,7 @@ The memory system is LingXi's core capability — it lets AI **learn your judgme
 The memory system has two sides: **retrieval** and **writing**.
 
 - **Retrieval (every turn)**: When a conversation starts, LingXi automatically pulls the most relevant notes from the memory bank and injects them into context, so the AI can respond with your "experience."
-- **Writing (three paths)**: Memories enter the bank through automatic capture (heartbeat session distillation), manual capture (/remember, /init), or workflow taste sniffing. See [Memory Writing](#memory-writing) below.
+- **Writing (three paths)**: Memories enter the bank through automatic capture (automatic session distillation), manual capture (/remember, /init), or workflow taste sniffing. See [Memory Writing](#memory-writing) below.
 
 The per-turn retrieval flow:
 
@@ -30,9 +30,9 @@ Before each conversation turn, LingXi automatically runs `memory-retrieve` to fi
 
 ## Memory Writing
 
-Memory writing has **three capture paths**: **automatic** (heartbeat-triggered session distillation), **manual** (/remember, /init), and **workflow taste sniffing** (built into task/plan/build/review).
+Memory writing has **three capture paths**: **automatic** (automatic session distillation), **manual** (/remember, /init), and **workflow taste sniffing** (built into task/plan/build/review).
 
-### Automatic capture: heartbeat session distillation
+### Automatic capture: automatic session distillation
 
 When you start a **new conversation**, LingXi checks whether it has been more than 30 minutes since the last session distillation. If so, it automatically enqueues up to 3 finished, unrefined sessions. The **lingxi-session-distill** subagent runs in the background, fetches conversation content, uses taste-recognition to produce payloads (`source=heartbeat`), and writes to memory. The main conversation does not wait; distillation runs asynchronously. You can inspect `heartbeat.triggered`, `heartbeat.distillation_completed`, and related events in `.cursor/.lingxi/workspace/audit.log`.
 
@@ -50,7 +50,7 @@ Examples: `/remember Capture the lesson from that bug we just fixed`, `/remember
 
 ### Workflow taste sniffing (built-in)
 
-During task / plan / build / review **skills**, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed.
+During task / plan / build / review **skills**, when the context calls for it, LingXi uses ask-questions to collect your choices, runs taste-recognition to produce payloads (`source=choice`), and writes them to memory — no separate command needed. For what is sniffed in each phase (context, principles, questions, extraction), see [Taste Sniffing](/en/guide/taste-sniffing).
 
 ## Memory structure
 
@@ -111,7 +111,10 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 
 ### 6) Audit governance
 
-- Both memory retrieval and memory writing emit audit events to `.cursor/.lingxi/workspace/audit.log`.
+- Both memory retrieval and memory writing emit audit events to `.cursor/.lingxi/workspace/audit.log` (NDJSON).
+- **Core events** (written by default): per-turn retrieval `memory.retrieve.performed` / `memory.retrieve.skipped`; write events `memory_note_*`, `memory_index_updated`; session distillation and self-iterate `heartbeat.*`, `memory.merge.*`, `memory.improvement.*`; and Cursor Hook `session_end`, `stop`.
+- **Self-iterate** (how audit feeds into it): see [Self-iterate](/en/guide/self-iterate).
+- **Debug events** (optional): with `LINGXI_AUDIT_DEBUG=1`, all 9 Hook event types (e.g. `pre_tool_use`, `post_tool_use`) and retrieval-integrity events (e.g. `memory.retrieve.missing`) are written for troubleshooting and health metrics.
 - Audit logs support traceability for queries, hits, adoption decisions, and write actions.
 
 For implementation details, see [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md) and [memory-write](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/memory-write/SKILL.md). For the site’s dedicated page, see [Memory Governance and Write](/en/guide/memory-governance-and-write).

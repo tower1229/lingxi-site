@@ -80,7 +80,18 @@ Write a memory proactively at any time. LingXi converts the description into str
 
 **Output:** Memory note(s) under `memory/project/` or `memory/share/` and INDEX update.
 
-See [Memory System](/en/guide/memory-system). Memory writing has **three capture paths**: **automatic** (heartbeat session distillation), **manual** (this command and /init), and **workflow taste sniffing** (context-driven during workflow Skills); see the “Automatic capture” section in Memory System for session distillation.
+See [Memory System](/en/guide/memory-system). Memory writing has **three capture paths**: **automatic** (automatic session distillation), **manual** (this command and /init), and **workflow taste sniffing** (context-driven during workflow Skills; per-phase content in [Taste Sniffing](/en/guide/taste-sniffing)); see the “Automatic capture” section in Memory System for session distillation. Self-iterate is a global feature; see [Self-iterate](/en/guide/self-iterate).
+
+### Automatic tasks and background subagents (no user command)
+
+When you start a **new conversation**, LingXi runs a check and may inject conventions so the main agent invokes a background subagent in step A:
+
+| Type | Trigger | Subagent | Description |
+|-----------|---------|----------|-------------|
+| **Automatic session distillation** | >30 min since last distillation | **lingxi-session-distill** | Enqueue up to 3 unrefined sessions; distill and write to memory in the background (source=heartbeat); main conversation does not wait. |
+| **Self-iterate** | Time since last run exceeds configured interval (default 24 h) | **lingxi-self-iterate** | Run diagnosis and low-risk-only auto-improvements in the background; currently memory-focused, with more of the system to be covered over time. Main conversation does not wait and only consumes a brief report. |
+
+Both tasks are checked and injected automatically; you do not run any command. Audit events are written to `.cursor/.lingxi/workspace/audit.log` (e.g. `heartbeat.triggered`, `heartbeat.distillation_completed`, `memory.improvement.*`). For the full self-iterate description (audit and implementation), see [Self-iterate](/en/guide/self-iterate).
 
 ---
 

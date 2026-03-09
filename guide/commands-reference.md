@@ -80,7 +80,18 @@
 
 **产出**：记忆笔记（写入 `memory/project/` 或 `memory/share/` 并更新 INDEX）。
 
-详见 [记忆系统](/guide/memory-system)。记忆写入有三种途径：**自动捕获**（心跳会话提炼）、**手动捕获**（本命令与 /init）、**品味嗅探**（工作流 Skills 情境驱动）；会话提炼说明见记忆系统「自动捕获」一节。
+详见 [记忆系统](/guide/memory-system)。记忆写入有三种途径：**自动捕获**（自动会话提炼）、**手动捕获**（本命令与 /init）、**品味嗅探**（工作流 Skills 情境驱动，各环节内容见 [品味嗅探](/guide/taste-sniffing)）。会话提炼说明见记忆系统「自动捕获」一节；自我迭代为灵犀全局特性，说明见 [自我迭代](/guide/self-iterate)。
+
+### 自动任务与后台子代理（无需用户输入命令）
+
+灵犀在**新会话开始时**（sessionStart）会执行检查，并视情况向当轮上下文注入约定，由主 Agent 在步骤 A 调用对应后台子代理：
+
+| 类型 | 触发条件 | 子代理 | 说明 |
+|----------|----------|--------|------|
+| **自动会话提炼** | 距上次会话提炼完成 >30 分钟 | **lingxi-session-distill** | 入队最多 3 个未提炼会话，后台异步提炼并写入记忆（source=heartbeat），主会话不等待。 |
+| **自我迭代** | 距上次运行超过设定间隔（默认 24 小时） | **lingxi-self-iterate** | 后台执行诊断与仅 low risk 的自动改进；目前实现包含记忆改进，未来将扩展至全系统。主会话不等待、仅消费简报。 |
+
+两种任务均由系统自动检查与注入，无需你输入任何命令；审计事件可查看 `.cursor/.lingxi/workspace/audit.log`（如 `heartbeat.triggered`、`heartbeat.distillation_completed`、`memory.improvement.*` 等）。自我迭代的完整说明（含审计与实施细节）见 [自我迭代](/guide/self-iterate)。
 
 ---
 

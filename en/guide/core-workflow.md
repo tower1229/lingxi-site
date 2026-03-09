@@ -175,3 +175,4 @@ Workflow steps are driven by **Skills**; `/task`, `/plan`, etc. are explicit tri
 
 - Full syntax and parameters: [Commands Reference](/en/guide/commands-reference)
 - Learn how the [Memory System](/en/guide/memory-system) captures experience in workflows
+- Per-phase taste-sniffing content: [Taste Sniffing](/en/guide/taste-sniffing)

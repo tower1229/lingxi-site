@@ -16,6 +16,9 @@ Two steps: install LingXi, initialize your project, create your first task.
 A multi-entry, decoupled, on-demand delivery chain: task / vet / plan / build / review.
 
 **[Memory System](/en/guide/memory-system)**
-LingXi's core capability — captures your judgment and experience through three paths: automatic (heartbeat session distillation), manual (/remember, /init), and workflow taste sniffing; reused in every conversation.
+LingXi's core capability — captures your judgment and experience through three paths: automatic (automatic session distillation), manual (/remember, /init), and workflow taste sniffing; reused in every conversation.
+
+**[Self-iterate](/en/guide/self-iterate)** (standalone reference)
+Architecture, implementation, and the audit system — how background diagnosis and low-risk auto-improvements work.
 
 </div>
