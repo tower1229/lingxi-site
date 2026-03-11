@@ -99,11 +99,11 @@ The flagship feature — a structured system for capturing, storing, retrieving,
 - Memory writes that modify or replace existing entries require explicit user confirmation
 - "Optional when you want, never overstepping when you don't"
 
-### 3.4 Context Curation (上下文运营)
+### 3.4 Self-iterate (自我迭代)
 
-- **Pointer-first, detail-later** — reads INDEX first, loads details on demand
-- **Minimal high-signal injection** — only injects 0-3 most relevant memories per turn
-- **Silent success** — no output when nothing matches ("no news is good news")
+- **Heartbeat-triggered** — runs periodic diagnosis and low-risk auto-improvement in background
+- **Audit-driven** — consumes runtime evidence from audit logs to generate and apply improvements
+- **Non-blocking** — main conversation continues uninterrupted and only receives brief summaries
 
 ### 3.5 Style Fusion (风格融合)
 
@@ -157,7 +157,7 @@ LingXi is built entirely on Cursor's extension points:
 │                         └─────────────────────┘  │
 ├─────────────────────────────────────────────────┤
 │ Subagents (Isolated Context)                     │
-│  lingxi-memory (memory write operations)         │
+│  lingxi-memory-write (memory write operations)   │
 ├─────────────────────────────────────────────────┤
 │ Hooks (Automation)                               │
 │  session-init.mjs (memory inject + conventions)  │
@@ -193,7 +193,7 @@ LingXi is built entirely on Cursor's extension points:
 
 ```
 User input → taste-recognition skill (7-field payload)
-  → lingxi-memory subagent (isolated context)
+  → lingxi-memory-write subagent (isolated context)
     → Validate payload
     → Map to note fields (Title, Kind, Status, etc.)
     → Score card (5 dimensions, 0-2 each, total T)
@@ -250,7 +250,7 @@ Session start → hook injects convention
 │   ├── skill-creator/     # Meta-skill for creating skills
 │   └── ...
 ├── agents/
-│   └── lingxi-memory.md   # Memory write subagent
+│   └── lingxi-memory-write.md   # Memory write subagent
 ├── hooks/
 │   ├── hooks.json          # Hook configuration
 │   ├── session-init.mjs    # Session start: inject conventions

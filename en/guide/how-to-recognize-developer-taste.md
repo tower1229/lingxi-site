@@ -66,14 +66,14 @@ So “taste” is no longer a fuzzy set but **enumerable types plus a unified st
 
 ## 4. The taste-recognition Pipeline: Recognize, Elevate, Contract
 
-taste-recognition **does not write to memory** and does not handle conflict resolution (merge/replace is done by lingxi-memory). It does one thing: **decide whether the current input contains capturable taste; if yes, output payloads that satisfy the contract; if no or “don’t write,” stay silent.**
+taste-recognition **does not write to memory** and does not handle conflict resolution (merge/replace is done by `lingxi-memory-write`). It does one thing: **decide whether the current input contains capturable taste; if yes, output payloads that satisfy the contract; if no or “don’t write,” stay silent.**
 
 Internally it’s a fixed pipeline in four steps:
 
 **1. Recognize**
 
 Using the user message (and, when needed, the last 1–2 turns), judge by **content type** whether there is capturable signal. Each of the nine types has typical phrasings—e.g. preference (“like / usually / don’t”), decision experience (“chose X because”), industry/org (“we always…”).  
-**No capturable signal → return silently**, no payload, no call to lingxi-memory.
+**No capturable signal → return silently**, no payload, no call to `lingxi-memory-write`.
 
 **2. Pattern alignment**
 
@@ -86,7 +86,7 @@ Score the content (D1 decision gain, D2 reusability/triggerability, D3 verifiabi
 
 **4. Output**
 
-For entries that pass, set layer (L0/L1/L0+L1) and optional l0OneLiner/l1OneLiner, emit JSON that matches the extended payload spec; multiple entries in one turn form the payloads array. **Only when payloads is non-empty** does the main agent pass it to lingxi-memory.
+For entries that pass, set layer (L0/L1/L0+L1) and optional l0OneLiner/l1OneLiner, emit JSON that matches the extended payload spec; multiple entries in one turn form the payloads array. **Only when payloads is non-empty** does the main agent pass it to `lingxi-memory-write`.
 
 **Summary**: **Recognize (by type) → pattern align → elevate (with type guidance) → output payload only for “worth writing.”** Otherwise the whole pipeline stays silent and the memory bank is unchanged.
 
@@ -109,7 +109,7 @@ From any entry point, **the same type-aware recognition and elevation logic** ru
 
 ## 6. Output Shape and Downstream Boundary
 
-Downstream lingxi-memory **accepts only the payloads array** (elements are extended payloads). It does not produce candidates and does not accept raw conversation.
+Downstream `lingxi-memory-write` **accepts only the payloads array** (elements are extended payloads). It does not produce candidates and does not accept raw conversation.
 
 Required and optional payload fields are in the main repo [taste-recognition SKILL](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/taste-recognition/SKILL.md). The ones that map directly to “taste” are:
 
@@ -120,9 +120,9 @@ Required and optional payload fields are in the main repo [taste-recognition SKI
 | layer | Set by this skill during elevation (L0 / L1 / L0+L1)—whether to store as fact layer, principle layer, or both. |
 | l0OneLiner / l1OneLiner | Optional one-liners for the note, used downstream for retrieval and injection. |
 
-Elevation (write or not, L0/L1) **is entirely done inside taste-recognition**. lingxi-memory does not recognize, score, or elevate; it only maps payload to note, governs, gates, and writes.
+Elevation (write or not, L0/L1) **is entirely done inside taste-recognition**. `lingxi-memory-write` does not recognize, score, or elevate; it only maps payload to note, governs, gates, and writes.
 
-**Responsibility boundary**: **Whether something enters memory and in what shape** is decided by taste-recognition; **which note it lands in, whether to merge/replace, and whether to prompt the user** is decided by lingxi-memory.
+**Responsibility boundary**: **Whether something enters memory and in what shape** is decided by taste-recognition; **which note it lands in, whether to merge/replace, and whether to prompt the user** is decided by `lingxi-memory-write`; **when obligations should execute (pre/post/both)** is decided by note `TriggerTiming` and retrieval timing (step C / step D).
 
 ---
 
@@ -143,6 +143,6 @@ So “taste recognition” is not labeling conversation; it’s **providing the 
 ## Related Links
 
 - [Memory System](/en/guide/memory-system) — End-to-end flow of memory write, retrieval, and governance
-- [Memory Governance and Write](/en/guide/memory-governance-and-write) — lingxi-memory responsibilities and governance logic
+- [Memory Governance and Write](/en/guide/memory-governance-and-write) — `lingxi-memory-write` responsibilities and governance logic
 - Main repo [taste-recognition SKILL](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/taste-recognition/SKILL.md) — Full payload spec and references
 - Main repo [content-types](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/taste-recognition/references/content-types.md) — Nine types, Kind mapping, and format conventions

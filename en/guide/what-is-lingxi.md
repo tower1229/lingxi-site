@@ -37,10 +37,6 @@ Invoke them **explicitly** via `/task`, `/plan`, etc. or natural language (e.g. 
 
 AI never acts on its own. Key decisions — requirement confirmation, memory writes, approach selection — always need your approval.
 
-### 🎯 Context Curation
-
-Using a dual-path retrieval system (semantic + keyword), LingXi injects only 0–3 of the most relevant memories per conversation turn, avoiding information overload and keeping the model focused.
-
 ## Design Philosophy
 
 | Principle | Meaning |

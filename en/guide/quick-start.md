@@ -39,7 +39,7 @@ After running the remote install script, you will get the following LingXi direc
 │   ├── memory-retrieve/
 │   └── ...
 ├── agents/                # Subagents (isolated context)
-│   └── lingxi-memory.md   # Memory writing
+│   └── lingxi-memory-write.md   # Memory writing
 ├── hooks/                 # sessionStart memory-injection convention + optional audit/gating
 └── .lingxi/
     ├── tasks/                 # Task documents (unified directory)

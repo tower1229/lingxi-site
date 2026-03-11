@@ -1,66 +1,67 @@
 # 记忆治理与写入
 
-记忆写入由 **lingxi-memory** 子代理在**独立上下文中**执行：它只接收 taste-recognition 产出的 payloads 数组，完成校验后调用 **memory-write** skill，由该 skill 完成映射、治理与门控并直接写入 `memory/project/`、`memory/share/` 与 `memory/INDEX.md`，并向主对话返回**简报**。本文介绍 lingxi-memory 的职责边界、执行链路与治理逻辑，便于开发者理解“写入”在记忆系统中的位置。
+本页描述灵犀“记忆写入模块”的稳定方案，而不是脚本级实现细节。
 
-## 在记忆系统中的位置
+## 模块定位
 
-- **上游**：主 Agent 先调用 [taste-recognition](/guide/how-to-recognize-developer-taste) 产出扩展 payload（7 字段 + layer）；仅当 payloads 非空时，才将 **payloads 数组**（及可选的 conversation_id、generation_id）传给 lingxi-memory。
-- **下游**：lingxi-memory 不产候选、不做升维，校验 payloads 后调用 **memory-write** skill 执行「按 payload 映射生成 note → 治理（TopK）→ 门控 → 直接文件写入」；全部处理结束后统一返回简报（新建/合并/跳过条数及 Id 列表）。
-- **检索**：写入后的笔记由 [memory-retrieve](/guide/memory-system#记忆检索) 在每轮对话前做双路径检索与最小注入，与写入流程解耦。
+`lingxi-memory-write` 位于记忆系统中游，承接上游识别结果并落盘：
 
-因此，**谁可以进记忆库、以什么形态进**由 taste-recognition 决定；**进到哪条 note、是否合并/替换、是否弹门控**由 lingxi-memory 决定。详见 [记忆系统](/guide/memory-system) 与 [开发者品味](/guide/how-to-recognize-developer-taste)。
+- **上游**：`taste-recognition` 决定“是否写入、以何种结构写入”
+- **中游**：`lingxi-memory-write` 决定“如何治理、是否门控、写入哪里”
+- **下游**：`memory-retrieve` 在 `pre/post` 时机消费记忆并触发履约
 
-## 职责边界
+## 稳定职责边界
 
-- **仅接受** taste-recognition 产出的 **payloads 数组**（扩展结构：必填 7 字段 + layer；可选 l0OneLiner、l1OneLiner、patternHint、patternConfidence）。禁止将原始用户消息、对话片段或草稿传入。
-- **不做升维**：不执行价值判定、评分或模式靠拢；升维已在 taste-recognition 完成，本子代理只接收「已判定为写」的 payload。
-- **执行链路**：校验 → 调用 memory-write skill：按 payload 映射生成 note 字段 → 治理（语义近邻 TopK）→ 门控 → 直接文件写入（memory/project/、memory/share/ + INDEX）。
+写入模块长期保持以下边界：
 
-## 执行步骤（6 步）
+- 仅接收结构化 payload，不直接消费原始对话
+- 不做价值判定（不重复做识别层工作）
+- 统一执行治理动作：`dedupe / merge / replace / veto / new`
+- 对高风险动作执行用户门控
+- 维护 note 与 INDEX 的一致性
 
-在收到 payloads 数组及可选的 conversation_id、generation_id 后，按顺序执行：
+## 治理策略
 
-1. **输入校验**：校验 payloads 为非空数组，逐条校验必填字段（7 字段 + layer）及可选字段类型/枚举；非法则拒收并返回错误与建议。
-2. **映射与补全**：按 payload 字段与映射规则生成每条 note 的 Meta、When to load、One-liner、Context/Decision、L0/L1 等；不对 note 做额外加工或升维。
-3. **治理**：对 `memory/project/` 与 `memory/share/` 做语义近邻 TopK，判断与已有笔记的关系，得到 **merge / replace / veto / new** 之一。
-4. **门控**：merge 或 replace 时**必须**通过 ask-questions 征得用户确认；new 时按 `payload.confidence` 分流：high 可静默写入，medium/low 须确认。
-5. **写入**：直接读写文件——按治理结果新建/更新/删除 note 文件，同步更新 INDEX；每条写入后追加记忆审计到 `audit.log`。
-6. **回传主对话**：全部处理结束后返回**简报**（新建 n 条、合并 m 条、跳过 k 条及 Id 列表）；不输出过程性描述或实现细节。
+治理遵循“语义相近优先收敛”的策略：
 
-## 治理逻辑（语义近邻 TopK）
+1. 先判断与已有记忆的关系（相同、补充、冲突、无关）
+2. 再选择治理动作（去重、合并、替换、否决、新建）
+3. 在必要场景要求用户确认
+4. 记录审计，确保可追溯
 
-- 对 `memory/project/` 与 `memory/share/` 做语义近邻检索（Top 5），对每个近邻评估：same_scenario、same_conclusion、conflict、completeness。
-- **merge**：同场景且同结论 → 合并到更完整版本，旧 note 删除、INDEX 更新，新 note 的 Supersedes 填被取代的 MEM-xxx。
-- **replace**：冲突且用户明确选新结论 → 覆盖或先删旧再建新，维护 Supersedes。
-- **veto**：冲突但无法判断更优且用户未给决定性变量 → 不写入，提示补齐或让用户选择保留哪一个。
-- **new**：与 TopK 均不构成 merge/replace → 新建 note 与 INDEX 行。
+该策略关注的是**决策原则**，而非具体阈值与打分参数。
 
-治理范围须**包含本批在本轮已写入的 note**，以便同批内不重复建语义相同的笔记。
+## 门控策略
 
-## 用户门控
+- **低风险**：允许自动执行（如明显去重）
+- **中高风险**：必须用户确认（如替换、删除、冲突覆盖）
+- **新建路径**：按置信度分流是否静默写入
 
-- **merge / replace**：必须通过 ask-questions 发起确认（如「治理方案：MERGE/REPLACE，是否执行？」），仅在用户确认执行时才写入或删除。
-- **new 且 confidence=high**：可静默写入；写入后仍追加 `memory_note_created` 审计。
-- **new 且 confidence=medium 或 low**：必须通过 ask-questions 确认后再写入。
-- 删除、合并、替换**一律**需用户在本对话内明确选择；不静默执行高风险动作。
+门控的核心目标是：在保证效率的同时，用户始终掌握关键决策权。
 
-## 写入路径与审计
+## 与检索时序的关系
 
-- **项目级**（apply 非 team 或未填）：note 写入 `.cursor/.lingxi/memory/project/MEM-<id>.md`，INDEX 的 File 列为 `memory/project/MEM-<id>.md`。
-- **团队级**（apply=team）：note 写入 `.cursor/.lingxi/memory/share/MEM-<id>.md`，便于跨项目复用（如 git submodule）。
-- **审计**：每次新建/更新/删除 note 或更新 INDEX 后，在同一流程内调用 `append-memory-audit.mjs` 向 `.cursor/.lingxi/workspace/audit.log` 追加 NDJSON 事件（如 `memory_note_created`、`memory_note_updated`、`memory_note_deleted`、`memory_index_updated`），便于追溯与合规。
+写入时可标注记忆触发时机（`TriggerTiming`）：
 
-## 主动治理：memory-govern
+- `pre`：执行前生效
+- `post`：执行后生效
+- `both`：前后都可生效
 
-除 lingxi-memory 在**写入时**执行的治理（TopK、dedupe/merge/replace/veto/new）外，灵犀提供 **memory-govern** Skill 用于**索引同步与整库主动治理**：
+检索层据此在步骤 C 与步骤 D 做不同阶段的履约，形成“写入即服务于执行”的闭环。
 
-1. **同步**：由 memory-govern Skill 下的脚本扫描 `memory/project/`、`memory/share/` 与 INDEX，**删除孤儿索引行**（INDEX 中有但对应 note 文件不存在），并上报**未索引 note**；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
-2. **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。
+## 与 memory-govern 的分工
 
-在添加或更新共享记忆后（例如执行 `git submodule update` 后），或希望整理索引并获取治理建议时，在 Cursor 中运行 **memory-govern** Skill（如输入 `/memory-govern`）即可。无需单独执行 Node.js 脚本。详见 [记忆系统 — 索引同步与主动治理](/guide/memory-system#索引同步与主动治理) 与 [命令参考](/guide/commands-reference#memory-govern)。
+- **写入模块**：处理“本次写入”过程中的即时治理
+- **memory-govern**：处理“全库层面”的索引同步与主动治理
 
-## 相关链接
+两者互补：一个是事务内治理，一个是库级治理。
 
-- [记忆系统](/guide/memory-system) — 记忆检索、写入入口与治理闭环概览
-- [开发者品味](/guide/how-to-recognize-developer-taste) — taste-recognition 与 payload 契约
-- 主仓 [lingxi-memory](https://github.com/tower1229/LingXi/blob/main/.cursor/agents/lingxi-memory.md) — 完整输入约定与调用 memory-write 的职责；[memory-write](https://github.com/tower1229/LingXi/blob/main/.cursor/skills/memory-write/SKILL.md) — 映射规则、治理与门控格式
+## 文档边界说明
+
+官网不承诺以下易变实现细节：
+
+- TopK、阈值、内部评分实现
+- 审计事件字段的完整枚举
+- 脚本参数与内部流程编排
+
+这些信息以主仓实现为准，官网仅保持架构与方案准确。

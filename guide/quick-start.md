@@ -39,7 +39,7 @@ irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.p
 │   ├── memory-retrieve/
 │   └── ...
 ├── agents/                # Subagents（独立上下文）
-│   └── lingxi-memory.md   # 记忆写入
+│   └── lingxi-memory-write.md   # 记忆写入
 ├── hooks/                 # sessionStart 记忆注入约定 + 可选审计/门控
 └── .lingxi/
     ├── tasks/                 # 任务文档（统一目录）
