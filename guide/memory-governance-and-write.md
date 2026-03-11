@@ -52,7 +52,7 @@
 
 ## 主动治理：memory-govern
 
-除 lingxi-memory 在**写入时**执行的治理（TopK、merge/replace/veto/new）外，灵犀提供 **memory-govern** Skill 用于**索引同步与整库主动治理**：
+除 lingxi-memory 在**写入时**执行的治理（TopK、dedupe/merge/replace/veto/new）外，灵犀提供 **memory-govern** Skill 用于**索引同步与整库主动治理**：
 
 1. **同步**：由 memory-govern Skill 下的脚本扫描 `memory/project/`、`memory/share/` 与 INDEX，**删除孤儿索引行**（INDEX 中有但对应 note 文件不存在），并上报**未索引 note**；再由模型为每条未索引 note 生成 INDEX 行，保证检索准确。
 2. **主动治理（可选）**：模型可对整库提出合并/改写/归档等建议；仅在你通过 ask-questions 确认后才写回。

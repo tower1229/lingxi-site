@@ -89,7 +89,7 @@ When you start a **new conversation**, LingXi runs a check and may inject conven
 | Type | Trigger | Subagent | Description |
 |-----------|---------|----------|-------------|
 | **Automatic session distillation** | >30 min since last distillation | **lingxi-session-distill** | Enqueue up to 3 unrefined sessions; distill and write to memory in the background (source=heartbeat); main conversation does not wait. |
-| **Self-iterate** | Time since last run exceeds configured interval (default 24 h) | **lingxi-self-iterate** | Run diagnosis and low-risk-only auto-improvements in the background; currently memory-focused, with more of the system to be covered over time. Main conversation does not wait and only consumes a brief report. |
+| **Self-iterate** | Time since last run exceeds configured interval (default 24 h) | **lingxi-self-iterate** | Run diagnosis and low-risk-only auto-improvements in the background; currently memory-focused, with more of the system to be covered over time. Main conversation does not wait and only consumes a brief report. **Triggered at most once within the same conversation_id session**. |
 
 Both tasks are checked and injected automatically; you do not run any command. Audit events are written to `.cursor/.lingxi/workspace/audit.log` (e.g. `heartbeat.triggered`, `heartbeat.distillation_completed`, `memory.improvement.*`). For the full self-iterate description (audit and implementation), see [Self-iterate](/en/guide/self-iterate).
 

@@ -27,7 +27,7 @@ Main conversation does not wait; only consumes report; last_improvement_cycle_at
 
 | Role | Responsibility |
 |------|----------------|
-| **session-init (sessionStart)** | Read `heartbeat-control.json`; if `last_improvement_cycle_at` is older than the configured interval, inject the “self-iterate” convention. |
+| **session-init (sessionStart)** | Read `heartbeat-control.json`; if `last_improvement_cycle_at` is older than the configured interval, inject the “self-iterate” convention; inject at most once per conversation. |
 | **Main agent** | In step A, per convention, call mcp_task to start **lingxi-self-iterate** subagent (`run_in_background=true`); do not wait before step B/C. |
 | **lingxi-self-iterate subagent** | In an isolated context: run proposal script (read audit + memory) → run apply script (approve low-risk only) → write `memory.improvement.*` etc. to audit and update `last_improvement_cycle_at`. |
 | **Audit system** | Continuously append run state to `audit.log` for self-iterate to read and analyze; **key input** to self-iterate. |
@@ -75,7 +75,7 @@ So the audit system is a **key input** to self-iterate; without it, self-iterate
 ### Trigger condition
 
 - **When checked**: At each session start, by **session-init.mjs** (sessionStart).
-- **Logic**: Read `last_improvement_cycle_at` from `.cursor/.lingxi/workspace/heartbeat-control.json`; if missing or older than the **configured interval** (default 24 hours), inject the “self-iterate” convention for this turn.
+- **Logic**: Read `last_improvement_cycle_at` from `.cursor/.lingxi/workspace/heartbeat-control.json`; if missing or older than the **configured interval** (default 24 hours), inject the “self-iterate” convention for this turn. To avoid repeated triggers, injection is **at most once per conversation_id**.
 - **Who runs**: Main agent invokes **lingxi-self-iterate** via mcp_task in step A with `run_in_background=true`, then proceeds to step B (memory retrieval) and step C (response) without waiting.
 
 ### Control file: heartbeat-control.json
@@ -87,6 +87,8 @@ Relevant fields for self-iterate:
 | Field | Meaning |
 |-------|---------|
 | `last_improvement_cycle_at` | Timestamp (ISO 8601) of the last completed self-iterate cycle. Updated by the self-iterate subagent when a cycle finishes; used for the next trigger check. |
+| `last_improvement_prompted_session_id` | Conversation ID that most recently received a self-iterate prompt; used for per-session idempotency. |
+| `last_improvement_prompted_at` | Timestamp (ISO 8601) of the most recent self-iterate prompt injection. |
 
 The file also holds session-distillation fields (e.g. `last_distillation_completed_at`, `heartbeat`, `pending_distillation`, `processed_conversation_ids`); both features share the same file, with each subagent updating its own fields.
 

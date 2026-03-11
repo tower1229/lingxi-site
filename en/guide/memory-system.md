@@ -83,18 +83,18 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 ### 1) Pre-write governance (quality threshold)
 
 - **Taste-recognition** runs **pattern alignment** (against a design-pattern catalog), then **elevation** (D1 decision gain, D2 reusability/triggerability, D3 verifiability, D4 stability; 0–2 each, total T). Only when T≥4 and no exception is triggered does it output that entry as a payload with layer (L0/L1/L0+L1); when T≤3 or an exception applies, that entry is not output and the main agent does not call lingxi-memory for it.
-- So only elevation-approved entries enter the **payloads array**. **Lingxi-memory** does not score or elevate; it validates, then invokes the **memory-write** skill to: map payload to note → semantic-neighbor TopK governance (merge/replace/veto/new) → gate → write to memory/project/, memory/share/, and INDEX.
+- So only elevation-approved entries enter the **payloads array**. **Lingxi-memory** does not score or elevate; it validates, then invokes the **memory-write** skill to: map payload to note → semantic-neighbor TopK governance (dedupe/merge/replace/veto/new) → gate → write to memory/project/, memory/share/, and INDEX.
 - For taste-recognition responsibility boundaries and common pitfalls, see [How to Effectively Recognize Developer Taste](/en/guide/how-to-recognize-developer-taste).
 
 ### 2) Deduplication and conflict governance (semantic-neighbor TopK)
 
-- Run semantic-neighbor TopK retrieval over `memory/project/` and `memory/share/`, then decide with `merge / replace / veto / new`.
+- Run semantic-neighbor TopK retrieval over `memory/project/` and `memory/share/`, then decide with `dedupe / merge / replace / veto / new`.
 - When merging or replacing, maintain `Supersedes` links and sync `INDEX` to preserve a traceable evolution chain.
 - The actual governance logic and gating are performed by the **lingxi-memory** subagent; see [Memory Governance and Write](/en/guide/memory-governance-and-write).
 
 ### 3) User gating (non-bypassable)
 
-- `merge / replace` must be confirmed via ask-questions.
+- `dedupe` can be auto-applied as low risk; `merge / replace` must be confirmed via ask-questions.
 - `new` can be silently written only when `confidence=high`; `medium/low` requires confirmation.
 - Any delete-or-replace behavior requires user confirmation and cannot be bypassed.
 
@@ -112,7 +112,7 @@ LingXi's memory governance is a closed loop of **write governance + retrieval go
 ### 6) Audit governance
 
 - Both memory retrieval and memory writing emit audit events to `.cursor/.lingxi/workspace/audit.log` (NDJSON).
-- **Core events** (written by default): per-turn retrieval `memory.retrieve.performed` / `memory.retrieve.skipped`; write events `memory_note_*`, `memory_index_updated`; session distillation and self-iterate `heartbeat.*`, `memory.merge.*`, `memory.improvement.*`; and Cursor Hook `session_end`, `stop`.
+- **Core events** (written by default): per-turn retrieval `memory.retrieve.performed` / `memory.retrieve.skipped`; write events `memory_note_*`, `memory_index_updated`; session distillation and self-iterate `heartbeat.*`, `memory.merge.*`, `memory.dedupe.*`, `memory.new.created_but_related_exists`, `memory.improvement.*`; and Cursor Hook `session_end`, `stop`.
 - **Self-iterate** (how audit feeds into it): see [Self-iterate](/en/guide/self-iterate).
 - **Debug events** (optional): with `LINGXI_AUDIT_DEBUG=1`, all 9 Hook event types (e.g. `pre_tool_use`, `post_tool_use`) and retrieval-integrity events (e.g. `memory.retrieve.missing`) are written for troubleshooting and health metrics.
 - Audit logs support traceability for queries, hits, adoption decisions, and write actions.
@@ -141,7 +141,7 @@ sequenceDiagram
     A->>LM: Invoke write (payloads + conversation_id)
     LM->>LM: Validate payloads (fields/enums)
     LM->>LM: Map payload to note fields (no scoring)
-    LM->>LM: Semantic-neighbor TopK governance (merge/replace/veto/new)
+    LM->>LM: Semantic-neighbor TopK governance (dedupe/merge/replace/veto/new)
     alt merge or replace
             LM->>AQ: Ask for confirmation
             AQ-->>LM: User decision

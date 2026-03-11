@@ -89,7 +89,7 @@
 | 类型 | 触发条件 | 子代理 | 说明 |
 |----------|----------|--------|------|
 | **自动会话提炼** | 距上次会话提炼完成 >30 分钟 | **lingxi-session-distill** | 入队最多 3 个未提炼会话，后台异步提炼并写入记忆（source=heartbeat），主会话不等待。 |
-| **自我迭代** | 距上次运行超过设定间隔（默认 24 小时） | **lingxi-self-iterate** | 后台执行诊断与仅 low risk 的自动改进；目前实现包含记忆改进，未来将扩展至全系统。主会话不等待、仅消费简报。 |
+| **自我迭代** | 距上次运行超过设定间隔（默认 24 小时） | **lingxi-self-iterate** | 后台执行诊断与仅 low risk 的自动改进；目前实现包含记忆改进，未来将扩展至全系统。主会话不等待、仅消费简报。**同一 conversation_id 会话内仅触发一次**。 |
 
 两种任务均由系统自动检查与注入，无需你输入任何命令；审计事件可查看 `.cursor/.lingxi/workspace/audit.log`（如 `heartbeat.triggered`、`heartbeat.distillation_completed`、`memory.improvement.*` 等）。自我迭代的完整说明（含审计与实施细节）见 [自我迭代](/guide/self-iterate)。
 

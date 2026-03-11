@@ -83,18 +83,18 @@ AI 带着你的"经验"回答
 ### 1) 写入前治理（质量门槛）
 
 - **taste-recognition** 在识别可沉淀内容后，会先做**模式靠拢**（参考设计模式目录），再做**升维判定**（D1 决策增益、D2 可复用/可触发、D3 可验证性、D4 稳定性，每维 0～2 分，总分 T）。仅当 T≥4 且未触犯例外时，才产出该条 payload 并标注 layer（L0/L1/L0+L1）；T≤3 或触犯例外时不产出该条，主 Agent 也不会因此条调用 lingxi-memory。
-- 因此只有通过升维判定的条目才会进入 **payloads 数组**；**lingxi-memory** 不执行评分或升维，校验后调用 **memory-write** skill 执行：按 payload 映射生成 note → 语义近邻 TopK 治理（merge/replace/veto/new）→ 门控 → 写入 memory/project/、memory/share/ 与 INDEX。
+- 因此只有通过升维判定的条目才会进入 **payloads 数组**；**lingxi-memory** 不执行评分或升维，校验后调用 **memory-write** skill 执行：按 payload 映射生成 note → 语义近邻 TopK 治理（dedupe/merge/replace/veto/new）→ 门控 → 写入 memory/project/、memory/share/ 与 INDEX。
 - 关于 taste-recognition 的职责边界与常见误区，见 [开发者品味](/guide/how-to-recognize-developer-taste)。
 
 ### 2) 去重与冲突治理（语义近邻 TopK）
 
-- 对 `memory/project/`、`memory/share/` 执行语义近邻检索（TopK）后，按 `merge / replace / veto / new` 四类动作决策。
+- 对 `memory/project/`、`memory/share/` 执行语义近邻检索（TopK）后，按 `dedupe / merge / replace / veto / new` 五类动作决策。
 - 发生合并或替换时维护 `Supersedes` 关系，并同步更新 `INDEX`，保证演进链条可追踪。
 - 具体治理逻辑与门控由 **lingxi-memory** 子代理执行，详见 [记忆治理与写入](/guide/memory-governance-and-write)。
 
 ### 3) 用户门控（不可绕过）
 
-- `merge / replace` 必须通过 ask-questions 征得确认。
+- `dedupe` 可低风险自动执行；`merge / replace` 必须通过 ask-questions 征得确认。
 - `new` 仅在 `confidence=high` 时可静默写入；`medium/low` 必须确认。
 - 涉及删除或替换的操作一律需要用户确认，不可绕过。
 
@@ -112,7 +112,7 @@ AI 带着你的"经验"回答
 ### 6) 审计治理
 
 - 记忆检索与记忆写入都会写入审计事件到 `.cursor/.lingxi/workspace/audit.log`（NDJSON 格式）。
-- **核心事件**（默认写入）：每轮检索的 `memory.retrieve.performed` / `memory.retrieve.skipped`；记忆写入的 `memory_note_*`、`memory_index_updated`；会话提炼与自我迭代的 `heartbeat.*`、`memory.merge.*`、`memory.improvement.*`；以及 Cursor Hook 的 `session_end`、`stop`。
+- **核心事件**（默认写入）：每轮检索的 `memory.retrieve.performed` / `memory.retrieve.skipped`；记忆写入的 `memory_note_*`、`memory_index_updated`；会话提炼与自我迭代的 `heartbeat.*`、`memory.merge.*`、`memory.dedupe.*`、`memory.new.created_but_related_exists`、`memory.improvement.*`；以及 Cursor Hook 的 `session_end`、`stop`。
 - **自我迭代机制**（含审计如何作为依据）：见 [自我迭代](/guide/self-iterate)。
 - **Debug 事件**（可选）：若设置环境变量 `LINGXI_AUDIT_DEBUG=1`，会额外写入全部 9 类 Hook 事件（如 `pre_tool_use`、`post_tool_use`）及记忆检索完整性审计（如 `memory.retrieve.missing`），便于排查与健康度指标计算。
 - 审计日志用于追溯 query、命中结果、采纳决策与写入动作，便于排错与合规审查。
@@ -141,7 +141,7 @@ sequenceDiagram
     A->>LM: 调用写入（payloads + conversation_id）
     LM->>LM: 校验 payloads（字段/枚举）
     LM->>LM: 按 payload 映射 note 字段（不做评分）
-    LM->>LM: 语义近邻 TopK 治理（merge/replace/veto/new）
+    LM->>LM: 语义近邻 TopK 治理（dedupe/merge/replace/veto/new）
     alt merge 或 replace
             LM->>AQ: 发起确认问题
             AQ-->>LM: 用户选择

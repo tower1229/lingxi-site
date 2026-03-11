@@ -52,7 +52,7 @@ Governance scope must **include notes already written in this batch this turn** 
 
 ## Proactive memory governance: memory-govern
 
-Besides the **write-time** governance performed by lingxi-memory (TopK, merge/replace/veto/new), LingXi provides the **memory-govern** skill for **index sync and proactive library governance**:
+Besides the **write-time** governance performed by lingxi-memory (TopK, dedupe/merge/replace/veto/new), LingXi provides the **memory-govern** skill for **index sync and proactive library governance**:
 
 1. **Sync**: A script (under the memory-govern skill) scans `memory/project/`, `memory/share/`, and INDEX, **removes orphan index rows** (INDEX entries whose note file is missing), and reports **unindexed notes**. The model then generates INDEX rows for each unindexed note so retrieval stays accurate.
 2. **Proactive governance (optional)**: The model can suggest merge/rewrite/archive actions for the whole library; changes are applied only after your confirmation via ask-questions.
