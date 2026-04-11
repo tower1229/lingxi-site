@@ -3,11 +3,11 @@ layout: home
 
 hero:
   name: LingXi
-  text: Cursor Workflow with Persistent Memory
-  tagline: Make AI work the way you do — capture judgment, preferences, and experience, then reuse them naturally in every conversation.
+  text: Codex-native Engineering Workflow
+  tagline: Turn rough requests into engineer-ready tasks, challenge quality before implementation starts, and distill durable engineering judgment into reusable memory.
   image:
-    src: /images/hero-screenshot-en.svg
-    alt: LingXi working inside Cursor IDE
+    src: /assets/logo-primary.svg
+    alt: LingXi logo
   actions:
     - theme: brand
       text: Get Started
@@ -17,22 +17,22 @@ hero:
       link: https://github.com/tower1229/LingXi
 
 features:
-  - icon: 🧩
-    title: Flexible Workflow
-    details: Covers task → vet → plan → build → review end-to-end. Compose the flow by task complexity; every step is optional.
-  - icon: 🗂️
-    title: Persistent Memory
-    details: Capture decisions, preferences, and lessons via /remember, automatic session distillation, or workflow taste sniffing; they become memory notes and are injected when relevant in new conversations.
-  - icon: 🚦
-    title: Human in the Loop
-    details: You confirm key decisions and control when to apply each step, so AI stays assistive instead of overreaching.
-  - icon: ⚡
-    title: Ready to Use
-    details: Install via script and start in your existing project right away; begin with /init, /task, or other commands as needed.
-  - icon: 🤝
-    title: Team Knowledge Sharing
-    details: Share memory banks across projects via git submodule so best practices and lessons learned can be reused by the team.
-  - icon: 🔄
-    title: Self-iterate
-    details: Continuously collects system run state during operation, audits on a heartbeat interval, and auto-improves low-risk issues.
+  - icon: 📝
+    title: Stronger Task Writing
+    details: Turn rough requests into engineer-ready task docs with clearer boundaries, constraints, acceptance criteria, and implementation guidance.
+  - icon: 🔎
+    title: Sharper Vetting
+    details: Challenge task quality before implementation and surface ambiguity, hidden risk, weak acceptance coverage, and shaky framing early.
+  - icon: 🧠
+    title: Engineering Taste Memory
+    details: Distill reusable engineering judgment from historical sessions, not generic chat summaries, so future work can inherit durable choices.
+  - icon: ⚙️
+    title: Small Surface, Strong Core
+    details: Keep the visible workflow narrow with task and vet while the memory layer continuously strengthens meaningful repository work underneath.
+  - icon: 🧪
+    title: Semantic Judgment with Deterministic Safety
+    details: Use LLM reasoning for extraction, adjudication, governance, and ranking, with deterministic scripts for contracts, state safety, and persistence.
+  - icon: 🔁
+    title: Continuous Background Distillation
+    details: Session-distill selects valid sessions, runs taste extraction and adjudication, governs memory writes, and retrieves the smallest useful set for task or vet intent.
 ---

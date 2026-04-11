@@ -1,67 +1,123 @@
 # Memory Governance and Write
 
-This page describes the stable solution contract of LingXi's memory write module, not script-level implementation details.
+This page describes the stable responsibilities of LingXi's memory midstream: how durable candidates enter governance, how they are written, and why that layer exists.
 
 ## Module Position
 
-`lingxi-memory-write` sits in the middle of the memory pipeline:
+The LingXi memory mainline can be understood in three parts:
 
-- **Upstream**: `taste-recognition` decides whether a memory should be written and in what structure.
-- **Midstream**: `lingxi-memory-write` decides how to govern, gate, and persist it.
-- **Downstream**: `memory-retrieve` consumes memories in `pre/post` phases for execution fulfillment.
+1. upstream extraction and adjudication
+2. midstream governance and write
+3. downstream retrieval and application
 
-## Stable Responsibility Boundary
+The governance-and-write layer is the part that turns adjudicated durable candidates into stable memory notes.
 
-The write module keeps these boundaries over time:
+## What This Layer Does
 
-- Accept structured payloads only (not raw conversation text)
-- Do not repeat value judgment done upstream
-- Execute unified governance actions: `dedupe / merge / replace / veto / new`
-- Require user confirmation for high-risk paths
-- Keep notes and INDEX consistent
+The current write layer is responsible for:
 
-## Governance Strategy
+1. accepting structured candidates
+2. deciding create, merge, or skip
+3. assigning note ids
+4. writing note files
+5. rebuilding `INDEX.md`
+6. updating runtime state and operation logs
 
-Governance follows a “semantic convergence first” strategy:
+It works from structured candidates and carries the persistence contract of the memory system.
 
-1. Determine relation to existing memory (same, complementary, conflicting, unrelated)
-2. Choose an action (dedupe, merge, replace, veto, new)
-3. Gate when needed
-4. Emit audit evidence for traceability
+## Current Governance Actions
 
-The contract is about decision principles, not fixed internal thresholds.
+In the current LingXi mainline, the primary governance actions are:
 
-## Gating Strategy
+- `create`
+- `merge_into_existing`
+- `skip_as_not_durable`
 
-- **Low risk**: can be auto-applied (for example, clear dedupe)
-- **Medium/high risk**: explicit user confirmation is required
-- **New path**: confidence-based split for silent vs confirmed writes
+This means the main job of the governance layer is to:
 
-The core objective is to balance speed with user control over critical decisions.
+- write new high-value judgment into memory
+- merge semantically equivalent or stronger judgment into existing notes
+- actively skip content that should not become long-lived memory
 
-## Relation to Retrieval Timing
+## What Governance Uses To Decide
 
-Writes can include timing metadata (`TriggerTiming`):
+The governance layer considers signals such as:
 
-- `pre`: applies before execution
-- `post`: applies after execution
-- `both`: applies in both phases
+- the candidate's semantic meaning
+- `content_type`
+- `value_scores`
+- `suggested_storage_kind`
+- the existing notes already present in the memory store
 
-Retrieval uses this in step C and step D, so writing directly serves execution-time behavior.
+It cares about semantic relation. For example:
 
-## Separation from `memory-govern`
+- whether two candidates express the same engineering judgment
+- whether a candidate is a stronger version of an existing note
+- whether a candidate is still too transient or noisy
 
-- **Write module**: transaction-level governance during this write operation
-- **memory-govern**: repository-level sync and proactive governance
+## Why Governance Is Separate From Distillation
 
-They are complementary, not overlapping.
+LingXi separates upstream distillation from midstream governance so the system keeps a cleaner contract:
 
-## Documentation Boundary
+### Upstream answers
 
-The website intentionally does not lock down:
+- is this worth treating as durable engineering judgment
+- what kind of judgment is it
+- in what scene is it useful
 
-- TopK thresholds and scoring internals
-- complete audit event-field enumerations
-- script parameters and orchestration internals
+### Midstream answers
 
-For those details, use the repository implementation and internal docs.
+- should this become a new note
+- should it merge into an existing note
+- should it be skipped to avoid polluting memory
+
+If these are collapsed into one step, the system easily degrades into direct note generation, which is weaker for both quality control and long-term governance.
+
+## Stable Artifacts After Write
+
+After governance succeeds, LingXi writes notes into:
+
+- `.lingxi/memory/project/`
+- `.lingxi/memory/share/`
+
+And maintains:
+
+- `.lingxi/memory/INDEX.md`
+
+It also updates runtime state such as:
+
+- `.lingxi/state/processed-sessions.json`
+- `.lingxi/state/distill-journal.jsonl`
+- `.lingxi/state/memory-ops.jsonl`
+
+So this layer writes notes and maintains the consistency of the whole memory runtime.
+
+## Why The Write Layer Is Deterministic
+
+LingXi lets LLMs handle extraction, adjudication, governance judgment, and ranking, but it keeps persistence deterministic.
+
+That is because:
+
+1. semantic judgment needs model reasoning
+2. ids, files, indexes, and state need stability
+3. repeated runs must not silently corrupt memory
+4. the memory runtime must remain auditable and testable
+
+So the write layer is optimized less for cleverness and more for consistency and safety.
+
+## How It Relates To Retrieval
+
+The point of write governance is to keep the notes useful for downstream application.
+
+Those notes are ultimately consumed by retrieval:
+
+- `task` uses them while drafting
+- `vet` uses them while challenging tasks
+- other meaningful repository work can use them through memory brief primitives
+
+So the write layer is always in service of better downstream judgment.
+
+## Next
+
+- [Memory System](/en/guide/memory-system)
+- [Engineering Taste Extraction and Adjudication](/en/guide/how-to-recognize-developer-taste)

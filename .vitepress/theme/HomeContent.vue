@@ -18,13 +18,13 @@ const isZh = () => lang.value === "zh-CN";
           aria-hidden="true"
         />
         <h2>
-          {{ isZh() ? "让 AI 按你的方式做事" : "Make AI Work the Way You Do" }}
+          {{ isZh() ? "让工程工作开始得更准，也积累得更稳" : "Start with sharper work, then keep raising the bar" }}
         </h2>
         <p>
           {{
             isZh()
-              ? "安装后可按需使用 /init、/task 等命令，在你的项目中逐步启用灵犀工作流。"
-              : "After installation, use /init, /task, or other commands as needed to adopt the LingXi workflow in your project."
+              ? "安装到仓库后，用 task 生成可执行任务，用 vet 在开工前做质量挑战，再让 session-distill 在后台持续沉淀工程品味记忆。"
+              : "Install LingXi into a repository, use task to create engineer-ready tasks, use vet to challenge quality before implementation, and let session-distill accumulate durable engineering taste in the background."
           }}
         </p>
         <div class="cta-buttons">

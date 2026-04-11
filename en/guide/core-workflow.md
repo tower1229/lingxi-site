@@ -1,182 +1,121 @@
 # Core Workflow
 
-## When to Use This Workflow
+LingXi keeps its explicit workflow surface intentionally small. The current foreground workflow is built around:
 
-The LingXi workflow is intended for tasks that are **larger than ~3 person-days and of medium-to-high complexity**. Such tasks benefit from upfront architecture and solution design; **task + vet** help architects (or whoever owns the design) shape the architecture and overall plan. For simpler tasks, using your IDE’s Agent mode is enough; there is no need to start the LingXi workflow.
+1. `task`
+2. `vet`
 
-## Top-Level Workflow Design
+Both are continuously strengthened by the same memory system underneath.
 
-### Design Goals
+## Workflow Mainline
 
-Under a multi-entry and decoupled process model, LingXi advances work from "decidable goals" to "executable implementation" to "verifiable delivery":
+The visible foreground flow is:
 
-- Use `task` to lock goal, scope, acceptance criteria, and architecture-level decisions
-- Use `vet` to review task document quality and support high-quality requirement and acceptance design (optional, repeatable)
-- Use `plan` to refine implementation paths and break work down, reducing `build` failure rate
-- Use `build` to execute the implementation-and-testing loop, while supporting both with-plan and skip-plan inputs (so simple tasks can still go straight to implementation)
-- Use `review` to run independent acceptance audits by requirement IDs (`F`) and close the evidence loop
-
-### Lifecycle (On Demand, Not Strictly Serial)
-
-Recommended progression:
-
-1. `/task <description>`: create `001.task.<title>.md`
-2. `/vet` (optional): inspect task quality
-3. `/plan` (optional): generate `001.plan.<title>.md` and `001.testcase.<title>.md`
-4. `/build` (optional): implementation and testing
-5. `/review`: delivery audit and acceptance conclusion
-
-Workflow properties:
-
-- Every step can be skipped on demand
-- Entry points are decoupled; invoke each workflow Skill explicitly (e.g. `/task`, `/plan`)
-
-### Multi-task Characteristics
-
-The workflow naturally supports parallel tasks. `taskId` is the unique context anchor:
-
-- Artifacts are named and isolated by `taskId`: `001.task.*`, `001.plan.*`, `001.testcase.*`, `001.review.*`
-- You can explicitly switch between tasks via `taskId` when invoking workflow skills; single-task serial flow is not required
-- If `taskId` is omitted, skills fall back to the latest task number for convenience
-- In multi-task scenarios, passing `taskId` explicitly is recommended to avoid ambiguity
-
-## Command Roles
-
-Workflow steps are driven by **Skills**; `/task`, `/plan`, etc. are explicit triggers (manual or explicit invocation only, not auto-loaded by semantic match). Below are the roles and usage of each step.
-
-### /task — Lock Goal and Boundaries (Architecture Level)
-
-```
-/task <description>
+```text
+task → vet
 ```
 
-**Role:**
+`task` turns a request into an executable task artifact, and `vet` challenges that artifact before implementation begins.
 
-- Produces goal, boundaries, acceptance criteria, architecture-level solution, verification method, and evidence format
-- Does not carry implementation-level details; those are refined in `/plan`
+LingXi focuses on making the two most important pre-implementation steps much stronger.
 
-**What LingXi does:**
+## What `task` Does
 
-- Auto-generates task ID (001, 002...) and title
-- Refines requirements and clarifies acceptance criteria
-- Creates task document: `.cursor/.lingxi/tasks/001.task.<title>.md`
+`task` turns a rough request into an engineer-ready task document.
 
-**Output:**
+It uses:
 
-- `001.task.<title>.md`
+- user intent
+- repository context
+- relevant memory
 
-### /vet — Inspect Task Quality (Optional)
+to shape a structured task artifact containing elements such as:
 
-```
-/vet [taskId]
-```
+- goals
+- scope
+- constraints
+- acceptance criteria
+- functional requirements
+- development guidance
 
-**Role:**
+This stage matters because many implementation problems are already baked in before coding starts: weak boundaries, missing constraints, vague acceptance, or shallow solution framing.
 
-- Reviews task quality to improve feasibility and decidability
+## What `vet` Does
 
-**What LingXi does:**
+`vet` challenges task quality before implementation starts.
 
-- Provides review conclusions and suggestions across completeness, consistency, and edge conditions
-- Supports repeated runs for iterative refinement
+It looks for issues such as:
 
-**Output:**
+- ambiguity
+- missing constraints
+- non-testable acceptance criteria
+- hidden breadth
+- hidden risk
+- weak rationale
+- weak implementation guidance
 
-- No file output (results appear in chat)
+Its output stays in a structured VetReport format.
 
-### /plan — Refine Implementation (Implementation Level, Optional)
+## How Memory Participates
 
-```
-/plan [taskId]
-```
+The workflow works together with the memory system.
 
-**Output:**
+When `task` drafts a task document, LingXi retrieves relevant memory and writes the memories that materially shaped the task into `memory_refs`.
 
-- `001.plan.<title>.md`
-- `001.testcase.<title>.md`
+When `vet` reviews the task, LingXi retrieves relevant memory again and checks whether the task already reflects those important standards. If key memory is missing from the task, `vet` treats that as a clear quality gap.
 
-**Role:**
+So the effective workflow can be understood as:
 
-- Refines task into an implementation plan (change points, dependencies, order, risks)
-- Performs optional requirement clarification and task decomposition when needed
-
-**What LingXi does:**
-
-- Breaks task into executable work items and verification paths
-- Organizes sequencing, dependencies, and major risks
-- For unit-testable items, it can apply a `Txa(test) -> Txb(implementation)` test-first pattern
-
-### /build — Execute Implementation (Execution Level, Optional)
-
-```
-/build [taskId]
+```text
+task → vet
 ```
 
-**Role:**
+It is closer to:
 
-- Supports both with-plan and skip-plan inputs to drive implementation and testing loop
-- Enforces a test-before-implementation loop for `unit/integration`
-
-**What LingXi does:**
-
-- Selects execution mode based on available inputs and drives implementation
-
-**Output:**
-
-- Code and corresponding test changes
-
-### /review — Independent Acceptance Audit (Acceptance Level)
-
-```
-/review [taskId]
+```text
+memory ↘
+         task → vet
+memory ↗
 ```
 
-**Role:**
+## Why The Workflow Has Only Two Explicit Steps
 
-- Runs independent acceptance audit by requirement item (Feature, denoted as `F`)
-- Produces traceable delivery conclusions
+LingXi keeps the visible workflow focused on `task` and `vet` because these two stages most directly determine whether engineering work starts from a strong foundation.
 
-**What LingXi does:**
+This has several advantages:
 
-- Gives Pass/Fail per requirement item (`F`)
-- Attaches evidence references to each conclusion
-- Marks any unverifiable requirement item (`F`) as Fail
+1. the product boundary stays clear
+2. foreground interaction stays lighter and easier to trust
+3. more effort can go into memory quality, contracts, state safety, and output quality
+4. it matches real engineering usage, where getting the task right and challenging it early often matters more than adding more named workflow stages
 
-**Output:**
+## Runtime Shape
 
-- Acceptance conclusions with evidence references (can be materialized as `001.review.<title>.md`)
+LingXi runs inside the target repository, with primary runtime roots under:
 
-## Flow Examples
+- `.lingxi/`
+- `.codex/agents/`
 
-### Simple Task (Skip Plan)
+A typical usage flow is:
 
-```
-/task Fix form validation bug on login page
-/build
-/review
-```
+1. install LingXi into the repository
+2. run bootstrap to create runtime and automation artifacts
+3. use `task` to create a task document
+4. use `vet` to challenge it before implementation
+5. let background `session-distill` accumulate durable engineering taste
 
-### Complex Task (Recommended Full Chain)
+## What The Workflow Is Trying To Achieve
 
-```
-/task Refactor user permission system to support RBAC
-/vet
-/plan
-/build
-/review
-```
+LingXi is trying to make three things true:
 
-### Parallel Multi-task
+1. requests become clear enough before implementation starts
+2. tasks survive a serious quality challenge before coding begins
+3. engineering judgment accumulates instead of being re-explained from scratch
 
-```
-/vet 002
-/plan 001
-/build 001
-/review 002
-```
+When those three things hold, the whole project becomes more stable than simply asking AI to start coding immediately.
 
-## Next Steps
+## Next
 
-- Full syntax and parameters: [Commands Reference](/en/guide/commands-reference)
-- Learn how the [Memory System](/en/guide/memory-system) captures experience in workflows
-- Per-phase taste-sniffing content: [Taste Sniffing](/en/guide/taste-sniffing)
+- [What Is LingXi](/en/guide/what-is-lingxi)
+- [Memory System](/en/guide/memory-system)
+- [Quick Start](/en/guide/quick-start)

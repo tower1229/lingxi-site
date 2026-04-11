@@ -2,22 +2,33 @@
 
 ## Environment and Installation
 
-### Which Cursor version is required?
+### What environment does LingXi run in?
 
-Use the latest stable Cursor. Final compatibility details follow the main repository README.
+LingXi is currently a Codex-native engineering workflow product. After installation, its runtime lives inside the target repository, primarily under:
+
+- `.lingxi/`
+- `.codex/agents/`
 
 ### Do I need local Node.js?
 
-Typical usage of workflow skills plus `/remember` and `/init` usually does not require local Node.js.  
-Direct script execution (for example uninstall scripts) does.
+Yes.
 
-### How do I sync the memory index?
+LingXi's setup, bootstrap, automation registration, and lower-level runtime scripts currently depend on Node.js, so the target environment needs a working `node`.
 
-Run `/memory-govern` in Cursor. It restores INDEX/notes consistency and can optionally run governance suggestions.
+### What is the most important step after installation?
+
+The most important step is making sure bootstrap and automation are actually in place.
+
+If you used the official remote install script, bootstrap is usually already handled.  
+If you synced files manually, run:
+
+```bash
+node scripts/lx-bootstrap.mjs
+```
 
 ### How do I uninstall LingXi?
 
-From project root:
+From the project root:
 
 ```bash
 yarn lx:uninstall
@@ -25,32 +36,71 @@ yarn lx:uninstall
 npm run lx:uninstall
 ```
 
-For CI/non-interactive environments:
+For CI or other non-interactive environments:
 
 ```bash
 yarn lx:uninstall --yes
 ```
 
-### How do I automatically verify install-manifest integrity?
-
-Run three tests in CI:
-
-- `install-manifest-exists`
-- `install-manifest-coverage`
-- `install-manifest-version-sync`
-
 ## Workflow
 
-### How do LingXi `/plan` and `/build` relate to Cursor Plan/Build?
+### What is LingXi's current core workflow?
 
-They are complementary. LingXi workflow is task-document-centric and layered; Cursor built-in features can be used as replacement or in combination depending on context.
+The current foreground workflow is:
+
+```text
+task → vet
+```
+
+`task` shapes a task document. `vet` challenges that task before implementation starts.
+
+### Does LingXi inject a lot of context into every conversation?
+
+LingXi is designed to keep the foreground workflow narrow.
+
+Explicit workflows run only when you call them. Background memory continues to distill and retrieve, and retrieval is optimized for the smallest useful set of context.
 
 ## Memory System
 
-### What if memory noise grows over time?
+### Will memory become noisy over time?
 
-Noise is controlled through write governance, minimal retrieval injection, and user gating.  
-When needed, use `/memory-govern` for periodic convergence.
+LingXi controls noise through three layers:
+
+1. `taste adjudicate` filters for value
+2. `governance` decides create / merge / skip
+3. retrieval returns only the smallest useful high-signal set
+
+Its goal is to preserve the engineering judgment that is actually worth reusing.
+
+### How does memory affect task and vet?
+
+`task` retrieves relevant memory while drafting and records memories that materially shaped the task in `memory_refs`.  
+`vet` retrieves relevant memory again and checks whether the task already reflects those important judgments.
+
+### Do I need to sync the memory index manually?
+
+In the current mainline, `INDEX.md` is maintained automatically during memory writes.  
+In the current mainline, index maintenance is part of the write path and `INDEX.md` stays in sync during memory writes.
+
+## Quality and Validation
+
+### How does LingXi avoid producing arbitrary output?
+
+LingXi uses a hybrid model:
+
+- LLMs handle semantic extraction, adjudication, governance, and ranking
+- deterministic scripts handle schema, state safety, persistence, and indexing
+
+So the goal is structured output, stable state, and auditable runtime behavior.
+
+### How do I verify that the current install surface is intact?
+
+You can use these tests and checks from the main repository:
+
+- `npm test`
+- `install-manifest-exists`
+- `install-manifest-coverage`
+- `install-manifest-version-sync`
 
 ## More
 

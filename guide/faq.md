@@ -2,20 +2,31 @@
 
 ## 环境与安装
 
-### 需要什么 Cursor 版本？
+### LingXi 运行在什么环境里？
 
-建议使用最新稳定版 Cursor，具体兼容性以主仓 README 为准。
+LingXi 当前是面向 Codex 的工程工作流产品。安装后，它会把运行时落在目标仓库中，核心目录是：
+
+- `.lingxi/`
+- `.codex/agents/`
 
 ### 需要本机安装 Node.js 吗？
 
-日常使用 workflow skills 与 `/remember`、`/init` 通常不依赖本机 Node.js。  
-直接运行脚本（例如卸载脚本）时需要 Node.js。
+需要。
 
-### 如何同步记忆索引？
+当前 LingXi 的 setup、bootstrap、automation 注册和底层运行脚本都基于 Node.js，因此目标环境需要可用的 `node`。
 
-在 Cursor 中运行 `/memory-govern`。它会处理 INDEX 与 notes 的一致性，并可选执行治理建议。
+### 安装后最关键的一步是什么？
 
-### 如何卸载灵犀？
+最关键的是让 bootstrap 和 automation 真正闭环。
+
+如果使用官方远程安装脚本，安装过程中通常已经自动执行了 bootstrap。  
+如果是手动同步文件，则需要自己执行：
+
+```bash
+node scripts/lx-bootstrap.mjs
+```
+
+### 如何卸载 LingXi？
 
 在项目根目录执行：
 
@@ -31,26 +42,65 @@ CI 等非交互场景可用：
 yarn lx:uninstall --yes
 ```
 
-### 如何自动校验安装清单完整性？
+## 工作方式
 
-在 CI 执行三类测试：
+### LingXi 当前最核心的工作流是什么？
 
-- `install-manifest-exists`
-- `install-manifest-coverage`
-- `install-manifest-version-sync`
+当前最核心的前台工作流是：
 
-## 工作流
+```text
+task → vet
+```
 
-### 灵犀的 `/plan`、`/build` 与 Cursor 内置 Plan/Build 是什么关系？
+`task` 用来整理任务，`vet` 用来在开工前挑战任务质量。
 
-两者可互补。灵犀 workflow 以 task 文档为核心做分层推进；Cursor 内置能力可按场景替代或配合。
+### LingXi 会不会自动在每轮对话里插很多东西？
+
+LingXi 的设计目标是把前台工作流保持得很克制。
+
+显式工作流只在你明确调用时运行。后台 memory 会持续提炼和检索，retrieval 会把上下文控制在最小必要范围内。
 
 ## 记忆系统
 
-### 记忆多了会不会噪音很大？
+### 记忆系统会不会越来越吵？
 
-记忆系统通过写入治理、检索最小注入和用户门控共同控制噪音。  
-如果仍偏高，可结合 `/memory-govern` 做定期收敛。
+LingXi 通过三层控制噪音：
+
+1. `taste adjudicate` 先做价值裁决
+2. `governance` 再决定 create / merge / skip
+3. retrieval 只返回最小必要的高信号记忆
+
+所以它的目标是沉淀真正值得复用的工程判断。
+
+### 记忆是怎么影响 task 和 vet 的？
+
+`task` 会在起草任务时主动检索相关记忆，并把真正影响任务内容的结果写进 `memory_refs`。  
+`vet` 会再次检索相关记忆，并检查任务是否遗漏了这些关键判断。
+
+### 记忆索引需要手动同步吗？
+
+当前主线里，memory 写入时会自动维护 `INDEX.md`。  
+当前主线把索引维护收进了 memory 写入链路中，`INDEX.md` 会在写入时自动保持同步。
+
+## 质量与验证
+
+### LingXi 怎么保证输出质量？
+
+LingXi 使用混合设计：
+
+- LLM 负责语义提炼、裁决、治理和检索排序
+- 确定性脚本负责 schema、状态、安全、持久化和索引
+
+所以它追求的是输出结构稳定、状态可控、运行可审计。
+
+### 如何验证当前安装面是否完整？
+
+可以使用主仓里的这些测试与检查：
+
+- `npm test`
+- `install-manifest-exists`
+- `install-manifest-coverage`
+- `install-manifest-version-sync`
 
 ## 更多
 

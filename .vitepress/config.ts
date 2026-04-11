@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/', // Vercel 或子域名下为根路径；若用 xxx.github.io/lingxi-site 则改为 '/lingxi-site/'
   title: '灵犀 LingXi',
-  description: '基于 Cursor 的持久记忆工作流',
+  description: '面向 Codex 的工程工作流产品',
   lang: 'zh-CN',
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/assets/logo-mono.svg' }],
@@ -22,7 +22,7 @@ export default defineConfig({
       label: '简体中文',
       lang: 'zh-CN',
       title: '灵犀 LingXi',
-      description: '基于 Cursor 的持久记忆工作流',
+      description: '面向 Codex 的工程工作流产品',
       themeConfig: {
         nav: [
           { text: '首页', link: '/' },
@@ -51,10 +51,8 @@ export default defineConfig({
             {
               text: '参考',
               items: [
-                { text: '开发者品味', link: '/guide/how-to-recognize-developer-taste' },
+                { text: '工程品味提炼与裁决', link: '/guide/how-to-recognize-developer-taste' },
                 { text: '记忆治理与写入', link: '/guide/memory-governance-and-write' },
-                { text: '品味嗅探', link: '/guide/taste-sniffing' },
-                { text: '自我迭代', link: '/guide/self-iterate' },
                 { text: '命令参考', link: '/guide/commands-reference' },
                 { text: 'FAQ', link: '/guide/faq' },
               ],
@@ -81,7 +79,7 @@ export default defineConfig({
       lang: 'en-US',
       link: '/en/',
       title: 'LingXi',
-      description: 'Cursor workflow with persistent memory',
+      description: 'Codex-native engineering workflow with durable memory',
       themeConfig: {
         nav: [
           { text: 'Home', link: '/en/' },
@@ -110,10 +108,8 @@ export default defineConfig({
             {
               text: 'Reference',
               items: [
-                { text: 'How to Recognize Developer Taste', link: '/en/guide/how-to-recognize-developer-taste' },
+                { text: 'Engineering Taste Extraction and Adjudication', link: '/en/guide/how-to-recognize-developer-taste' },
                 { text: 'Memory Governance and Write', link: '/en/guide/memory-governance-and-write' },
-                { text: 'Taste Sniffing', link: '/en/guide/taste-sniffing' },
-                { text: 'Self-iterate', link: '/en/guide/self-iterate' },
                 { text: 'Commands Reference', link: '/en/guide/commands-reference' },
                 { text: 'FAQ', link: '/en/guide/faq' },
               ],

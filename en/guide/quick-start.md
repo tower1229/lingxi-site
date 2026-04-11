@@ -1,100 +1,121 @@
 # Quick Start
 
-## Installation
+## Install
 
-Run one of these commands from your project root:
+Run the install script at the root of your target repository.
 
-**Linux / macOS / Git Bash:**
+**Linux / macOS / Git Bash**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.sh | bash
 ```
 
-**Windows PowerShell:**
+**Windows PowerShell**
 
 ```powershell
 irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
 ```
 
-## Directory Structure
+## What Installation Adds
 
-After running the remote install script, you will get the following LingXi directory structure in your project:
+LingXi installs the currently supported product surface into your repository, including:
+
+- `.codex-plugin/plugin.json`
+- `skills/`
+- `scripts/`
+- `templates/`
+
+It also creates project-local runtime artifacts such as:
+
+- `.lingxi/`
+- `.codex/agents/`
+- `AGENTS.md` when missing
+
+## Runtime Layout
+
+The current runtime layout looks roughly like this:
 
 ```text
-.cursor/
-├── commands/              # Helper command entry points (init, remember, etc.)
-│   ├── init.md
-│   ├── remember.md
-│   └── ...
-├── skills/                # Execution logic (workflow + memory, etc.)
-│   ├── task/              # Workflow: task document
-│   ├── vet/
-│   ├── plan/
-│   ├── build/
-│   ├── review/
-│   ├── reviewer-doc-consistency/
-│   ├── reviewer-security/
-│   ├── reviewer-performance/
-│   ├── reviewer-e2e/
-│   ├── memory-retrieve/
-│   └── ...
-├── agents/                # Subagents (isolated context)
-│   └── lingxi-memory-write.md   # Memory writing
-├── hooks/                 # sessionStart memory-injection convention + optional audit/gating
-└── .lingxi/
-    ├── tasks/                 # Task documents (unified directory)
-    │   ├── 001.task.<title>.md
-    │   ├── 001.plan.<title>.md
-    │   └── ...
-    ├── memory/                # Unified memory system
-    │   ├── INDEX.md           # Unified index (SSoT)
-    │   ├── project/           # Project-level memory notes (primary search surface)
-    │   └── share/             # Shared memory directory (recommended as git submodule)
-    └── workspace/             # Workspace
-        └── audit.log          # Audit log
+.lingxi/
+  tasks/
+  memory/
+    INDEX.md
+    project/
+    share/
+  state/
+    processed-sessions.json
+    distill-journal.jsonl
+    memory-ops.jsonl
+  setup/
+    automation.session-distill.toml
+.codex/
+  agents/
+    lingxi-session-distill.toml
+AGENTS.md
 ```
 
-## Initialize Your Project (Recommended, Optional)
+These areas are used for:
 
-In Cursor's Chat, type:
+- `tasks/`: task documents
+- `memory/`: project and shared memory notes
+- `INDEX.md`: the memory index
+- `state/`: processed sessions, distill journal, and memory ops logs
+- `setup/`: generated automation artifacts
+- `.codex/agents/`: local LingXi agent config
 
-```
-/init
-```
+## Bootstrap
 
-LingXi will guide you through:
+If you used the remote install script, bootstrap is usually already handled for you.
 
-1. **Silent understanding + confirmation of project info** — infer from existing docs/repo structure first, then ask only for missing items
-2. **Generating a candidate memory list** — candidates are produced first; no write by default
-3. **Optional write by your choice** — only when you explicitly choose `all` or `partial`, LingXi writes to `memory/project/` or `memory/share/` (by apply)
+If you synced LingXi files manually, or want to rerun runtime and automation registration, run:
 
-If you want to move directly on a concrete requirement, you can start with `/task` first and run `/init` later when needed.
-
-## Your First Task (Recommended)
-
-Try creating your first task with LingXi:
-
-```
-/task Add user login with email and phone number support
+```bash
+node scripts/lx-bootstrap.mjs
 ```
 
-LingXi will:
+This step:
 
-- Auto-generate a task ID (e.g., `001`)
-- Create a structured task document: `.cursor/.lingxi/tasks/001.task.user-login.md`
-- Guide you through **requirement refinement**: analysis, expansion, confirmation
+1. initializes `.lingxi/`
+2. generates `.codex/agents/lingxi-session-distill.toml`
+3. generates `.lingxi/setup/automation.session-distill.toml`
+4. registers the session-distill automation
 
-Then you can choose your next step:
+## First Use
 
-| Next Step            | Command  | When to Use                                        |
-| -------------------- | -------- | -------------------------------------------------- |
-| Review task document | `/vet`   | Multi-angle review of requirement quality          |
-| Plan the task        | `/plan`  | Complex task needing step breakdown and test cases |
-| Build directly       | `/build` | Simple task, start coding right away               |
+The main foreground capabilities in LingXi are `task` and `vet`.
 
-LingXi workflow (Skills) **act on the latest task by default**, and also support multi-task usage. See [Core Workflow — Multi-task](/en/guide/core-workflow#multi-task-characteristics).
+A good starting pattern is:
 
-## Next Steps
+1. use `task` to turn a rough request into a task document
+2. use `vet` to challenge the task before implementation begins
 
-- Learn the full [Core Workflow](/en/guide/core-workflow) lifecycle
-- Understand how the [Memory System](/en/guide/memory-system) works
+The visible flow is:
+
+```text
+task → vet
+```
+
+In the background, `session-distill` keeps extracting durable engineering judgment from historical sessions so future task and vet work can benefit from it.
+
+## Debugging And Useful Commands
+
+If you want to inspect runtime state or debug the memory system, these lower-level commands are useful:
+
+```bash
+node scripts/lingxi-setup.mjs
+node scripts/lx-create-automation.mjs
+node scripts/lx-distill-sessions.mjs
+node scripts/lx-memory-brief.mjs --prompt "current request"
+```
+
+Or run:
+
+```bash
+npm run lx:bootstrap
+```
+
+## Next
+
+- [What Is LingXi](/en/guide/what-is-lingxi)
+- [Core Workflow](/en/guide/core-workflow)
+- [Memory System](/en/guide/memory-system)

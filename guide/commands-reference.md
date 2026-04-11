@@ -1,86 +1,90 @@
 # 命令与工作流参考
 
-本页用于快速查“入口是什么、做什么、输出什么”。
+本页用于快速查看 LingXi 当前对外支持的前台能力与底层运行命令。
 
-## 工作流 Skills
+## 前台能力
 
-灵犀核心工作流由 Skills 驱动：`task -> vet -> plan -> build -> review`。  
-这些 Skills 只在你显式触发时运行（命令或自然语言），不会按语义自动加载。
+LingXi 当前显式工作流表层聚焦在两个能力上：
 
-| Skill | 作用 | 典型产出 |
+| 能力 | 作用 | 典型产出 |
 | --- | --- | --- |
-| `task` | 定义目标、边界、验收 | `*.task.*.md` |
-| `vet` | 审查 task 质量 | 对话内审查结论 |
-| `plan` | 形成实施方案与测试映射 | `*.plan.*.md` + `*.testcase.*.md` |
-| `build` | 实施与测试 | 代码与测试变更 |
-| `review` | 按需求验收与证据审计 | `*.review.*.md` |
+| `task` | 把粗糙请求整理成工程师可直接开工的任务文档 | `.lingxi/tasks/*.md` |
+| `vet` | 在实现前挑战任务质量，输出结构化审查结果 | VetReport（结构化输出） |
 
-## 记忆相关命令
+这两个能力都只在你明确调用时运行。
 
-### `/remember`
+## 后台能力
 
-```bash
-/remember <记忆描述>
-```
+LingXi 还有一条后台持续运行的记忆链路：
 
-- 用途：即时沉淀一条经验或规则
-- 输出：写入 `memory/project/` 或 `memory/share/`，并更新 `INDEX`
+| 能力 | 作用 | 典型产出 |
+| --- | --- | --- |
+| `session-distill` | 从历史会话中提炼 durable engineering taste | 写入 `.lingxi/memory/`，并更新 state 与 index |
+| `memory-retrieve` | 为当前工作检索最小必要的高信号记忆 | memory brief / retrieval hits |
+| `memory-write` | 对通过裁决的候选执行治理并落盘 | notes + `INDEX.md` 更新 |
 
-### `/memory-govern`
+## 常用脚本
 
-```bash
-/memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]
-```
+LingXi 当前运行时最常用的脚本包括：
 
-- 用途：索引同步与可选主动治理
-- 作用：修复 INDEX 与 notes 一致性，并在确认后执行治理建议
-
-### `/init`
+### `lx-bootstrap`
 
 ```bash
-/init
+node scripts/lx-bootstrap.mjs
+# 或
+npm run lx:bootstrap
 ```
 
-- 用途：初始化项目上下文并生成记忆候选
-- 默认行为：先给候选，不自动写入；仅在你确认后写入
+作用：
 
-## 调试与调优辅助
+- 初始化 `.lingxi/`
+- 生成 `.codex/agents/lingxi-session-distill.toml`
+- 生成 `.lingxi/setup/automation.session-distill.toml`
+- 注册 session-distill automation
 
-### `about-lingxi`（Skill）
-
-- 定位：灵犀的人机共读技术手册（知识底座），并以 Skill 形式提供给模型按需自动加载
-- 你可以把它理解为两层一体：
-  - **文档层（Human + AI Readable）**：包含背景、架构、机制、设计原则、评估标准等可持续维护的知识系统
-  - **调用层（Skill）**：在需要时快速加载上述知识，帮助模型基于灵犀语境做判断
-- 适用场景：
-  - 快速对齐“灵犀是什么、为什么这样设计、关键机制如何协作”
-  - 在功能设计/机制调整时评估长期收益、代价与边界
-  - 讨论 Command / Skill / Hook / Subagent 的选型取舍
-- 加载方式：
-  - 首选模型按需自动加载（当任务需要灵犀背景信息时）
-  - 也可手动触发（在 Cursor 中输入 `/about-lingxi` 选择同名 skill）
-- 边界：它只提供背景知识与评估依据，不直接执行具体动作
-
-### `/start-tuning`
+### `lx-distill-sessions`
 
 ```bash
-/start-tuning
+node scripts/lx-distill-sessions.mjs
 ```
 
-- 定位：`about-lingxi` 的上层应用（调试/调优快捷入口）
-- 目的：让模型快速进入“调优灵犀”的工作模式，便于开发者调试灵犀
-- 会发生什么：自动加载 `about-lingxi` 作为背景上下文，再围绕调优目标展开分析
-- 适用场景：调试灵犀、讨论优化目标、梳理约束、设计演进路径
-- 边界：它是调优会话启动器，不承担底层知识内容本身（该部分由 `about-lingxi` 提供）
+作用：
 
-## 自动任务（无需手动命令）
+- 扫描历史 session artifact
+- 选择有效 session
+- 调用单 session worker 提炼 durable engineering taste
 
-系统在新会话开始时自动检查并按约定触发后台子代理：
+### `lx-memory-brief`
 
-- **会话提炼**：触发后由 `lingxi-session-distill` 后台执行
-- **自我迭代**：触发后由 `lingxi-self-iterate` 后台执行
+```bash
+node scripts/lx-memory-brief.mjs --prompt "当前请求"
+```
 
-两者都不阻塞主会话，主会话继续正常响应。
+作用：
+
+- 针对当前请求检索相关记忆
+- 返回最小必要的高信号 memory brief
+
+### `lingxi-setup`
+
+```bash
+node scripts/lingxi-setup.mjs
+```
+
+作用：
+
+- 初始化 LingXi runtime 基础目录
+- 生成运行时骨架
+
+### `lx-create-automation`
+
+```bash
+node scripts/lx-create-automation.mjs
+```
+
+作用：
+
+- 根据 setup 产物注册或更新 LingXi 的 session-distill automation
 
 ## 卸载
 
@@ -90,19 +94,20 @@ yarn lx:uninstall
 npm run lx:uninstall
 ```
 
-非交互环境可用：
+非交互环境可使用：
 
 ```bash
 yarn lx:uninstall --yes
 ```
 
-## 安装清单自动化校验
+## 测试与发布前检查
 
-建议在 CI 固定执行三类测试：
+主仓当前用这些测试来保证安装面、工作流与 memory 主线的一致性：
 
-- `install-manifest-exists`：清单路径有效性（manifest -> repo）
-- `install-manifest-coverage`：结构覆盖率（repo -> manifest）
-- `install-manifest-version-sync`：版本一致性（manifest = package）
+- `npm test`
+- `install-manifest-exists`
+- `install-manifest-coverage`
+- `install-manifest-version-sync`
 
 ## 下一步
 

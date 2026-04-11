@@ -1,81 +1,173 @@
 # Memory System
 
-The memory system is LingXi's long-term capability layer: it turns decisions from past conversations into reusable assets, then reuses them with minimal interruption.
+The memory system is LingXi's long-term capability layer.
 
-This page focuses on **architecture-level consistency** and **solution-level accuracy**, not implementation-level details.
+It distills stable engineering judgment from historical sessions and applies that judgment back into future `task`, `vet`, and other meaningful repository work.
 
-## Module View
+## What The Memory System Stores
 
-The memory system has five functional modules:
+LingXi memory focuses on reusable engineering judgment and experience.
 
-| Module | Purpose | Stable responsibility |
-| --- | --- | --- |
-| **Capture** | Turn inputs into candidate knowledge | Identify reusable signals and produce structured payloads |
-| **Write** | Persist candidates to memory | Validate, govern, gate, and write to project/team memory |
-| **Retrieve** | Reuse memory when needed | Return minimal actionable context |
-| **Index & Governance** | Keep the memory base maintainable | Keep INDEX consistent and support proactive governance |
-| **Audit & Self-iterate** | Improve over time from runtime signals | Record evidence and apply periodic low-risk improvements |
+It focuses on future-reusable engineering judgment such as:
 
-## Core Data Layers
+- stable implementation preferences
+- recurring project constraints
+- reusable heuristics
+- anti-pattern signals
+- repeated review sensitivities
 
-- **Memory notes**: `memory/project/` + `memory/share/`
-- **Unified index**: `memory/INDEX.md` (SSoT, minimal metadata)
-- **Audit log**: `audit.log` (runtime evidence + improvement signals)
+LingXi refers to this as durable engineering taste.
 
-These form a three-layer model: content, index, and evidence.
+## Core Flow
 
-## Runtime Contract
+The current memory mainline can be understood as six steps:
 
-Each turn follows a consistent sequence:
+1. select valid sessions
+2. `taste extract`
+3. `taste adjudicate`
+4. `governance`
+5. `write + index rebuild`
+6. `retrieve for task / vet intent`
 
-1. **Step A/B**: Session init and convention injection (including heartbeat checks)
-2. **Step C (pre)**: Run retrieval before response/implementation
-3. **Main execution**: response, coding, tests, etc.
-4. **Step D (post, conditional)**: Run retrieval again only when files were written
+### 1. Select Valid Sessions
 
-`TriggerTiming` declares when a memory should apply: `pre`, `post`, or `both`.
+The background distill runner first filters historical sessions down to valid source material.
 
-## Memory Write Paths
+It prioritizes sessions with real repository engineering signal and excludes unsuitable material such as bookkeeping-only conversations or memory-about-memory chatter.
 
-Memories enter the system through three paths:
+### 2. Taste Extract
 
-- **Manual capture**: `/remember`
-- **Init capture**: `/init` (write only after explicit confirmation)
-- **Automatic capture**: session distillation and workflow taste sniffing
+`taste extract` is the high-recall extraction stage.
 
-Writing is handled by `lingxi-memory-write` with a stable chain: validate -> govern -> gate -> write.  
-In short: recognition decides **whether** to write; write module decides **how/where** to write.
+It first identifies plausible judgment candidates with fields such as:
 
-## Governance Strategy
+- `scene`
+- `content_type`
+- `alternatives`
+- `choice`
+- `rationale`
+- `evidence`
+- `pattern_hint`
+- `confidence`
 
-The goal is not “store more,” but “keep high-value, low-noise, traceable memory”:
+This stage is about recovering the decision structure before trying to finalize durable memory.
 
-- **Write governance**: dedupe, merge, replace, veto, new
-- **Retrieval governance**: minimal injection (adopt only, limited count)
-- **User gating**: explicit confirmation for high-risk changes
-- **Structure governance**: INDEX and notes stay consistent
-- **Audit governance**: key actions remain replayable
+### 3. Taste Adjudicate
 
-## Index Sync and Proactive Governance
+`taste adjudicate` is the precision-first decision stage.
 
-Use `memory-govern` when shared memory changes or when you need cleanup:
+LingXi uses it to decide which candidates really deserve durable memory treatment, and to produce note-ready durable-memory fields. Adjudication considers value dimensions such as:
 
-- Sync INDEX with notes
-- Resolve orphan rows and unindexed notes
-- Apply optional governance suggestions after confirmation
+- `decision_gain`
+- `reusability`
+- `trigger_clarity`
+- `verifiability`
+- `stability`
 
-## Documentation Boundary
+Accepted candidates are enriched with fields like:
 
-To reduce frequent doc-code re-alignment, this page intentionally does not freeze:
+- `title`
+- `kind`
+- `one_liner`
+- `decision`
+- `when_to_load`
+- `durability_reason`
+- `value_scores`
+- `suggested_storage_kind`
 
-- script-level parameters and internal thresholds
-- full event-field catalogs
-- subagent internal execution details
+## 4. Governance
 
-Those belong to the repository implementation and internal docs. The website guarantees architecture and solution contracts.
+Candidates that pass adjudication still go through governance before persistence.
 
-## Next Steps
+Governance answers:
 
-- [Memory Governance and Write](/en/guide/memory-governance-and-write)
-- [Self-iterate](/en/guide/self-iterate)
-- [Commands and Workflow Reference](/en/guide/commands-reference)
+1. should this create a new note
+2. should it merge into an existing note
+3. should it be skipped to avoid polluting memory
+
+The current main actions are `create / merge_into_existing / skip_as_not_durable`, using `content_type`, `value_scores`, and `suggested_storage_kind` as primary signals.
+
+## 5. Write And Index
+
+Approved notes are written into the project runtime:
+
+- `.lingxi/memory/project/`
+- `.lingxi/memory/share/`
+
+LingXi also rebuilds:
+
+- `.lingxi/memory/INDEX.md`
+
+The runtime keeps additional state for safe operation:
+
+- `.lingxi/state/processed-sessions.json`
+- `.lingxi/state/distill-journal.jsonl`
+- `.lingxi/state/memory-ops.jsonl`
+
+Together, these give LingXi:
+
+- session dedupe and re-distill control
+- a visible distill journal
+- auditable retrieval, distill, and governance operation logs
+
+## 6. Retrieval
+
+After notes are written, the system becomes useful through retrieval.
+
+LingXi retrieval combines the query with caller context, ranks notes semantically, and returns only the smallest useful high-signal set.
+
+It already distinguishes between two intents:
+
+### Task Intent
+
+For `task`, LingXi prioritizes memories about:
+
+- implementation boundaries
+- contract constraints
+- rollback and delivery guidance
+- stable engineering preferences
+
+### Vet Intent
+
+For `vet`, LingXi prioritizes memories about:
+
+- anti-patterns
+- review tendencies
+- hidden risk
+- prior failure modes
+- important constraints the task may have ignored
+
+## How Memory Feeds Task And Vet
+
+When `task` drafts a new task document, it retrieves relevant memory and records the memories that materially shaped the task in `memory_refs`.
+
+When `vet` reviews a task, it retrieves relevant memory again and checks whether the task already reflects those important judgments. If the task ignored material memory, LingXi treats that as an explicit quality gap.
+
+That is why memory in LingXi serves as the judgment layer that keeps strengthening `task` and `vet`.
+
+## Why It Is Designed This Way
+
+LingXi uses a hybrid model of semantic reasoning plus deterministic safety.
+
+LLMs handle:
+
+- candidate extraction
+- adjudication
+- governance judgment
+- retrieval ranking
+
+Deterministic scripts handle:
+
+- schema validation
+- state safety
+- persistence
+- id allocation
+- index rebuild
+- session dedupe
+
+This split exists because semantic judgment needs model reasoning, while contracts, state, and persistence need stable and testable behavior.
+
+## Next
+
+- [Core Workflow](/en/guide/core-workflow)
+- [Quick Start](/en/guide/quick-start)

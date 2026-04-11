@@ -1,86 +1,90 @@
 # Commands and Workflow Reference
 
-Use this page as a quick contract: entry, purpose, and output.
+This page is a quick guide to LingXi's current foreground capabilities and lower-level runtime commands.
 
-## Workflow Skills
+## Foreground Capabilities
 
-LingXi workflow is skill-driven: `task -> vet -> plan -> build -> review`.  
-These skills run only when explicitly invoked (command or clear natural-language request).
+LingXi currently keeps its explicit workflow surface focused on two capabilities:
 
-| Skill | Purpose | Typical output |
+| Capability | Purpose | Typical output |
 | --- | --- | --- |
-| `task` | Define goal, boundaries, acceptance | `*.task.*.md` |
-| `vet` | Review task quality | In-chat review conclusions |
-| `plan` | Build implementation and test mapping | `*.plan.*.md` + `*.testcase.*.md` |
-| `build` | Implement and test | Code and test changes |
-| `review` | Requirement-level acceptance audit | `*.review.*.md` |
+| `task` | Turn a rough request into an engineer-ready task document | `.lingxi/tasks/*.md` |
+| `vet` | Challenge task quality before implementation starts | VetReport (structured output) |
 
-## Memory Commands
+These capabilities run only when explicitly invoked.
 
-### `/remember`
+## Background Capabilities
 
-```bash
-/remember <description>
-```
+LingXi also runs a background memory loop:
 
-- Purpose: capture one memory immediately
-- Output: write to `memory/project/` or `memory/share/`, update `INDEX`
+| Capability | Purpose | Typical output |
+| --- | --- | --- |
+| `session-distill` | Distill durable engineering taste from historical sessions | writes to `.lingxi/memory/` and updates state and index |
+| `memory-retrieve` | Retrieve the smallest useful set of memory for current work | memory brief / retrieval hits |
+| `memory-write` | Govern and persist adjudicated candidates | notes + `INDEX.md` updates |
 
-### `/memory-govern`
+## Common Scripts
 
-```bash
-/memory-govern [--dry-run] [--skip-govern] [--root <memoryRoot>]
-```
+These are the most useful runtime scripts in the current LingXi surface:
 
-- Purpose: index sync and optional proactive governance
-- Effect: restore INDEX/notes consistency and apply governance suggestions after confirmation
-
-### `/init`
+### `lx-bootstrap`
 
 ```bash
-/init
+node scripts/lx-bootstrap.mjs
+# or
+npm run lx:bootstrap
 ```
 
-- Purpose: initialize project context and generate memory candidates
-- Default behavior: candidate-first, no automatic write until explicit confirmation
+Purpose:
 
-## Debug and Tuning Helpers
+- initialize `.lingxi/`
+- generate `.codex/agents/lingxi-session-distill.toml`
+- generate `.lingxi/setup/automation.session-distill.toml`
+- register the session-distill automation
 
-### `about-lingxi` (Skill)
-
-- Role: LingXi's human+AI co-readable technical handbook (knowledge base), exposed as a Skill for on-demand automatic loading
-- Think of it as one capability with two layers:
-  - **Documentation layer (Human + AI Readable)**: background, architecture, mechanisms, design principles, evaluation criteria
-  - **Invocation layer (Skill)**: quickly loads that knowledge when the model needs LingXi-specific context
-- Use when:
-  - you need to align on what LingXi is and how/why it is designed this way
-  - you are evaluating long-term benefit/cost/boundary of mechanism changes
-  - you are choosing among `Command / Skill / Hook / Subagent`
-- Loading:
-  - primarily auto-loaded by the model when LingXi background is needed
-  - can also be manually triggered (type `/about-lingxi` in Cursor and select the skill)
-- Boundary: provides background and evaluation context only; performs no concrete actions directly
-
-### `/start-tuning`
+### `lx-distill-sessions`
 
 ```bash
-/start-tuning
+node scripts/lx-distill-sessions.mjs
 ```
 
-- Role: an upper-layer application of `about-lingxi` (debug/tuning shortcut entrypoint)
-- Goal: switch the model into LingXi tuning mode so developers can debug LingXi efficiently
-- What happens: it auto-loads `about-lingxi` as background context, then starts tuning analysis and discussion
-- Use when: debugging LingXi, aligning optimization goals, clarifying constraints, planning evolution paths
-- Boundary: session starter for tuning; it does not own the underlying knowledge content (that is `about-lingxi`)
+Purpose:
 
-## Automatic Background Tasks (No Manual Command)
+- scan session artifacts
+- select valid sessions
+- hand selected sessions to the single-session worker
 
-At session start, LingXi may trigger background subagents by convention:
+### `lx-memory-brief`
 
-- **Session distillation** via `lingxi-session-distill`
-- **Self-iterate** via `lingxi-self-iterate`
+```bash
+node scripts/lx-memory-brief.mjs --prompt "current request"
+```
 
-Both run in background and do not block the main conversation.
+Purpose:
+
+- retrieve relevant memory for the current request
+- return a minimal high-signal memory brief
+
+### `lingxi-setup`
+
+```bash
+node scripts/lingxi-setup.mjs
+```
+
+Purpose:
+
+- initialize the LingXi runtime directory layout
+- generate the runtime skeleton
+
+### `lx-create-automation`
+
+```bash
+node scripts/lx-create-automation.mjs
+```
+
+Purpose:
+
+- register or update LingXi's session-distill automation from setup artifacts
 
 ## Uninstall
 
@@ -96,15 +100,16 @@ For non-interactive environments:
 yarn lx:uninstall --yes
 ```
 
-## Install Manifest Automation
+## Testing And Release Checks
 
-Run these three tests in CI:
+The main repository currently uses these checks to keep installation, workflow, and memory behavior aligned:
 
-- `install-manifest-exists`: manifest path validity (manifest -> repo)
-- `install-manifest-coverage`: structural coverage (repo -> manifest)
-- `install-manifest-version-sync`: version consistency (manifest = package)
+- `npm test`
+- `install-manifest-exists`
+- `install-manifest-coverage`
+- `install-manifest-version-sync`
 
-## Next Steps
+## Next
 
 - [Core Workflow](/en/guide/core-workflow)
 - [Memory System](/en/guide/memory-system)

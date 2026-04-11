@@ -3,11 +3,11 @@ layout: home
 
 hero:
   name: 灵犀
-  text: 基于 Cursor 的持久记忆工作流
-  tagline: 让 AI 按你的方式做事——沉淀判断、偏好与经验，并在每一轮对话中自然复用。
+  text: 面向 Codex 的工程工作流
+  tagline: 把模糊需求整理成可执行任务，在开工前完成高质量审查，并把稳定的工程判断沉淀成可复用记忆。
   image:
-    src: /images/hero-screenshot.svg
-    alt: 灵犀在 Cursor 中的工作界面
+    src: /assets/logo-primary.svg
+    alt: 灵犀标识
   actions:
     - theme: brand
       text: 快速开始
@@ -17,22 +17,22 @@ hero:
       link: https://github.com/tower1229/LingXi
 
 features:
-  - icon: 🧩
-    title: 可伸缩工作流
-    details: 从需求到交付，覆盖 task → vet → plan → build → review，按任务复杂度自由组合，每一步都可选。
-  - icon: 🗂️
-    title: 持久化记忆
-    details: 通过 /remember、自动会话提炼或工作流中的品味嗅探，提取你的判断、偏好与经验，形成记忆笔记，并在新对话中按需注入。
-  - icon: 🚦
-    title: 人工门控
-    details: 关键节点由你确认，默认不越权；可按任务需要启用或跳过相应流程。
-  - icon: ⚡
-    title: 开箱即用
-    details: 通过脚本安装后即可在现有项目使用；你可以按需从 /init、/task 等命令开始。
-  - icon: 🤝
-    title: 团队经验共享
-    details: 通过 git submodule 共享记忆库，让团队最佳实践与踩坑经验在项目间复用。
-  - icon: 🔄
-    title: 自我迭代
-    details: 运行期间持续收集系统运行状态，按心跳间隔审计，对低风险问题自动改进。
+  - icon: 📝
+    title: 更强的 Task
+    details: 将粗糙请求整理为工程师可直接开工的任务文档，补齐边界、约束、验收标准与开发指导。
+  - icon: 🔎
+    title: 更锋利的 Vet
+    details: 在实现前挑战任务质量，提前暴露模糊点、隐藏风险、薄弱验收与不稳妥的方案设定。
+  - icon: 🧠
+    title: 工程品味记忆
+    details: 从历史会话中提炼可复用的工程判断，不是记录聊天内容，而是沉淀未来还能用的工程选择。
+  - icon: ⚙️
+    title: 窄表层，强底层
+    details: 表层只保留 task 与 vet 两个显式工作流，底层由记忆系统持续积累判断并反向增强后续工作。
+  - icon: 🧪
+    title: 语义判断 + 确定性落盘
+    details: 用 LLM 处理提炼、裁决、治理与检索，用确定性脚本保证合同、状态、安全与持久化一致。
+  - icon: 🔁
+    title: 后台持续提炼
+    details: session-distill 在后台筛选有效会话，完成 taste extract、taste adjudicate、governance 与写入，再按 task 或 vet 意图注入最小必要记忆。
 ---
