@@ -6,7 +6,7 @@
 
 ```bash
 yarn install
-yarn docs:dev
+yarn dev
 ```
 
 访问 http://localhost:5173

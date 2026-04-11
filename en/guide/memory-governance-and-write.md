@@ -120,4 +120,4 @@ So the write layer is always in service of better downstream judgment.
 ## Next
 
 - [Memory System](/en/guide/memory-system)
-- [Engineering Taste Extraction and Adjudication](/en/guide/how-to-recognize-developer-taste)
+- [Engineering Taste Extraction and Adjudication](/en/guide/taste-extraction-and-adjudication)

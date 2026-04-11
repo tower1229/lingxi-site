@@ -51,7 +51,7 @@ export default defineConfig({
             {
               text: '参考',
               items: [
-                { text: '工程品味提炼与裁决', link: '/guide/how-to-recognize-developer-taste' },
+                { text: '工程品味提炼与裁决', link: '/guide/taste-extraction-and-adjudication' },
                 { text: '记忆治理与写入', link: '/guide/memory-governance-and-write' },
                 { text: '命令参考', link: '/guide/commands-reference' },
                 { text: 'FAQ', link: '/guide/faq' },
@@ -108,7 +108,7 @@ export default defineConfig({
             {
               text: 'Reference',
               items: [
-                { text: 'Engineering Taste Extraction and Adjudication', link: '/en/guide/how-to-recognize-developer-taste' },
+                { text: 'Engineering Taste Extraction and Adjudication', link: '/en/guide/taste-extraction-and-adjudication' },
                 { text: 'Memory Governance and Write', link: '/en/guide/memory-governance-and-write' },
                 { text: 'Commands Reference', link: '/en/guide/commands-reference' },
                 { text: 'FAQ', link: '/en/guide/faq' },

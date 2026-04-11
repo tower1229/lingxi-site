@@ -1,438 +1,217 @@
-# LingXi (灵犀) — Comprehensive Product Research
+# LingXi Website Research Notes
 
-> Research conducted on 2026-02-26 from [github.com/tower1229/LingXi](https://github.com/tower1229/LingXi)
+> Updated on 2026-04-11 against the current `tower1229/LingXi` repository implementation.
 
----
+## Product Definition
 
-## 1. What is LingXi?
+LingXi is a Codex-native engineering workflow product.
 
-**LingXi (灵犀)** is a **Cursor IDE workflow system with persistent memory**. It is distributed via a **shell install script** that adds structured development workflows and an AI memory system directly into your Cursor IDE environment.
+Its current visible surface is intentionally narrow:
 
-**Tagline (Chinese):** 基于 Cursor 的持久记忆工作流 — "Cursor workflow with persistent memory"
+1. `task`
+2. `vet`
+3. `memory` as a durable background judgment layer
 
-**Vision:** "为创造者打造 AI 时代的专属法宝" — "Your go-to toolkit for creators in the AI era."
+The current product is best described as:
 
-### The Problem It Solves
+- a narrow foreground workflow
+- a durable engineering taste memory system
+- a project-local runtime installed into the target repository
 
-LingXi addresses several key pain points in AI-assisted development:
+## Core Positioning
 
-1. **AI amnesia** — Every new Cursor chat session starts from scratch. The AI forgets your preferences, coding standards, past decisions, and lessons learned. LingXi gives the AI **persistent memory** that survives across sessions.
+LingXi helps teams:
 
-2. **Lack of structured workflow** — AI coding assistants are powerful but unstructured. LingXi provides a **composable workflow** (requirements → planning → building → review) that brings engineering rigor without rigidity.
+1. turn rough requests into engineer-ready task documents
+2. challenge task quality before implementation starts
+3. accumulate durable engineering judgment over time
 
-3. **Context overload** — AI models get worse when flooded with irrelevant context. LingXi implements **context curation** — retrieving only the most relevant memories and injecting minimal, high-signal information.
+This means the website should describe LingXi as a quality-focused engineering workflow system rather than a broad workflow suite.
 
-4. **Lost institutional knowledge** — Team decisions, code conventions, "don't do X because of Y" — these are lost in chat history. LingXi **captures and reuses** these as structured memory notes.
+## Current Architecture
 
-5. **No human oversight** — AI can make unilateral decisions. LingXi implements **human-in-the-loop gates** at critical decision points.
+LingXi 2.0 is built from three layers:
 
----
+1. `plugin`
+2. `setup`
+3. `runtime`
 
-## 2. Target Audience
+### Plugin
 
-### Primary Users
+The installable shell packages:
 
-- **Software developers** who use **Cursor IDE** as their primary development environment
-- **Individual developers** who want their AI assistant to "learn" their preferences and coding style
-- **Development teams** who want to standardize workflows and share institutional knowledge across projects
+- `.codex-plugin/plugin.json`
+- `skills/`
+- `scripts/`
+- `templates/`
 
-### User Profiles
+### Setup
 
-- **Solo developers** building personal projects who want consistent AI behavior
-- **Tech leads / senior developers** who want to encode team standards and architectural decisions
-- **Teams transitioning to AI-assisted development** who need structure without losing flexibility
-- **Open-source maintainers** who want to document project conventions for AI assistants
+Setup and bootstrap create project-local runtime artifacts such as:
 
-### Prerequisites
+- `.lingxi/`
+- `.codex/agents/`
+- `AGENTS.md`
+- session-distill automation artifacts
 
-- Must use **Cursor IDE**
-- Some features require Node.js (for hooks and scripts)
-- Bilingual: supports both **Chinese and English** (README, commands, docs)
+### Runtime
 
----
+The runtime lives in the target repository and stores:
 
-## 3. Core Features & Capabilities
+- task documents
+- memory notes
+- memory index
+- processed sessions state
+- distill journal
+- memory ops logs
 
-### 3.1 Flexible Workflow (可伸缩工作流)
+## Foreground Workflow
 
-A toolkit of composable **Skills** that follow a software development lifecycle — use all of them for rigorous work, or skip steps for quick tasks. Workflow is **skill-driven**: invoke task, vet, plan, build, review **explicitly** via `/task`, `/plan`, `/build`, `/review`, `/vet` (Cursor shows the matching skill) or natural language. These workflow Skills are **manual or explicit invocation only**; they are not auto-loaded by semantic match, to keep context lean.
+The current foreground workflow is:
 
-| Skill    | Purpose                                                       | Output                                            |
-| -------- | ------------------------------------------------------------- | ------------------------------------------------- |
-| **task**   | Create a task document with refined requirements              | `001.task.<title>.md`                             |
-| **vet**    | Review the task document (optional, repeatable)               | Chat-only feedback                                |
-| **plan**   | Generate task plan + test cases (optional, for complex tasks) | `001.plan.<title>.md` + `001.testcase.<title>.md` |
-| **build**  | Execute implementation (plan-driven or req-driven)            | Code changes                                      |
-| **review** | Multi-dimensional delivery review                             | `001.review.<title>.md`                           |
-
-**Key design choices:**
-
-- **task** is the common entry point; all other steps are optional
-- **No lifecycle management or state routing** — each skill works independently
-- **Multiple entry points** — experienced developers can jump to any stage (invoke the corresponding skill)
-- Works with Cursor's built-in plan mode
-
-### 3.2 Persistent Memory Bank (持久化记忆库)
-
-The flagship feature — a structured system for capturing, storing, retrieving, and applying knowledge across sessions:
-
-| Aspect               | Detail                                                                                          |
-| -------------------- | ----------------------------------------------------------------------------------------------- |
-| **What gets stored** | Judgments, preferences, decisions, conventions, debugging paths, anti-patterns ("taste" / 品味) |
-| **Storage format**   | Flat Markdown files in `.cursor/.lingxi/memory/project/` and `memory/share/`                     |
-| **Index**            | Single Source of Truth in `memory/INDEX.md`                                                     |
-| **Write entry**      | **Three capture paths**: **Automatic** — heartbeat-triggered session distillation (new conversation, >30 min since last run). **Manual** — `/remember`, `/init` (optional during setup). **Workflow taste sniffing** — during task/plan/build/review when context calls for it. |
-| **Read entry**       | Automatic retrieval before every response via `memory-retrieve`                                 |
-| **Cross-project**    | `memory/share/` directory (git submodule recommended)                                           |
-
-**Memory lifecycle:**
-
-1. **Capture** — via taste-recognition skill (7-field structured payload)
-2. **Evaluate** — 5-dimension scoring (decision gain, transferability, trigger-ability, verifiability, stability)
-3. **Govern** — semantic deduplication, merge/replace/veto/new decisions
-4. **Gate** — human confirmation for merges/replaces; silent writes only for high-confidence new entries
-5. **Retrieve** — hybrid semantic + keyword search, top 0-3 results, minimal injection
-
-### 3.3 Human-in-the-Loop (人工门控)
-
-- Key decisions always follow the user's lead
-- Memory writes that modify or replace existing entries require explicit user confirmation
-- "Optional when you want, never overstepping when you don't"
-
-### 3.4 Self-iterate (自我迭代)
-
-- **Heartbeat-triggered** — runs periodic diagnosis and low-risk auto-improvement in background
-- **Audit-driven** — consumes runtime evidence from audit logs to generate and apply improvements
-- **Non-blocking** — main conversation continues uninterrupted and only receives brief summaries
-
-### 3.5 Style Fusion (风格融合)
-
-A unique feature that learns and replicates the user's writing style:
-
-- Analyzes text samples to extract style vectors (10 dimensions including sentence length, logic pattern, emotion intensity, vocabulary level, etc.)
-- Builds a cumulative style profile via weighted averaging
-- Generates writing prompts that match the user's style for documentation
-
-### 3.6 Skill Creator
-
-A meta-skill that guides users through creating new Cursor Agent Skills, following best practices for description writing, progressive disclosure, and directory organization.
-
-### 3.7 Audit System (审计系统)
-
-- 8 hook events captured (prompt submission, agent response, tool use, subagent lifecycle, session events)
-- NDJSON format audit log at `.cursor/.lingxi/workspace/audit.log`
-- Memory-specific audit events (note created/updated/deleted)
-- Session-level correlation via `conversation_id`
-
----
-
-## 4. Technical Architecture
-
-### 4.1 Component Model
-
-LingXi is built entirely on Cursor's extension points:
-
-```
-┌─────────────────────────────────────────────────┐
-│ Workflow (Skill-driven) + Helper Commands        │
-│  task  plan  build  review  vet  (/remember /init) │
-├─────────────────────────────────────────────────┤
-│ Skills (Execution Logic)                         │
-│  ┌──────────────────┐  ┌─────────────────────┐  │
-│  │ Workflow Skills   │  │ Utility Skills      │  │
-│  │  task             │  │  about-lingxi       │  │
-│  │  plan             │  │  ask-questions       │  │
-│  │  build            │  │  skill-creator       │  │
-│  │  review           │  │  taste-recognition   │  │
-│  │  vet              │  │  workspace-bootstrap │  │
-│  └──────────────────┘  └─────────────────────┘  │
-│  ┌──────────────────┐  ┌─────────────────────┐  │
-│  │ Memory Skills     │  │ Reviewer Skills     │  │
-│  │  memory-retrieve  │  │  reviewer-doc-cons  │  │
-│  └──────────────────┘  │  reviewer-security  │  │
-│                         │  reviewer-perf      │  │
-│                         │  reviewer-e2e       │  │
-│                         └─────────────────────┘  │
-│                         │  reviewer-e2e       │  │
-│                         └─────────────────────┘  │
-├─────────────────────────────────────────────────┤
-│ Subagents (Isolated Context)                     │
-│  lingxi-memory-write (memory write operations)   │
-├─────────────────────────────────────────────────┤
-│ Hooks (Automation)                               │
-│  session-init.mjs (memory inject + conventions)  │
-│  lingxi-audit.mjs (8-event audit logging)        │
-│  append-memory-audit.mjs (memory event log)      │
-├─────────────────────────────────────────────────┤
-│ Data Layer                                       │
-│  .cursor/.lingxi/                                │
-│    tasks/          (task documents)               │
-│    memory/         (INDEX + notes + templates)    │
-│    workspace/      (audit log, session state)     │
-│    style-fusion/   (profile + stats)              │
-└─────────────────────────────────────────────────┘
+```text
+task → vet
 ```
 
-### 4.2 Key Design Principles
+### `task`
 
-1. **AI Native** — Use AI for high-semantic, ambiguous tasks; use deterministic mechanisms for standardizable steps. Balance capability release with engineering control.
+`task` turns rough requests into structured task documents that an engineer can actually build from.
 
-2. **Silent Success** — Following Linux CLI philosophy: "No news is good news." Minimize output, save tokens, save user attention.
+It combines:
 
-3. **Context Organization** — Pointer-first, detail-later. INDEX as SSoT. Minimal high-signal injection.
+- user intent
+- repository context
+- relevant memory
 
-4. **Convention over Configuration** — File naming conventions (`001.task.<title>.md`), directory structure conventions, unified index format.
+to produce a stronger task artifact with boundaries, constraints, acceptance criteria, and development guidance.
 
-5. **Separation of Concerns** — Workflow is skill-driven (task, vet, plan, build, review); helper commands for memory/init; Skills carry execution logic; Hooks handle automation; Subagents handle isolated tasks.
+### `vet`
 
-6. **Single Source of Truth (SSoT)** — INDEX.md is the authoritative memory index; notes contain the actual content.
+`vet` challenges task quality before implementation starts.
 
-### 4.3 Memory System Deep Dive
+It inspects:
 
-**Write Path:**
+- ambiguity
+- missing constraints
+- hidden breadth
+- hidden risk
+- weak acceptance coverage
+- weak solution framing
+- weak development guidance
 
-```
-User input → taste-recognition skill (7-field payload)
-  → lingxi-memory-write subagent (isolated context)
-    → Validate payload
-    → Map to note fields (Title, Kind, Status, etc.)
-    → Score card (5 dimensions, 0-2 each, total T)
-      → T ≤ 3: don't write (low value)
-      → T 4-5 + D4≥1: write L0 (factual layer)
-      → T 6-7 + D1+D2≥3: write L1 (principle layer)
-      → T ≥ 8 + D2≥1 + D4≥1: write both L0+L1
-    → Govern (semantic TopK: merge/replace/veto/new)
-    → Gate (human confirmation for non-high-confidence)
-    → Direct file write (memory/project/*.md, memory/share/*.md + INDEX.md)
-    → Audit log entry
-```
+It returns a stable structured VetReport.
 
-**Read Path (every turn):**
+## Memory System
 
-```
-Session start → hook injects convention
-  → Each user message triggers memory-retrieve
-    → Understand + refine (semantic summary + keywords)
-    → Dual-path search (semantic + keyword)
-    → Weighted merge (0.7 semantic + 0.3 keyword)
-    → Top 0-3 results → minimal injection
-    → Silent if no match
-```
+The memory system is one of LingXi's defining capabilities.
 
-**Taste Payload (7 fields):**
+It distills durable engineering taste from historical sessions and applies that judgment back into future work.
 
-```json
-{
-  "scene": "When referencing Skills in documentation",
-  "principles": ["short reference", "full path"],
-  "choice": "short reference",
-  "evidence": "Don't write full paths",
-  "source": "remember|heartbeat|choice|init",
-  "confidence": "low|medium|high",
-  "apply": "project|team"
-}
+### Current Mainline
+
+```text
+session selection
+→ taste extract
+→ taste adjudicate
+→ governance
+→ write
+→ retrieval
 ```
 
-### 4.4 Directory Structure
+### What Is Being Distilled
 
+LingXi distills reusable engineering judgment such as:
+
+- stable preferences
+- recurring constraints
+- reusable heuristics
+- anti-pattern signals
+- review tendencies
+- troubleshooting experience
+
+### Why The New Memory System Matters
+
+The current implementation no longer treats memory as generic conversation recall.
+
+It now explicitly separates:
+
+1. high-recall extraction
+2. precision-first adjudication
+3. governance and persistence
+4. task/vet-intent retrieval
+
+That makes the current product much more coherent than the older Cursor-era memory story.
+
+## Retrieval Model
+
+LingXi retrieval is intent-aware.
+
+It distinguishes between:
+
+- `task` intent
+- `vet` intent
+
+For `task`, retrieval prioritizes:
+
+- implementation boundaries
+- contract constraints
+- rollback guidance
+- stable engineering preferences
+
+For `vet`, retrieval prioritizes:
+
+- anti-patterns
+- review tendencies
+- hidden risk
+- missed constraints
+- historical failure modes
+
+## Runtime State
+
+Current runtime data roots include:
+
+```text
+.lingxi/
+  tasks/
+  memory/
+    INDEX.md
+    project/
+    share/
+  state/
+    processed-sessions.json
+    distill-journal.jsonl
+    memory-ops.jsonl
+  setup/
+    automation.session-distill.toml
+.codex/
+  agents/
+    lingxi-session-distill.toml
+AGENTS.md
 ```
-.cursor/
-├── commands/              # Helper commands (init, remember)
-├── skills/                # Execution logic (SKILL.md + references/)
-│   ├── task/
-│   ├── plan/
-│   ├── build/
-│   ├── review/
-│   ├── vet/
-│   ├── memory-retrieve/
-│   ├── taste-recognition/
-│   ├── about-lingxi/      # Self-documentation skill
-│   ├── skill-creator/     # Meta-skill for creating skills
-│   └── ...
-├── agents/
-│   └── lingxi-memory-write.md   # Memory write subagent
-├── hooks/
-│   ├── hooks.json          # Hook configuration
-│   ├── session-init.mjs    # Session start: inject conventions
-│   ├── lingxi-audit.mjs    # 8-event audit logging
-│   └── append-memory-audit.mjs
-└── .lingxi/
-    ├── tasks/              # Task documents (001.task.*.md, etc.)
-    ├── memory/
-    │   ├── INDEX.md        # SSoT memory index
-    │   ├── project/        # Project-level memory files
-    │   └── share/          # Cross-project shared memories (git submodule)
-    ├── style-fusion/       # Style profile data
-    └── workspace/          # Audit log, session state
-```
 
----
+## Website Implications
 
-## 5. Installation & Quick Start
+The website should consistently present LingXi as:
 
-### Script Install
+1. a Codex-native engineering workflow product
+2. centered on `task`, `vet`, and durable engineering taste memory
+3. running through `plugin + setup + runtime`
+4. strengthened by a memory system with explicit extraction, adjudication, governance, and retrieval
 
-**Linux / macOS / Git Bash:**
+The website should use current product terminology such as:
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/tower1229/LingXi/main/install/bash.sh | bash
-```
+- `task` and `vet` as the foreground workflow
+- `plugin + setup + runtime` as the product structure
+- `.lingxi/` and `.codex/agents/` as the runtime roots
+- `taste extract` and `taste adjudicate` as the distillation stages
+- `session-distill` as the background accumulation loop
 
-**Windows PowerShell:**
+## Current Website Rewrite Rule
 
-```powershell
-irm https://raw.githubusercontent.com/tower1229/LingXi/main/install/powershell.ps1 | iex
-```
+When rewriting website content, prefer these questions:
 
-### Quick Start Flow
+1. What does LingXi do?
+2. How does LingXi do it?
+3. Why is it designed that way?
 
-1. Run `/init` — guided project initialization (collects stack info, patterns, rules)
-2. Run task skill (e.g. `/task <description>`) — create your first task document
-3. Optionally: plan, build, review skills (e.g. `/plan`, `/build`, `/review`)
-4. Use `/remember` anytime to save learnings
-
-### Cross-Project Knowledge Sharing
-
-```bash
-# Add shared memory repo as submodule
-git submodule add <shareRepoUrl> .cursor/.lingxi/memory/share
-
-# Sync memory index after adding shared notes
-npm run memory-sync
-```
-
----
-
-## 6. What Makes It Unique (Competitive Differentiation)
-
-### vs. Cursor Rules / .cursorrules
-
-| Aspect             | Cursor Rules                | LingXi                                          |
-| ------------------ | --------------------------- | ----------------------------------------------- |
-| Memory             | Static, manual              | Dynamic, learns from interactions               |
-| Workflow           | None                        | Full dev lifecycle (task→vet→plan→build→review) |
-| Knowledge sharing  | Copy-paste between projects | Git submodule shared memory                     |
-| Context management | All-or-nothing              | Selective retrieval + minimal injection         |
-
-### vs. Custom GPTs / System Prompts
-
-| Aspect          | Custom GPTs  | LingXi                               |
-| --------------- | ------------ | ------------------------------------ |
-| Persistence     | Session-only | Cross-session, file-based            |
-| Learning        | No           | Automatic taste recognition          |
-| Structure       | Freeform     | Structured with scoring & governance |
-| Human oversight | No           | Gated writes with confirmation       |
-
-### vs. Other AI Workflow Tools (e.g., Windsurf Flows, Aider)
-
-| Aspect          | Others              | LingXi                                      |
-| --------------- | ------------------- | ------------------------------------------- |
-| Memory system   | None or basic       | Deep: capture→evaluate→govern→gate→retrieve |
-| Style learning  | None                | Style fusion (10-dimension vector)          |
-| Audit trail     | None                | Full NDJSON audit with session correlation  |
-| Knowledge reuse | None                | Cross-project via git submodule             |
-| Philosophy      | Maximize automation | Balance AI capability with human control    |
-
-### Unique Selling Points (USPs)
-
-1. **Taste-Aware Memory** — Not just "remember this" but structured capture of decisions, principles, and preferences with scoring and governance. The AI learns your "taste" (品味) — your judgment, preferences, and responsibility.
-
-2. **Silent Success Philosophy** — Follows Unix CLI philosophy. No verbose confirmations, no process narration. Saves tokens and attention.
-
-3. **AI Native Design** — Neither "give everything to AI" nor "replace AI with rules." Uses AI for semantic tasks, deterministic scripts for mechanical tasks.
-
-4. **Composable, Not Prescriptive** — Every workflow step is optional. No forced linear flow. Experienced devs can enter at any stage.
-
-5. **Cross-Project Knowledge Transfer** — Share team-level conventions across projects via git submodules. Memories have audience/portability metadata for controlled sharing.
-
-6. **Self-Documenting Architecture** — The `about-lingxi` skill means the AI itself can explain and evaluate LingXi's own architecture and design decisions.
-
-7. **Writing Style Continuity** — The style-fusion feature learns your writing voice and applies it consistently across documentation.
-
----
-
-## 7. Project Metadata
-
-| Field                | Value                                                              |
-| -------------------- | ------------------------------------------------------------------ |
-| **Repository**       | [github.com/tower1229/LingXi](https://github.com/tower1229/LingXi) |
-| **Author**           | tower1229                                                          |
-| **Language**         | JavaScript (Node.js scripts), Markdown (skills, commands, docs)    |
-| **Plugin Version**   | 1.1.0                                                              |
-| **License**          | Not explicitly stated (but MIT mentioned in plugin.json)           |
-| **Created**          | 2026-01-11                                                         |
-| **Last Updated**     | 2026-02-25                                                         |
-| **Stars**            | 0 (new project)                                                    |
-| **Issues**           | None open                                                          |
-| **Releases**         | None yet                                                           |
-| **Primary Language** | Chinese (with English translations for README and commands)        |
-
----
-
-## 8. Key Terminology (Glossary)
-
-| Term                | Chinese      | Meaning                                                                           |
-| ------------------- | ------------ | --------------------------------------------------------------------------------- |
-| Taste (品味)        | 品味         | The user's judgment, preferences, principles — what LingXi captures and remembers |
-| Memory Note         | 记忆         | A structured Markdown file storing a captured preference/decision                 |
-| INDEX               | 索引         | The single source of truth listing all memory notes                               |
-| SSoT                | 单一事实来源 | Single Source of Truth — each piece of info defined in one place                  |
-| Silent Success      | 静默成功     | No output when things work fine (Unix philosophy)                                 |
-| Taste Recognition   | 品味识别     | The skill that identifies capturable preferences from user input                  |
-| Memory Retrieve     | 记忆提取     | The skill that searches and injects relevant memories each turn                   |
-| Human Gate          | 人工门控     | Required user confirmation for critical decisions                                 |
-| Style Fusion        | 风格融合     | Feature that learns and replicates writing style                                  |
-| Workspace Bootstrap | 工作区引导   | Initial setup of the `.cursor/.lingxi/` directory structure                       |
-
----
-
-## 9. Content Map for Marketing Website
-
-Based on this research, here's a suggested content strategy:
-
-### Homepage Hero
-
-- **Headline:** "Your AI remembers." / "让 AI 记住你的方式"
-- **Subhead:** "Persistent memory and structured workflows for Cursor"
-- **CTA:** Quick Start guide (script install)
-
-### Key Pages to Create
-
-1. **What is LingXi** — Problem/solution, value proposition
-2. **Features** — The 6 core features with visuals
-3. **How It Works** — Architecture diagram, memory system explanation
-4. **Quick Start** — Installation + first 5 minutes walkthrough
-5. **Commands Reference** — All commands with examples
-6. **Memory System** — Deep dive into how memory works
-7. **Team Sharing** — Cross-project knowledge sharing guide
-8. **FAQ** — Common questions, comparisons
-9. **Changelog** — Version history
-
-### Marketing Angles
-
-- **For individuals:** "Your AI assistant that actually learns"
-- **For teams:** "Encode your team's standards once, apply everywhere"
-- **For productivity:** "Stop repeating yourself to AI"
-- **Technical depth:** "AI-native architecture that respects both AI capability and human judgment"
-
----
-
-## 10. Observations & Notes
-
-1. **Very new project** — Created Jan 2026, 0 stars, no issues, sole contributor. Early stage but architecturally mature.
-
-2. **Deep documentation** — The project is exceptionally well-documented internally, with extensive design principles, evaluation criteria, and engineering practices. This suggests strong product thinking.
-
-3. **Chinese-first** — Primary documentation and internal docs are in Chinese. English README exists but some internal docs are Chinese-only.
-
-4. **Cursor-dependent** — Entirely built on Cursor's plugin infrastructure (Commands, Skills, Hooks, Subagents). Cannot work with other editors/IDEs.
-
-5. **No runtime dependencies** — Uses only Node.js built-in modules. No npm packages required for the plugin itself.
-
-6. **Plugin distribution** — Has a `plugin.json` manifest for future Cursor plugin marketplace; currently install via script only. No releases yet published on GitHub.
-
-7. **The "taste" concept** — The structured 7-field taste payload is a novel approach to capturing user preferences. It goes beyond simple "remember this" to structured decision capture with scoring.
-
-8. **Dogfooding** — The project uses its own workflow system. The `.cursor/.lingxi/tasks/` directory contains actual task documents (audit system, memory improvements, etc.) created using the LingXi workflow.
-
-9. **Install script quality** — The bash install script is production-quality with retry logic, error handling, JSON parsing fallbacks (jq → Python), and Windows compatibility considerations.
+This keeps the site aligned with the current product without relying on legacy contrast.

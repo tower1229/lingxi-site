@@ -120,4 +120,4 @@ LingXi 把提炼、裁决、治理判断交给 LLM，但把持久化交给确定
 ## 下一步
 
 - [记忆系统](/guide/memory-system)
-- [工程品味提炼与裁决](/guide/how-to-recognize-developer-taste)
+- [工程品味提炼与裁决](/guide/taste-extraction-and-adjudication)
