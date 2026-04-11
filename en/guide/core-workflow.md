@@ -94,6 +94,8 @@ This has several advantages:
 LingXi runs inside the target repository, with primary runtime roots under:
 
 - `.lingxi/`
+- `.codex/config.toml`
+- `.codex/hooks.json`
 - `.codex/agents/`
 
 A typical usage flow is:
@@ -103,6 +105,8 @@ A typical usage flow is:
 3. use `task` to create a task document
 4. use `vet` to challenge it before implementation
 5. let background `session-distill` accumulate durable engineering taste
+
+Outside the explicit `task → vet` path, generic but meaningful repository turns also consume memory automatically through the repo-local Codex hook. That path complements `task` and `vet` rather than replacing them.
 
 ## What The Workflow Is Trying To Achieve
 

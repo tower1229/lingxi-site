@@ -27,7 +27,7 @@ The current memory mainline can be understood as six steps:
 3. `taste adjudicate`
 4. `governance`
 5. `write + index rebuild`
-6. `retrieve for task / vet intent`
+6. `retrieve for task / vet / meaningful repo turn`
 
 ### 1. Select Valid Sessions
 
@@ -102,7 +102,7 @@ The runtime keeps additional state for safe operation:
 
 - `.lingxi/state/processed-sessions.json`
 - `.lingxi/state/distill-journal.jsonl`
-- `.lingxi/state/memory-ops.jsonl`
+- `.lingxi/state/memory-ops.jsonl` (created lazily after retrieval / distill / governance operations begin)
 
 Together, these give LingXi:
 
@@ -116,7 +116,7 @@ After notes are written, the system becomes useful through retrieval.
 
 LingXi retrieval combines the query with caller context, ranks notes semantically, and returns only the smallest useful high-signal set.
 
-It already distinguishes between two intents:
+It already distinguishes between two explicit workflow intents, and it also serves generic repository turns:
 
 ### Task Intent
 
@@ -137,13 +137,30 @@ For `vet`, LingXi prioritizes memories about:
 - prior failure modes
 - important constraints the task may have ignored
 
+### Meaningful Repository Turns
+
+In addition to `task` and `vet`, LingXi now consumes memory for generic but meaningful repository conversations.
+
+In Codex, this path no longer depends on a manual command. Instead, a repo-local `UserPromptSubmit` hook:
+
+- checks whether the current prompt is meaningful repository work
+- retrieves the smallest relevant memory set using prompt, caller, and project context
+- injects the resulting brief as hidden turn context when there is a hit
+
+That means LingXi now has two main memory-consumption paths:
+
+1. `task` / `vet`: direct retrieval from the workflow implementation
+2. generic repository turns: automatic injection through the Codex hook
+
 ## How Memory Feeds Task And Vet
 
-When `task` drafts a new task document, it retrieves relevant memory and records the memories that materially shaped the task in `memory_refs`.
+When `task` drafts a new task document, it retrieves relevant memory and records the memories that materially shaped the task in the task's memory-application layer.
 
 When `vet` reviews a task, it retrieves relevant memory again and checks whether the task already reflects those important judgments. If the task ignored material memory, LingXi treats that as an explicit quality gap.
 
-That is why memory in LingXi serves as the judgment layer that keeps strengthening `task` and `vet`.
+For generic repository turns, LingXi injects the smallest useful memory brief through the hook adapter.
+
+That is why memory in LingXi serves as a broader judgment layer: it keeps strengthening `task`, `vet`, and meaningful repository conversations.
 
 ## Why It Is Designed This Way
 

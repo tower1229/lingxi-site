@@ -38,6 +38,8 @@ node scripts/lx-bootstrap.mjs
 Purpose:
 
 - initialize `.lingxi/`
+- create or merge `.codex/config.toml`
+- create or merge `.codex/hooks.json`
 - generate `.codex/agents/lingxi-session-distill.toml`
 - generate `.lingxi/setup/automation.session-distill.toml`
 - register the session-distill automation
@@ -56,18 +58,16 @@ Purpose:
 - select valid sessions
 - hand selected sessions to the single-session worker
 
-### `lx-memory-brief`
+### Generic Conversation Memory Consumption
 
-```bash
-npm run lx:memory-brief -- --prompt "current request"
-# or
-node scripts/lx-memory-brief.mjs --prompt "current request"
-```
+The current mainline no longer ships a supported manual `lx-memory-brief` command.
 
-Purpose:
+For meaningful repository turns, LingXi injects the smallest relevant memory brief automatically through a repo-local Codex `UserPromptSubmit` hook.
 
-- retrieve relevant memory for the current request
-- return a minimal high-signal memory brief
+Notes:
+
+- `task` and `vet` still call the underlying retrieval flow directly rather than going through the hook
+- on native Windows, setup still generates hook config, but the current Codex runtime does not execute hooks natively yet
 
 ### `lingxi-setup`
 
@@ -80,7 +80,12 @@ node scripts/lingxi-setup.mjs
 Purpose:
 
 - initialize the LingXi runtime directory layout
-- generate the runtime skeleton
+- generate `.lingxi/`
+- create or merge `.codex/config.toml`
+- create or merge `.codex/hooks.json`
+- generate `.codex/agents/lingxi-session-distill.toml`
+- generate `.lingxi/setup/automation.session-distill.toml`
+- write `AGENTS.md` only when missing
 
 ### `lx-create-automation`
 

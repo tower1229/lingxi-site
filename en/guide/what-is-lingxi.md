@@ -68,6 +68,8 @@ The plugin provides the installable product shell, including skills, templates, 
 Setup creates project-local runtime artifacts such as:
 
 - `.lingxi/`
+- `.codex/config.toml`
+- `.codex/hooks.json`
 - `.codex/agents/`
 - `AGENTS.md`
 - session-distill automation config
@@ -81,7 +83,7 @@ Runtime lives inside the target repository and stores long-lived state:
 - the memory index
 - processed session state
 - distill journal
-- memory ops logs
+- memory ops logs (created on demand)
 
 ## Why The Surface Is Small
 
@@ -100,7 +102,12 @@ LingXi is designed to feel small at the surface and strong underneath.
 
 Memory is the long-term engine that makes the product improve with use.
 
-The background distillation loop analyzes historical sessions, identifies durable engineering judgment, writes that judgment into `.lingxi/memory/`, and then feeds it back into future `task` and `vet` work with the smallest useful amount of context.
+The background distillation loop analyzes historical sessions, identifies durable engineering judgment, writes that judgment into `.lingxi/memory/`, and then feeds it back in two ways:
+
+- `task` and `vet` retrieve memory directly with workflow-specific intent
+- generic but meaningful repository turns receive the smallest useful memory brief through the repo-local Codex hook
+
+That means memory does not only support explicit workflows. It also strengthens everyday implementation, debugging, analysis, and review conversations.
 
 That is how LingXi gradually accumulates standards instead of restarting from scratch every time.
 

@@ -34,5 +34,5 @@ features:
     details: 用 LLM 处理提炼、裁决、治理与检索，用确定性脚本保证合同、状态、安全与持久化一致。
   - icon: 🔁
     title: 后台持续提炼
-    details: session-distill 在后台筛选有效会话，完成 taste extract、taste adjudicate、governance 与写入，再按 task 或 vet 意图注入最小必要记忆。
+    details: session-distill 在后台筛选有效会话，完成 taste extract、taste adjudicate、governance 与写入；而普通有意义的仓库对话会通过 repo-local Codex hook 自动注入最小必要记忆。
 ---

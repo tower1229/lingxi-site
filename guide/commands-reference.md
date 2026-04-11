@@ -38,6 +38,8 @@ node scripts/lx-bootstrap.mjs
 作用：
 
 - 初始化 `.lingxi/`
+- 生成或合并 `.codex/config.toml`
+- 生成或合并 `.codex/hooks.json`
 - 生成 `.codex/agents/lingxi-session-distill.toml`
 - 生成 `.lingxi/setup/automation.session-distill.toml`
 - 注册 session-distill automation
@@ -56,18 +58,16 @@ node scripts/lx-distill-sessions.mjs
 - 选择有效 session
 - 调用单 session worker 提炼 durable engineering taste
 
-### `lx-memory-brief`
+### 通用对话 memory 消费
 
-```bash
-npm run lx:memory-brief -- --prompt "当前请求"
-# 或
-node scripts/lx-memory-brief.mjs --prompt "当前请求"
-```
+当前主线不再保留 `lx-memory-brief` 这种手动命令。
 
-作用：
+普通的有意义仓库对话，会通过仓库级 Codex `UserPromptSubmit` hook 自动注入最小必要的 memory brief。
 
-- 针对当前请求检索相关记忆
-- 返回最小必要的高信号 memory brief
+补充说明：
+
+- `task` 与 `vet` 继续直接调用底层 retrieval，不依赖 Codex hook
+- Windows 原生环境下，setup 会生成 hooks 配置，但 Codex 目前还不会原生执行这些 hooks
 
 ### `lingxi-setup`
 
@@ -80,7 +80,12 @@ node scripts/lingxi-setup.mjs
 作用：
 
 - 初始化 LingXi runtime 基础目录
-- 生成运行时骨架
+- 生成 `.lingxi/`
+- 生成或合并 `.codex/config.toml`
+- 生成或合并 `.codex/hooks.json`
+- 生成 `.codex/agents/lingxi-session-distill.toml`
+- 生成 `.lingxi/setup/automation.session-distill.toml`
+- 仅在缺失时生成 `AGENTS.md`
 
 ### `lx-create-automation`
 

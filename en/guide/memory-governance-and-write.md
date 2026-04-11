@@ -88,7 +88,7 @@ It also updates runtime state such as:
 
 - `.lingxi/state/processed-sessions.json`
 - `.lingxi/state/distill-journal.jsonl`
-- `.lingxi/state/memory-ops.jsonl`
+- `.lingxi/state/memory-ops.jsonl` (created on demand)
 
 So this layer writes notes and maintains the consistency of the whole memory runtime.
 

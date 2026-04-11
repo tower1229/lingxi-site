@@ -34,5 +34,5 @@ features:
     details: Use LLM reasoning for extraction, adjudication, governance, and ranking, with deterministic scripts for contracts, state safety, and persistence.
   - icon: 🔁
     title: Continuous Background Distillation
-    details: Session-distill selects valid sessions, runs taste extraction and adjudication, governs memory writes, and retrieves the smallest useful set for task or vet intent.
+    details: Session-distill selects valid sessions, runs taste extraction and adjudication, governs memory writes, and lets generic meaningful repository turns receive the smallest useful memory brief through the repo-local Codex hook.
 ---

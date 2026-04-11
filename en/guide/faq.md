@@ -7,6 +7,8 @@
 LingXi is currently a Codex-native engineering workflow product. After installation, its runtime lives inside the target repository, primarily under:
 
 - `.lingxi/`
+- `.codex/config.toml`
+- `.codex/hooks.json`
 - `.codex/agents/`
 
 ### Do I need local Node.js?
@@ -25,6 +27,8 @@ If you synced files manually, run:
 ```bash
 node scripts/lx-bootstrap.mjs
 ```
+
+That step also creates or merges the repo-local Codex hook config that enables automatic memory consumption for generic repository turns.
 
 ### How do I uninstall LingXi?
 
@@ -58,7 +62,16 @@ task → vet
 
 LingXi is designed to keep the foreground workflow narrow.
 
-Explicit workflows run only when you call them. Background memory continues to distill and retrieve, and retrieval is optimized for the smallest useful set of context.
+Explicit workflows run only when you call them. Background memory continues to distill and retrieve, and generic meaningful repository turns receive only the smallest useful memory brief through the hook adapter.
+
+### Why am I not seeing automatic memory injection in normal conversations?
+
+Check these first:
+
+1. whether bootstrap has already created `.codex/config.toml` and `.codex/hooks.json`
+2. whether the repository is trusted and Codex hooks are actually active
+3. whether the current prompt is meaningful repository work rather than casual conversation
+4. whether you are on native Windows, where the current Codex runtime still does not execute hooks natively
 
 ## Memory System
 
@@ -79,8 +92,7 @@ Its goal is to preserve the engineering judgment that is actually worth reusing.
 
 ### Do I need to sync the memory index manually?
 
-In the current mainline, `INDEX.md` is maintained automatically during memory writes.  
-In the current mainline, index maintenance is part of the write path and `INDEX.md` stays in sync during memory writes.
+In the current mainline, `INDEX.md` is maintained automatically during memory writes, so no manual sync is needed.
 
 ## Quality and Validation
 

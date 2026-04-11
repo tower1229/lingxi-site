@@ -27,7 +27,7 @@ LingXi 把这类内容称为 durable engineering taste。
 3. `taste adjudicate`
 4. `governance`
 5. `write + index rebuild`
-6. `retrieve for task / vet intent`
+6. `retrieve for task / vet / meaningful repo turn`
 
 ### 1. 选择有效 session
 
@@ -102,7 +102,7 @@ note 正文之外，系统还会保存与记忆运行有关的状态：
 
 - `.lingxi/state/processed-sessions.json`
 - `.lingxi/state/distill-journal.jsonl`
-- `.lingxi/state/memory-ops.jsonl`
+- `.lingxi/state/memory-ops.jsonl`（在首次 retrieval / distill / governance 操作后按需生成）
 
 这些状态共同保证记忆系统具备：
 
@@ -116,7 +116,7 @@ note 正文之外，系统还会保存与记忆运行有关的状态：
 
 LingXi 的 retrieval 会结合当前 query 和 caller context 进行语义排序，并只返回最小必要的高信号记忆。
 
-当前 retrieval 会区分两类意图：
+当前 retrieval 会区分两类显式工作流意图，同时也服务普通仓库对话：
 
 ### Task Intent
 
@@ -139,13 +139,30 @@ LingXi 的 retrieval 会结合当前 query 和 caller context 进行语义排序
 
 这让同一个 memory store 在不同工作阶段有不同作用方式。
 
+### Meaningful Repository Turns
+
+除了 `task` 和 `vet`，LingXi 当前也会对普通但有意义的仓库对话消费 memory。
+
+在 Codex 里，这条路径不是通过手动命令完成，而是通过仓库级 `UserPromptSubmit` hook 自动触发：
+
+- 先判断当前请求是否真的是有意义的仓库工作
+- 再按当前 prompt、caller context 和 project context 检索最小必要记忆
+- 命中时，把 brief 作为隐藏上下文注入当前回合
+
+这意味着 LingXi 的 memory 现在有两种主要消费方式：
+
+1. `task` / `vet`：直接调用底层 retrieval
+2. 普通仓库对话：通过 Codex hook 自动注入
+
 ## 记忆如何反馈到 task 和 vet
 
-`task` 会在起草任务时主动检索相关记忆，并把真正影响了任务内容的结果写进 `memory_refs`。
+`task` 会在起草任务时主动检索相关记忆，并把真正影响了任务内容的结果写进任务文档的 memory 应用层。
 
 `vet` 会再次检索相关记忆，并检查当前任务是否遗漏了这些关键判断。如果任务忽略了本该应用的记忆，LingXi 会把它当作一个明确的质量问题指出来。
 
-所以 memory 在 LingXi 里承担着持续增强 `task` 和 `vet` 的底层判断层角色。
+而在普通仓库对话里，LingXi 会通过 hook 为当前回合隐式注入最小必要的 memory brief。
+
+所以 memory 在 LingXi 里承担的是一个更广义的底层判断层角色：既持续增强 `task` / `vet`，也增强普通的有意义仓库工作。
 
 ## 为什么这样设计
 

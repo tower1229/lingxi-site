@@ -68,6 +68,8 @@
 setup 会在目标仓库中生成运行所需的本地 runtime，例如：
 
 - `.lingxi/`
+- `.codex/config.toml`
+- `.codex/hooks.json`
 - `.codex/agents/`
 - `AGENTS.md`
 - session-distill automation 配置
@@ -81,7 +83,7 @@ runtime 运行在目标仓库内部，负责保存长期状态：
 - memory index
 - processed sessions 状态
 - distill journal
-- memory ops logs
+- memory ops logs（按需生成）
 
 ## 为什么表层做得很小
 
@@ -100,7 +102,12 @@ runtime 运行在目标仓库内部，负责保存长期状态：
 
 LingXi 的 memory 是整个产品长期变强的基础。
 
-后台会持续分析历史会话，筛选出值得沉淀的工程判断，再把这些判断写入 `.lingxi/memory/`。之后无论是在 `task` 还是 `vet` 中，LingXi 都会按当前意图检索最小必要的记忆，让任务写得更稳、审查更有针对性。
+后台会持续分析历史会话，筛选出值得沉淀的工程判断，再把这些判断写入 `.lingxi/memory/`。之后：
+
+- `task` 和 `vet` 会按当前工作流意图直接检索最小必要记忆
+- 普通但有意义的仓库对话会通过仓库级 Codex hook 自动注入最小必要记忆
+
+这样 memory 不只是服务于显式工作流，也会反向增强日常实现、调试、分析和评审对话。
 
 这让 LingXi 不只是一次性帮你整理任务，而是随着项目推进逐步积累工程标准。
 

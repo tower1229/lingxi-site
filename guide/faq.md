@@ -7,6 +7,8 @@
 LingXi 当前是面向 Codex 的工程工作流产品。安装后，它会把运行时落在目标仓库中，核心目录是：
 
 - `.lingxi/`
+- `.codex/config.toml`
+- `.codex/hooks.json`
 - `.codex/agents/`
 
 ### 需要本机安装 Node.js 吗？
@@ -25,6 +27,8 @@ LingXi 当前是面向 Codex 的工程工作流产品。安装后，它会把运
 ```bash
 node scripts/lx-bootstrap.mjs
 ```
+
+这一步除了 runtime 和 automation，还会生成或合并仓库级 Codex hooks 配置，让普通仓库对话可以自动消费 LingXi memory。
 
 ### 如何卸载 LingXi？
 
@@ -58,7 +62,16 @@ task → vet
 
 LingXi 的设计目标是把前台工作流保持得很克制。
 
-显式工作流只在你明确调用时运行。后台 memory 会持续提炼和检索，retrieval 会把上下文控制在最小必要范围内。
+显式工作流只在你明确调用时运行。后台 memory 会持续提炼和检索，而普通的有意义仓库对话只会通过 hook 注入最小必要的 memory brief，不会默认塞入一大段上下文。
+
+### 为什么我装好了，但普通对话没有自动带上 memory？
+
+先检查这几项：
+
+1. 是否已经跑过 bootstrap，并生成了 `.codex/config.toml` 与 `.codex/hooks.json`
+2. 当前仓库在 Codex 里是否处于 trusted / 启用 hooks 的状态
+3. 当前请求是否属于有意义的仓库工作，而不是简单寒暄
+4. 如果你在 Windows 原生环境里运行 Codex，需要注意当前 hooks 还不会原生执行
 
 ## 记忆系统
 
@@ -79,8 +92,7 @@ LingXi 通过三层控制噪音：
 
 ### 记忆索引需要手动同步吗？
 
-当前主线里，memory 写入时会自动维护 `INDEX.md`。  
-当前主线把索引维护收进了 memory 写入链路中，`INDEX.md` 会在写入时自动保持同步。
+当前主线里，memory 写入时会自动维护 `INDEX.md`，不需要手动同步。
 
 ## 质量与验证
 
