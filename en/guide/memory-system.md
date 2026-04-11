@@ -141,7 +141,7 @@ For `vet`, LingXi prioritizes memories about:
 
 In addition to `task` and `vet`, LingXi now consumes memory for generic but meaningful repository conversations.
 
-In Codex, this path no longer depends on a manual command. Instead, a repo-local `UserPromptSubmit` hook:
+In Codex and Claude Code, this path no longer depends on a manual command. Instead, a repo-local `UserPromptSubmit` hook:
 
 - checks whether the current prompt is meaningful repository work
 - retrieves the smallest relevant memory set using prompt, caller, and project context
@@ -150,7 +150,7 @@ In Codex, this path no longer depends on a manual command. Instead, a repo-local
 That means LingXi now has two main memory-consumption paths:
 
 1. `task` / `vet`: direct retrieval from the workflow implementation
-2. generic repository turns: automatic injection through the Codex hook
+2. generic repository turns: automatic injection through the repo-local hook (Codex or Claude Code)
 
 ## How Memory Feeds Task And Vet
 

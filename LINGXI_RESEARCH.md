@@ -4,7 +4,7 @@
 
 ## Product Definition
 
-LingXi is a Codex-native engineering workflow product.
+LingXi is an engineering workflow product for Codex and Claude Code.
 
 Its current visible surface is intentionally narrow:
 
@@ -193,7 +193,7 @@ AGENTS.md
 
 The website should consistently present LingXi as:
 
-1. a Codex-native engineering workflow product
+1. an engineering workflow product for Codex and Claude Code
 2. centered on `task`, `vet`, and durable engineering taste memory
 3. running through `plugin + setup + runtime`
 4. strengthened by a memory system with explicit extraction, adjudication, governance, and retrieval

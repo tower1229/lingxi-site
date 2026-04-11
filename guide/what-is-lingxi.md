@@ -1,6 +1,6 @@
 # 什么是灵犀
 
-灵犀（LingXi）是一个面向 Codex 的工程工作流产品。
+灵犀（LingXi）是一个同时支持 Codex 和 Claude Code 的工程工作流产品。
 
 它做三件事：
 
@@ -67,11 +67,10 @@
 
 setup 会在目标仓库中生成运行所需的本地 runtime，例如：
 
-- `.lingxi/`
-- `.codex/config.toml`
-- `.codex/hooks.json`
-- `.codex/agents/`
-- `AGENTS.md`
+- `.lingxi/`（公共运行时根）
+- `.codex/config.toml`、`.codex/hooks.json`、`.codex/agents/`（Codex adapter）
+- `.claude/settings.json`、`.claude/agents/`、`.claude/skills/`（Claude Code adapter）
+- `AGENTS.md`、`CLAUDE.md`
 - session-distill automation 配置
 
 ### Runtime
@@ -105,7 +104,7 @@ LingXi 的 memory 是整个产品长期变强的基础。
 后台会持续分析历史会话，筛选出值得沉淀的工程判断，再把这些判断写入 `.lingxi/memory/`。之后：
 
 - `task` 和 `vet` 会按当前工作流意图直接检索最小必要记忆
-- 普通但有意义的仓库对话会通过仓库级 Codex hook 自动注入最小必要记忆
+- 普通但有意义的仓库对话会通过仓库级 hook（Codex 或 Claude Code）自动注入最小必要记忆
 
 这样 memory 不只是服务于显式工作流，也会反向增强日常实现、调试、分析和评审对话。
 

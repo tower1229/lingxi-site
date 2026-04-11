@@ -4,12 +4,11 @@
 
 ### LingXi 运行在什么环境里？
 
-LingXi 当前是面向 Codex 的工程工作流产品。安装后，它会把运行时落在目标仓库中，核心目录是：
+LingXi 当前同时支持 Codex 和 Claude Code。安装后，它会把运行时落在目标仓库中，核心目录是：
 
-- `.lingxi/`
-- `.codex/config.toml`
-- `.codex/hooks.json`
-- `.codex/agents/`
+- `.lingxi/`（公共运行时根）
+- `.codex/config.toml`、`.codex/hooks.json`、`.codex/agents/`（Codex adapter）
+- `.claude/settings.json`、`.claude/agents/`、`.claude/skills/`（Claude Code adapter）
 
 ### 需要本机安装 Node.js 吗？
 
@@ -68,8 +67,8 @@ LingXi 的设计目标是把前台工作流保持得很克制。
 
 先检查这几项：
 
-1. 是否已经跑过 bootstrap，并生成了 `.codex/config.toml` 与 `.codex/hooks.json`
-2. 当前仓库在 Codex 里是否处于 trusted / 启用 hooks 的状态
+1. 是否已经跑过 bootstrap，并生成了对应 host 的 hook 配置（Codex: `.codex/config.toml` + `.codex/hooks.json`；Claude Code: `.claude/settings.json`）
+2. 当前仓库在 Codex 或 Claude Code 里是否处于 trusted / 启用 hooks 的状态
 3. 当前请求是否属于有意义的仓库工作，而不是简单寒暄
 4. 如果你在 Windows 原生环境里运行 Codex，需要注意当前 hooks 还不会原生执行
 

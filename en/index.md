@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: LingXi
-  text: Codex-native Engineering Workflow
+  text: Engineering Workflow for Codex and Claude Code
   tagline: Turn rough requests into engineer-ready tasks, challenge quality before implementation starts, and distill durable engineering judgment into reusable memory.
   image:
     src: /assets/logo-primary.svg
@@ -34,5 +34,5 @@ features:
     details: Use LLM reasoning for extraction, adjudication, governance, and ranking, with deterministic scripts for contracts, state safety, and persistence.
   - icon: 🔁
     title: Continuous Background Distillation
-    details: Session-distill selects valid sessions, runs taste extraction and adjudication, governs memory writes, and lets generic meaningful repository turns receive the smallest useful memory brief through the repo-local Codex hook.
+    details: Session-distill selects valid sessions, runs taste extraction and adjudication, governs memory writes, and lets generic meaningful repository turns receive the smallest useful memory brief through the repo-local hook (Codex or Claude Code).
 ---

@@ -143,7 +143,7 @@ LingXi 的 retrieval 会结合当前 query 和 caller context 进行语义排序
 
 除了 `task` 和 `vet`，LingXi 当前也会对普通但有意义的仓库对话消费 memory。
 
-在 Codex 里，这条路径不是通过手动命令完成，而是通过仓库级 `UserPromptSubmit` hook 自动触发：
+在 Codex 和 Claude Code 里，这条路径不是通过手动命令完成，而是通过仓库级 `UserPromptSubmit` hook 自动触发：
 
 - 先判断当前请求是否真的是有意义的仓库工作
 - 再按当前 prompt、caller context 和 project context 检索最小必要记忆
@@ -152,7 +152,7 @@ LingXi 的 retrieval 会结合当前 query 和 caller context 进行语义排序
 这意味着 LingXi 的 memory 现在有两种主要消费方式：
 
 1. `task` / `vet`：直接调用底层 retrieval
-2. 普通仓库对话：通过 Codex hook 自动注入
+2. 普通仓库对话：通过 hook（Codex 或 Claude Code）自动注入
 
 ## 记忆如何反馈到 task 和 vet
 

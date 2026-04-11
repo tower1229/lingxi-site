@@ -37,12 +37,13 @@ node scripts/lx-bootstrap.mjs
 
 Purpose:
 
-- initialize `.lingxi/`
-- create or merge `.codex/config.toml`
-- create or merge `.codex/hooks.json`
+- initialize `.lingxi/`, write `AGENTS.md`
+- create or merge `.codex/config.toml`, `.codex/hooks.json` (Codex adapter)
 - generate `.codex/agents/lingxi-session-distill.toml`
-- generate `.lingxi/setup/automation.session-distill.toml`
-- register the session-distill automation
+- create or merge `.claude/settings.json` (Claude Code adapter)
+- generate `.claude/agents/lingxi-session-distill.md`, copy skills to `.claude/skills/`
+- write `CLAUDE.md`, generate `.lingxi/setup/automation.session-distill.toml`
+- register the session-distill automation (Codex only)
 
 ### `lx-distill-sessions`
 
@@ -62,7 +63,7 @@ Purpose:
 
 The current mainline no longer ships a supported manual `lx-memory-brief` command.
 
-For meaningful repository turns, LingXi injects the smallest relevant memory brief automatically through a repo-local Codex `UserPromptSubmit` hook.
+For meaningful repository turns, LingXi injects the smallest relevant memory brief automatically through a repo-local `UserPromptSubmit` hook (Codex or Claude Code).
 
 Notes:
 
@@ -79,13 +80,16 @@ node scripts/lingxi-setup.mjs
 
 Purpose:
 
-- initialize the LingXi runtime directory layout
-- generate `.lingxi/`
-- create or merge `.codex/config.toml`
-- create or merge `.codex/hooks.json`
-- generate `.codex/agents/lingxi-session-distill.toml`
-- generate `.lingxi/setup/automation.session-distill.toml`
+- initialize the LingXi runtime directory layout `.lingxi/`
 - write `AGENTS.md` only when missing
+- create or merge `.codex/config.toml`, `.codex/hooks.json` (Codex adapter)
+- generate `.codex/agents/lingxi-session-distill.toml`
+- create or merge `.claude/settings.json` (Claude Code adapter)
+- generate `.claude/agents/lingxi-session-distill.md`, copy skills to `.claude/skills/`
+- write `CLAUDE.md` only when missing
+- generate `.lingxi/setup/automation.session-distill.toml`
+
+Supports `--host` parameter: `codex`, `claude`, `all` (default).
 
 ### `lx-create-automation`
 

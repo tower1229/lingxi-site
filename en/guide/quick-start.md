@@ -28,11 +28,10 @@ LingXi installs the currently supported product surface into your repository, in
 
 It also creates project-local runtime artifacts such as:
 
-- `.lingxi/`
-- `.codex/config.toml`
-- `.codex/hooks.json`
-- `.codex/agents/`
-- `AGENTS.md` when missing
+- `.lingxi/` (host-agnostic core)
+- `.codex/config.toml`, `.codex/hooks.json`, `.codex/agents/` (Codex adapter)
+- `.claude/settings.json`, `.claude/agents/`, `.claude/skills/` (Claude Code adapter)
+- `AGENTS.md`, `CLAUDE.md` (only when missing)
 
 ## Runtime Layout
 
@@ -56,7 +55,13 @@ The current runtime layout looks roughly like this:
   hooks.json
   agents/
     lingxi-session-distill.toml
+.claude/
+  settings.json
+  agents/
+    lingxi-session-distill.md
+  skills/
 AGENTS.md
+CLAUDE.md
 ```
 
 These areas are used for:
@@ -66,9 +71,12 @@ These areas are used for:
 - `INDEX.md`: the memory index
 - `state/`: processed sessions, distill journal, and lazily-created memory ops logs
 - `.codex/config.toml`: enables repo-local Codex hooks
-- `.codex/hooks.json`: defines LingXi's repo-local `UserPromptSubmit` hook
+- `.codex/hooks.json`: defines LingXi's repo-local `UserPromptSubmit` hook (Codex)
+- `.claude/settings.json`: defines LingXi's repo-local `UserPromptSubmit` hook (Claude Code)
+- `.claude/agents/`: Claude Code local agent config
+- `.claude/skills/`: LingXi skills copied for Claude Code
 - `setup/`: generated automation artifacts
-- `.codex/agents/`: local LingXi agent config
+- `.codex/agents/`: Codex local agent config
 
 ## Bootstrap
 
@@ -85,15 +93,26 @@ node scripts/lx-bootstrap.mjs
 This step:
 
 1. initializes `.lingxi/`
-2. creates or merges `.codex/config.toml`
-3. creates or merges `.codex/hooks.json`
+2. writes `AGENTS.md` (only when missing)
+3. creates or merges `.codex/config.toml`, `.codex/hooks.json` (Codex adapter)
 4. generates `.codex/agents/lingxi-session-distill.toml`
-5. generates `.lingxi/setup/automation.session-distill.toml`
-6. registers the session-distill automation
+5. creates or merges `.claude/settings.json` (Claude Code adapter)
+6. generates `.claude/agents/lingxi-session-distill.md`, copies skills to `.claude/skills/`
+7. writes `CLAUDE.md` (only when missing)
+8. generates `.lingxi/setup/automation.session-distill.toml`
+9. registers the session-distill automation (Codex only)
+
+You can use `--host` to generate artifacts for a specific host only:
+
+```bash
+node scripts/lingxi-setup.mjs --host codex   # Codex only
+node scripts/lingxi-setup.mjs --host claude  # Claude Code only
+node scripts/lingxi-setup.mjs --host all     # both (default)
+```
 
 Additional notes:
 
-- For meaningful repository requests, LingXi now injects the smallest relevant memory set automatically through a repo-local Codex `UserPromptSubmit` hook.
+- For meaningful repository requests, LingXi injects the smallest relevant memory set automatically through a repo-local `UserPromptSubmit` hook (Codex or Claude Code).
 - On native Windows, setup still writes the hook config, but the current Codex runtime does not execute hooks natively yet.
 
 ## First Use

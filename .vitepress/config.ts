@@ -3,7 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/', // Vercel 或子域名下为根路径；若用 xxx.github.io/lingxi-site 则改为 '/lingxi-site/'
   title: '灵犀 LingXi',
-  description: '面向 Codex 的工程工作流产品',
+  description: '面向 Codex 和 Claude Code 的工程工作流产品',
   lang: 'zh-CN',
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/assets/logo-mono.svg' }],
@@ -22,7 +22,7 @@ export default defineConfig({
       label: '简体中文',
       lang: 'zh-CN',
       title: '灵犀 LingXi',
-      description: '面向 Codex 的工程工作流产品',
+      description: '面向 Codex 和 Claude Code 的工程工作流产品',
       themeConfig: {
         nav: [
           { text: '首页', link: '/' },
@@ -61,7 +61,7 @@ export default defineConfig({
         },
         footer: {
           message: 'MIT 许可证 · 版本与反馈见 GitHub',
-          copyright: '© 2025 taozang (灵犀 LingXi)',
+          copyright: '© 2025–2026 taozang (灵犀 LingXi)',
         },
         docFooter: { prev: '上一页', next: '下一页' },
         lastUpdated: {
@@ -79,7 +79,7 @@ export default defineConfig({
       lang: 'en-US',
       link: '/en/',
       title: 'LingXi',
-      description: 'Codex-native engineering workflow with durable memory',
+      description: 'Engineering workflow for Codex and Claude Code with durable memory',
       themeConfig: {
         nav: [
           { text: 'Home', link: '/en/' },
@@ -118,7 +118,7 @@ export default defineConfig({
         },
         footer: {
           message: 'MIT License · Releases & feedback on GitHub',
-          copyright: '© 2025 taozang (LingXi)',
+          copyright: '© 2025–2026 taozang (LingXi)',
         },
         docFooter: { prev: 'Previous', next: 'Next' },
         lastUpdated: {

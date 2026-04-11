@@ -1,6 +1,6 @@
 # What Is LingXi
 
-LingXi is a Codex-native engineering workflow product.
+LingXi is an engineering workflow product for Codex and Claude Code.
 
 It does three things:
 
@@ -67,11 +67,10 @@ The plugin provides the installable product shell, including skills, templates, 
 
 Setup creates project-local runtime artifacts such as:
 
-- `.lingxi/`
-- `.codex/config.toml`
-- `.codex/hooks.json`
-- `.codex/agents/`
-- `AGENTS.md`
+- `.lingxi/` (host-agnostic core)
+- `.codex/config.toml`, `.codex/hooks.json`, `.codex/agents/` (Codex adapter)
+- `.claude/settings.json`, `.claude/agents/`, `.claude/skills/` (Claude Code adapter)
+- `AGENTS.md`, `CLAUDE.md`
 - session-distill automation config
 
 ### Runtime
@@ -105,7 +104,7 @@ Memory is the long-term engine that makes the product improve with use.
 The background distillation loop analyzes historical sessions, identifies durable engineering judgment, writes that judgment into `.lingxi/memory/`, and then feeds it back in two ways:
 
 - `task` and `vet` retrieve memory directly with workflow-specific intent
-- generic but meaningful repository turns receive the smallest useful memory brief through the repo-local Codex hook
+- generic but meaningful repository turns receive the smallest useful memory brief through the repo-local hook (Codex or Claude Code)
 
 That means memory does not only support explicit workflows. It also strengthens everyday implementation, debugging, analysis, and review conversations.
 

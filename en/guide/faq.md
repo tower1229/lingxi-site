@@ -4,12 +4,11 @@
 
 ### What environment does LingXi run in?
 
-LingXi is currently a Codex-native engineering workflow product. After installation, its runtime lives inside the target repository, primarily under:
+LingXi is an engineering workflow product that supports both Codex and Claude Code. After installation, its runtime lives inside the target repository, primarily under:
 
-- `.lingxi/`
-- `.codex/config.toml`
-- `.codex/hooks.json`
-- `.codex/agents/`
+- `.lingxi/` (host-agnostic core)
+- `.codex/config.toml`, `.codex/hooks.json`, `.codex/agents/` (Codex adapter)
+- `.claude/settings.json`, `.claude/agents/`, `.claude/skills/` (Claude Code adapter)
 
 ### Do I need local Node.js?
 
@@ -68,8 +67,8 @@ Explicit workflows run only when you call them. Background memory continues to d
 
 Check these first:
 
-1. whether bootstrap has already created `.codex/config.toml` and `.codex/hooks.json`
-2. whether the repository is trusted and Codex hooks are actually active
+1. whether bootstrap has already created the hook config for your host (Codex: `.codex/config.toml` + `.codex/hooks.json`; Claude Code: `.claude/settings.json`)
+2. whether the repository is trusted and hooks are actually active in Codex or Claude Code
 3. whether the current prompt is meaningful repository work rather than casual conversation
 4. whether you are on native Windows, where the current Codex runtime still does not execute hooks natively
 

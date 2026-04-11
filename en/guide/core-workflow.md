@@ -93,10 +93,9 @@ This has several advantages:
 
 LingXi runs inside the target repository, with primary runtime roots under:
 
-- `.lingxi/`
-- `.codex/config.toml`
-- `.codex/hooks.json`
-- `.codex/agents/`
+- `.lingxi/` (host-agnostic core)
+- `.codex/config.toml`, `.codex/hooks.json`, `.codex/agents/` (Codex adapter)
+- `.claude/settings.json`, `.claude/agents/`, `.claude/skills/` (Claude Code adapter)
 
 A typical usage flow is:
 
@@ -106,7 +105,7 @@ A typical usage flow is:
 4. use `vet` to challenge it before implementation
 5. let background `session-distill` accumulate durable engineering taste
 
-Outside the explicit `task → vet` path, generic but meaningful repository turns also consume memory automatically through the repo-local Codex hook. That path complements `task` and `vet` rather than replacing them.
+Outside the explicit `task → vet` path, generic but meaningful repository turns also consume memory automatically through the repo-local hook (Codex or Claude Code). That path complements `task` and `vet` rather than replacing them.
 
 ## What The Workflow Is Trying To Achieve
 
