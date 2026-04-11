@@ -140,7 +140,7 @@ It now explicitly separates:
 3. governance and persistence
 4. task/vet-intent retrieval
 
-That makes the current product much more coherent than the older Cursor-era memory story.
+That gives the current product a clearer and more coherent memory architecture.
 
 ## Retrieval Model
 

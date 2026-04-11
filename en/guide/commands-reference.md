@@ -30,9 +30,9 @@ These are the most useful runtime scripts in the current LingXi surface:
 ### `lx-bootstrap`
 
 ```bash
-node scripts/lx-bootstrap.mjs
-# or
 npm run lx:bootstrap
+# or
+node scripts/lx-bootstrap.mjs
 ```
 
 Purpose:
@@ -45,6 +45,8 @@ Purpose:
 ### `lx-distill-sessions`
 
 ```bash
+npm run lx:distill-sessions
+# or
 node scripts/lx-distill-sessions.mjs
 ```
 
@@ -57,6 +59,8 @@ Purpose:
 ### `lx-memory-brief`
 
 ```bash
+npm run lx:memory-brief -- --prompt "current request"
+# or
 node scripts/lx-memory-brief.mjs --prompt "current request"
 ```
 
@@ -68,6 +72,8 @@ Purpose:
 ### `lingxi-setup`
 
 ```bash
+npm run lx:setup
+# or
 node scripts/lingxi-setup.mjs
 ```
 
@@ -79,6 +85,8 @@ Purpose:
 ### `lx-create-automation`
 
 ```bash
+npm run lx:create-automation
+# or
 node scripts/lx-create-automation.mjs
 ```
 
@@ -89,9 +97,9 @@ Purpose:
 ## Uninstall
 
 ```bash
-yarn lx:uninstall
-# or
 npm run lx:uninstall
+# or
+yarn lx:uninstall
 ```
 
 For non-interactive environments:

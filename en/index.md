@@ -25,7 +25,7 @@ features:
     details: Challenge task quality before implementation and surface ambiguity, hidden risk, weak acceptance coverage, and shaky framing early.
   - icon: 🧠
     title: Engineering Taste Memory
-    details: Distill reusable engineering judgment from historical sessions, not generic chat summaries, so future work can inherit durable choices.
+    details: Distill reusable engineering judgment from historical sessions so future work can inherit durable engineering choices.
   - icon: ⚙️
     title: Small Surface, Strong Core
     details: Keep the visible workflow narrow with task and vet while the memory layer continuously strengthens meaningful repository work underneath.

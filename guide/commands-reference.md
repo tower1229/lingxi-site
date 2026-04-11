@@ -30,9 +30,9 @@ LingXi 当前运行时最常用的脚本包括：
 ### `lx-bootstrap`
 
 ```bash
-node scripts/lx-bootstrap.mjs
-# 或
 npm run lx:bootstrap
+# 或
+node scripts/lx-bootstrap.mjs
 ```
 
 作用：
@@ -45,6 +45,8 @@ npm run lx:bootstrap
 ### `lx-distill-sessions`
 
 ```bash
+npm run lx:distill-sessions
+# 或
 node scripts/lx-distill-sessions.mjs
 ```
 
@@ -57,6 +59,8 @@ node scripts/lx-distill-sessions.mjs
 ### `lx-memory-brief`
 
 ```bash
+npm run lx:memory-brief -- --prompt "当前请求"
+# 或
 node scripts/lx-memory-brief.mjs --prompt "当前请求"
 ```
 
@@ -68,6 +72,8 @@ node scripts/lx-memory-brief.mjs --prompt "当前请求"
 ### `lingxi-setup`
 
 ```bash
+npm run lx:setup
+# 或
 node scripts/lingxi-setup.mjs
 ```
 
@@ -79,6 +85,8 @@ node scripts/lingxi-setup.mjs
 ### `lx-create-automation`
 
 ```bash
+npm run lx:create-automation
+# 或
 node scripts/lx-create-automation.mjs
 ```
 
@@ -89,9 +97,9 @@ node scripts/lx-create-automation.mjs
 ## 卸载
 
 ```bash
-yarn lx:uninstall
-# 或
 npm run lx:uninstall
+# 或
+yarn lx:uninstall
 ```
 
 非交互环境可使用：

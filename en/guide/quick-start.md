@@ -70,6 +70,8 @@ If you used the remote install script, bootstrap is usually already handled for 
 If you synced LingXi files manually, or want to rerun runtime and automation registration, run:
 
 ```bash
+npm run lx:bootstrap
+# or
 node scripts/lx-bootstrap.mjs
 ```
 
@@ -102,10 +104,10 @@ In the background, `session-distill` keeps extracting durable engineering judgme
 If you want to inspect runtime state or debug the memory system, these lower-level commands are useful:
 
 ```bash
-node scripts/lingxi-setup.mjs
-node scripts/lx-create-automation.mjs
-node scripts/lx-distill-sessions.mjs
-node scripts/lx-memory-brief.mjs --prompt "current request"
+npm run lx:setup
+npm run lx:create-automation
+npm run lx:distill-sessions
+npm run lx:memory-brief -- --prompt "current request"
 ```
 
 Or run:

@@ -10,15 +10,15 @@ It does three things:
 
 LingXi makes engineering work more executable at the start, more reviewable before implementation, and more consistent over time.
 
-## What Problem LingXi Solves
+## What LingXi Strengthens
 
-In AI-assisted engineering work, the main areas that need strengthening are:
+In AI-assisted engineering work, LingXi strengthens the parts that shape quality early and keep standards reusable over time:
 
-- implementation starts before the request is properly framed
-- boundaries, constraints, and acceptance criteria stay weak
-- there is no serious pre-implementation quality challenge
-- engineering judgment from prior sessions does not get reused reliably
-- the same project standards have to be restated again and again
+- framing requests into implementation-ready tasks
+- clarifying boundaries, constraints, and acceptance criteria
+- challenging task quality before implementation begins
+- carrying forward engineering judgment from prior sessions
+- turning recurring project standards into reusable memory
 
 LingXi addresses this with a deliberately narrow product surface:
 

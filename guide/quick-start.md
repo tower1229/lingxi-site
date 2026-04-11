@@ -70,6 +70,8 @@ AGENTS.md
 如果你是手动同步 LingXi 文件，或者只想补跑 runtime / automation 注册，可以执行：
 
 ```bash
+npm run lx:bootstrap
+# 或
 node scripts/lx-bootstrap.mjs
 ```
 
@@ -102,10 +104,10 @@ task → vet
 如果你需要检查运行时状态或调试 memory，可以使用这些底层命令：
 
 ```bash
-node scripts/lingxi-setup.mjs
-node scripts/lx-create-automation.mjs
-node scripts/lx-distill-sessions.mjs
-node scripts/lx-memory-brief.mjs --prompt "当前请求"
+npm run lx:setup
+npm run lx:create-automation
+npm run lx:distill-sessions
+npm run lx:memory-brief -- --prompt "当前请求"
 ```
 
 或者直接执行：
